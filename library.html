@@ -1,0 +1,334 @@
+<html lang="hi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>अनन्त श्री विभूषित स्वामी श्री रामहर्षण दास जी का अनमोल साहित्य</title>
+    <link rel="shortcut icon" href="./favicon/favicon.ico">
+    <link rel="icon" sizes="16x16 32x32 64x64" href="./favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="./favicon/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="./favicon/favicon-160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="./favicon/favicon-96.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="./favicon/favicon-64.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16.png">
+    <link rel="apple-touch-icon" href="./favicon/favicon-57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./favicon/favicon-114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./favicon/favicon-72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./favicon/favicon-144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./favicon/favicon-60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./favicon/favicon-120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./favicon/favicon-76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./favicon/favicon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/favicon-180.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta name="msapplication-TileImage" content="./favicon/favicon-144.png">
+    <meta name="msapplication-config" content="./favicon/browserconfig.xml">
+    <style>
+        @font-face {
+            font-family: sanskrit;
+            src: url(fonts/Sanskrit2003.ttf);
+        }
+    </style>
+    <link href="previewer/photoviewer.min.css" rel="stylesheet" />
+    <script src="previewer/photoviewer.min.js"></script>
+    <script src="booklist.js"></script>
+    <script>
+        function bookActive(th) {
+            th.querySelector(".book__wrapper").classList.add("book-hover");
+            th.querySelector(".book__cover").classList.add("book-hover");
+        }
+
+        function bookInactive(th) {
+            th.querySelector(".book__wrapper").classList.remove("book-hover");
+            th.querySelector(".book__cover").classList.remove("book-hover");
+        }
+        (function () {
+            window.bookElements = null;
+            var windowHeight, windowWidth;
+            var timer = null;
+            function init() {
+                bookElements = document.querySelectorAll('.book');
+                windowHeight = window.innerHeight || document.documentElement.clientHeight;
+                windowWidth = window.innerWidth || document.documentElement.clientWidth;
+            }
+
+            function checkPosition() {
+                for (var i = 0; i < bookElements.length; i++) {
+                    var element = bookElements[i];
+                    var bounding = bookElements[i].getBoundingClientRect();
+                    var elementHeight = element.offsetHeight;
+                    var elementWidth = element.offsetWidth;
+
+                    if (bounding.top >= -elementHeight
+                        && bounding.left >= -elementWidth
+                        && bounding.right <= windowWidth + elementWidth
+                        && bounding.bottom <= (windowHeight / 2) + elementHeight) {
+                        // top is inside viewport
+                        bookActive(element);
+                    } else {
+                        // Bottom is out of viewport
+                        bookInactive(element);
+                    }
+                }
+            }
+            if (/Mobi/.test(navigator.userAgent)) {
+                window.addEventListener('scroll', function () {
+                    clearTimeout(checkPosition);
+                    timer = setTimeout(checkPosition, 700);
+                });
+                window.addEventListener('resize', init);
+            }
+            init();
+            checkPosition();
+        })();
+    </script>
+    <script>
+        function createBooks() {
+            var templateHtml = "";
+            for (const bookName in booksList) {
+                if (Object.hasOwnProperty.call(booksList, bookName)) {
+                    const bookObj = booksList[bookName];
+                    templateHtml += bookTemplate(bookName);
+                }
+            }
+            var bookShelf = document.getElementById('bookShelf');
+            bookShelf.innerHTML = templateHtml;
+            window.bookElements = document.querySelectorAll('.book');
+        }
+
+        function loadPdf(bookName, pageNo) {
+            var pageCount = booksList[bookName]['pageCount'];
+            var title = booksList[bookName]['title'];
+            var photos = [{
+                src: `books/${bookName}/${bookName}_1.jpg`,
+                title: `${title} - Page No: 1`,
+            },
+            {
+                src: `assets/not_for_sale.jpg`,
+                title: `${title} - Page No: 2`,
+            }];
+            for (let index = 1; index < pageCount; index++) {
+                photos.push({
+                    src: `books/${bookName}/${bookName}_${index + 1}.jpg`,
+                    title: `${title} - Page No: ${index + 2}`,
+                });
+            }
+            pageCount += 1;
+            var options = {
+                multiInstance: false,
+                fixedModalPos: true,
+                initMaximized: true,
+                headerToolbar: ['close'],
+                footerToolbar: ['zoomIn', 'zoomOut', 'prev', 'fullscreen', 'next', 'goto'],
+                progressiveLoading: true,
+                index: pageNo || 0,
+                customButtons: {
+                    goto: {
+                        text: 'Go To Page',
+                        title: 'Jump to page',
+                        click: function (context, e) {
+                            var userInput = prompt(`Please enter page number between 1 - ${context.pageCount}`, context.groupIndex + 1);
+                            if (!isNaN(userInput) && +userInput != context.groupIndex + 1 && +userInput > 0 && +userInput <= context.pageCount) {
+                                context.$close.selector[0].click();
+                                loadPdf(context.bookName, +userInput - 1);
+                            }
+                        },
+                    },
+                }
+            };
+            var viewer = new PhotoViewer(photos, options);
+            viewer.bookName = bookName;
+            viewer.pageCount = pageCount;
+        }
+    </script>
+    <style>
+        .button-panel {
+            display: flex;
+            margin-top: 5px;
+            justify-content: center;
+        }
+
+        a.button {
+            min-width: 100px;
+            display: inline-block;
+            padding: 0.35em 1.2em;
+            border: 0.1em solid #000000;
+            margin: 0 0.4em 0 0.4em;
+            border-radius: 0.12em;
+            box-sizing: border-box;
+            text-decoration: none;
+            font-family: 'Roboto', sans-serif;
+            cursor: pointer;
+            font-weight: 300;
+            color: #000000;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        a.button:hover {
+            border-color: grey;
+            background-color: grey;
+            color: #fff;
+        }
+
+        @media all and (max-width:30em) {
+            a.button {
+                display: block;
+                margin: 0.4em auto;
+            }
+        }
+
+        .book {
+            width: 200px;
+            height: 300px;
+            margin: 30px;
+            display: flex;
+            align-items: flex-end;
+            perspective: 400px;
+        }
+
+        .book-hover {
+            transform-style: unset;
+            transform: rotateY(-30deg) !important;
+            transition: transform 1s ease;
+        }
+
+        .book__wrapper {
+            transform: rotateY(-10deg);
+            position: relative;
+            transform-style: preserve-3d;
+            width: 200px;
+            height: 300px;
+            transition: transform 1s ease;
+        }
+
+        .book__cover {
+            position: absolute;
+            background: #0d47a1aa;
+            width: 200px;
+            height: 300px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            box-shadow: 5px 5px 20px #666;
+            transform: rotateY(-10deg);
+            transition: transform 1s ease;
+        }
+
+        .book.small > .book__cover, .book.small > .book__wrapper, .book.small > .book__wrapper::after {
+            height: 200px;
+        }
+
+        .book.small > .book__wrapper::before {
+            height: calc(200px - 2 * 3px);
+        }
+
+        .book__wrapper::before {
+            content: ' ';
+            background: #fff;
+            height: calc(300px - 2 * 3px);
+            width: 20px;
+            top: 3px;
+            position: absolute;
+            transform: translateX(calc(200px - 20px / 2 - 3px)) rotateY(90deg) translateX(calc(20px / 2));
+        }
+
+        .book__wrapper::after {
+            content: ' ';
+            position: absolute;
+            left: 0;
+            width: 200px;
+            height: 300px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            background: #01060f;
+            transform: translateZ(-20px);
+            box-shadow: -10px 0 50px 10px #666;
+        }
+
+        .book__wrapper.medium::before {
+            width: 50px;
+            transform: translateX(calc(200px - 50px / 2 - 3px)) rotateY(90deg) translateX(calc(50px / 2));
+        }
+
+        .book__wrapper.medium::after {
+            transform: translateZ(-50px);
+        }
+
+        .book__wrapper.large::before {
+            width: 80px;
+            transform: translateX(calc(200px - 80px / 2 - 3px)) rotateY(90deg) translateX(calc(80px / 2))
+        }
+
+        .book__wrapper.large::after {
+            transform: translateZ(-80px);
+        }
+
+        body {
+            margin: auto;
+            padding: 30px;
+            background: #f8f4f2;
+            font-family: sanskrit;
+        }
+
+        .a-box {
+            display: inline-block;
+            width: 300px;
+            margin: 10px;
+        }
+
+        .page-count {
+            float: left;
+            color: grey;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .about-book {
+            display: flex;
+            justify-content: flex-end;
+            flex-direction: column;
+            flex-grow: 1;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+            padding: 120px 20px 20px 20px;
+            border-radius: 20px;
+            background: #fff;
+            margin: -120px 0px 0px 0px;
+            line-height: 19px;
+            font-size: 14px;
+            min-height: 260px;
+        }
+
+        .book-title {
+            margin: 20px 0px 10px 0px;
+            color: rgb(92, 91, 91);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .book-intro {
+            font-size: 16px;
+            line-height: 1.5;
+            color: grey;
+            flex-grow: 1;
+        }
+
+        .book-intro-author {
+            text-align: right;
+            font-weight: bold;
+            color: brown;
+        }
+
+        .books {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body onload="createBooks();">
+    <h1>प्रेम मूर्ति, पंचरसाचार्य अनन्त श्री सम्पन्न स्वामी श्री रामहर्षण दास जी महाराज</h1>
+    <div id="bookShelf" class="books"></div>
+</body>
+
+</html>
