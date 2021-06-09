@@ -198,7 +198,6 @@ function bookTemplate(folderName) {
     } else if (pageCount > 90) {
         bookSize = ' medium';
     }
-    var source = location.host == "" ? 'books' : 'https://srhssa.github.io/shriharshanbooks';
     return `<div class="a-box" onmouseenter="bookActive(this)" onmouseleave="bookInactive(this)">
     <div class="book${isMini}">
         <div class="book__wrapper${bookSize}"></div>

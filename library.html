@@ -100,8 +100,9 @@
         function loadPdf(bookName, pageNo) {
             var pageCount = booksList[bookName]['pageCount'];
             var title = booksList[bookName]['title'];
+            var source = location.host == "" ? 'books' : 'https://srhssa.github.io/shriharshanbooks';
             var photos = [
-                { src: `books/${bookName}/${bookName}_1.jpg` },
+                { src: `${source}/${bookName}/${bookName}_1.jpg` },
                 { src: `assets/not_for_sale.jpg` },
             ];
             for (let index = 1; index < pageCount; index++) {
