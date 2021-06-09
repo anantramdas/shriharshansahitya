@@ -11,6 +11,18 @@ var booksList = {
         intro: `"लीला-सुधा-सिन्धु" वस्तुतः लीला सुधा का सागर ही नहीं अपितु महासागर है... रसिक-जन आत्मा तथा मानस के हेतु इसमें अनेक रागों से रंजित पदावलियों की षोडश-शत रत्नराशि सन्निहित है, जिसका एक-एक अमूल्य रत्न प्राप्त हो जाने पर उस लीलामय शाहंशाह... को खरीद लेने हेतु पर्याप्त है।`,
         introAuthor: '— श्री हरिगोविन्द दास (द्विवेदी)',
     },
+    'vinay_vallari': {
+        pageCount: 271,
+        title: 'विनय वल्लरी',
+        intro: ``,
+        introAuthor: '',
+    },
+    'prem_vallari': {
+        pageCount: 234,
+        title: 'प्रेम वल्लरी',
+        intro: ``,
+        introAuthor: '',
+    },
     'panch_shatak': {
         pageCount: 29,
         title: 'पंच शतक',
@@ -186,11 +198,11 @@ function bookTemplate(folderName) {
     } else if (pageCount > 90) {
         bookSize = ' medium';
     }
-    
+    var source = location.host == "" ? 'books' : 'https://srhssa.github.io/shriharshanbooks';
     return `<div class="a-box" onmouseenter="bookActive(this)" onmouseleave="bookInactive(this)">
     <div class="book${isMini}">
         <div class="book__wrapper${bookSize}"></div>
-        <img class="book__cover" alt="${title}" src="books/${folderName}/${folderName}_1.jpg" />
+        <img class="book__cover" alt="${title}" src="assets/${folderName}.jpg" />
     </div>
     <div class="about-book">
         <p class="book-title">${title}</p>
