@@ -85,29 +85,27 @@
                     src: `${source}/${bookName}/${bookName}_${index + 1}.jpg`,
                 });
             }
+            Spotlight.currentPage = pageNo;
             pageCount += 1;
             var options = {
                 animation: "slide",
                 title: title,
-                // index: pageNo || 0,
-                // customButtons: {
-                //     goto: {
-                //         text: 'Go To Page',
-                //         title: 'Jump to page',
-                //         click: function (context, e) {
-                //             var userInput = prompt(`Please enter page number between 1 - ${context.pageCount}`, context.groupIndex + 1);
-                //             if (!isNaN(userInput) && +userInput != context.groupIndex + 1 && +userInput > 0 && +userInput <= context.pageCount) {
-                //                 context.$close.selector[0].click();
-                //                 loadPdf(context.bookName, +userInput - 1);
-                //             }
-                //         },
-                //     },
-                // }
+                index: pageNo,
+                autofit: false,
+                control: ["fullscreen", "zoom", "close", "page"],
+                autohide: 2,
+                onchange: function(index, options){
+                    Spotlight.currentPage = index;
+                },
             };
             Spotlight.show(photos, options);
-            // var viewer = new PhotoViewer(photos, options);
-            // viewer.bookName = bookName;
-            // viewer.pageCount = pageCount;
+            Spotlight.pageCount = pageCount;
+            var button = Spotlight.addControl("goto-page", function(event){
+                var userInput = prompt(`Please enter page number between 1 - ${Spotlight.pageCount}`, Spotlight.currentPage);
+                if (!isNaN(userInput) && +userInput != Spotlight.currentPage && +userInput > 0 && +userInput <= Spotlight.pageCount) {
+                    Spotlight.goto(+userInput);
+                }
+            });
         }
     </script>
     <style>
@@ -238,6 +236,11 @@
             margin: auto;
             background: #f8f4f2;
             font-family: sanskrit;
+        }
+
+        .spl-goto-page {
+            background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+PHN2ZyBoZWlnaHQ9Ijk2cHgiIHZpZXdCb3g9IjAgMCA5NiA5NiIgd2lkdGg9Ijk2cHgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoOTAgNTAgNTApIiBmaWxsPSIjZmZmIiBkPSJNNzEuMzExLDgwQzY5LjY3LDg0LjY2LDY1LjIzLDg4LDYwLDg4SDIwYy02LjYzLDAtMTItNS4zNy0xMi0xMlYzNmMwLTUuMjMsMy4zNC05LjY3LDgtMTEuMzExVjc2YzAsMi4yMSwxLjc5LDQsNCw0SDcxLjMxMSAgeiIvPjxwYXRoIHRyYW5zZm9ybT0icm90YXRlKDkwIDUwIDUwKSIgZmlsbD0iI2ZmZiIgZD0iTTc2LDhIMzZjLTYuNjMsMC0xMiw1LjM3LTEyLDEydjQwYzAsNi42Myw1LjM3LDEyLDEyLDEyaDQwYzYuNjMsMCwxMi01LjM3LDEyLTEyVjIwQzg4LDEzLjM3LDgyLjYzLDgsNzYsOHogTTgwLDYwICBjMCwyLjIxLTEuNzksNC00LDRIMzZjLTIuMjEsMC00LTEuNzktNC00VjIwYzAtMi4yMSwxLjc5LTQsNC00aDQwYzIuMjEsMCw0LDEuNzksNCw0VjYweiIvPjwvc3ZnPg==');
+            background-size: 22px;
         }
 
         .body-wrapper {
