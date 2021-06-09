@@ -5,8 +5,8 @@
     <title>अनन्त श्री विभूषित स्वामी श्री रामहर्षण दास जी का अनमोल साहित्य</title>
     <sergey-import src="favicon" />
     <sergey-import src="common_style" />
-    <link href="previewer/photoviewer.min.css" rel="stylesheet" />
-    <script src="previewer/photoviewer.min.js"></script>
+    <link href="previewer/spotlight.min.css" rel="stylesheet" />
+    <script src="previewer/spotlight.min.js"></script>
     <script src="booklist.js"></script>
     <script>
         function bookActive(th) {
@@ -75,46 +75,38 @@
         function loadPdf(bookName, pageNo) {
             var pageCount = booksList[bookName]['pageCount'];
             var title = booksList[bookName]['title'];
-            var photos = [{
-                src: `books/${bookName}/${bookName}_1.jpg`,
-                title: `${title} - Page No: 1`,
-            },
-            {
-                src: `assets/not_for_sale.jpg`,
-                title: `${title} - Page No: 2`,
-            }];
+            var photos = [
+                { src: `books/${bookName}/${bookName}_1.jpg` },
+                { src: `assets/not_for_sale.jpg` },
+            ];
             for (let index = 1; index < pageCount; index++) {
                 photos.push({
                     src: `books/${bookName}/${bookName}_${index + 1}.jpg`,
-                    title: `${title} - Page No: ${index + 2}`,
                 });
             }
             pageCount += 1;
             var options = {
-                multiInstance: false,
-                fixedModalPos: true,
-                initMaximized: true,
-                headerToolbar: ['close'],
-                footerToolbar: ['zoomIn', 'zoomOut', 'prev', 'fullscreen', 'next', 'goto'],
-                progressiveLoading: true,
-                index: pageNo || 0,
-                customButtons: {
-                    goto: {
-                        text: 'Go To Page',
-                        title: 'Jump to page',
-                        click: function (context, e) {
-                            var userInput = prompt(`Please enter page number between 1 - ${context.pageCount}`, context.groupIndex + 1);
-                            if (!isNaN(userInput) && +userInput != context.groupIndex + 1 && +userInput > 0 && +userInput <= context.pageCount) {
-                                context.$close.selector[0].click();
-                                loadPdf(context.bookName, +userInput - 1);
-                            }
-                        },
-                    },
-                }
+                animation: "slide",
+                title: title,
+                // index: pageNo || 0,
+                // customButtons: {
+                //     goto: {
+                //         text: 'Go To Page',
+                //         title: 'Jump to page',
+                //         click: function (context, e) {
+                //             var userInput = prompt(`Please enter page number between 1 - ${context.pageCount}`, context.groupIndex + 1);
+                //             if (!isNaN(userInput) && +userInput != context.groupIndex + 1 && +userInput > 0 && +userInput <= context.pageCount) {
+                //                 context.$close.selector[0].click();
+                //                 loadPdf(context.bookName, +userInput - 1);
+                //             }
+                //         },
+                //     },
+                // }
             };
-            var viewer = new PhotoViewer(photos, options);
-            viewer.bookName = bookName;
-            viewer.pageCount = pageCount;
+            Spotlight.show(photos, options);
+            // var viewer = new PhotoViewer(photos, options);
+            // viewer.bookName = bookName;
+            // viewer.pageCount = pageCount;
         }
     </script>
     <style>
@@ -190,11 +182,13 @@
             transition: transform 1s ease;
         }
 
-        .book.small > .book__cover, .book.small > .book__wrapper, .book.small > .book__wrapper::after {
+        .book.small>.book__cover,
+        .book.small>.book__wrapper,
+        .book.small>.book__wrapper::after {
             height: 200px;
         }
 
-        .book.small > .book__wrapper::before {
+        .book.small>.book__wrapper::before {
             height: calc(200px - 2 * 3px);
         }
 
@@ -241,9 +235,12 @@
 
         body {
             margin: auto;
-            padding: 30px;
             background: #f8f4f2;
             font-family: sanskrit;
+        }
+
+        .body-wrapper {
+            padding: 30px;
         }
 
         .a-box {
@@ -309,12 +306,18 @@
 
         .chaupai {
             pointer-events: none;
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Old versions of Firefox */
-                -ms-user-select: none; /* Internet Explorer/Edge */
-                    user-select: none; /* Non-prefixed version, currently
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Safari */
+            -khtml-user-select: none;
+            /* Konqueror HTML */
+            -moz-user-select: none;
+            /* Old versions of Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently
                                         supported by Chrome, Edge, Opera and Firefox */
             font-family: sanskrit;
             font-size: 4.5vw;
@@ -337,12 +340,14 @@
 </head>
 
 <body onload="createBooks();">
-    <h1>प्रेम मूर्ति, पंचरसाचार्य अनन्त श्री सम्पन्न स्वामी श्री रामहर्षण दास जी महाराज</h1>
-    <h1 class="chaupai">एहि महँ मैं शास्त्रन मत थापा ।</h1>
-    <h1 class="chaupai ml">पै कछु तहँ न मोर परतापा ॥</h1>
-    <h1 class="chaupai">जस लीला हिय दरशन पायो ।</h1>
-    <h1 class="chaupai ml">प्रभु प्रेरित सोइ लिखौं सुहायो ॥</h1>
-    <div id="bookShelf" class="books"></div>
+    <div class="body-wrapper">
+        <h1>प्रेम मूर्ति, पंचरसाचार्य अनन्त श्री सम्पन्न स्वामी श्री रामहर्षण दास जी महाराज</h1>
+        <h1 class="chaupai">एहि महँ मैं शास्त्रन मत थापा ।</h1>
+        <h1 class="chaupai ml">पै कछु तहँ न मोर परतापा ॥</h1>
+        <h1 class="chaupai">जस लीला हिय दरशन पायो ।</h1>
+        <h1 class="chaupai ml">प्रभु प्रेरित सोइ लिखौं सुहायो ॥</h1>
+        <div id="bookShelf" class="books"></div>
+    </div>
 </body>
 
 </html>
