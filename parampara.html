@@ -73,6 +73,7 @@
     align-items: center;
     margin: auto;
     width: 40vw;
+    min-width: 300px;
     opacity: 0;
     animation: appear 1s forwards 2s, slideDown 1s forwards 2s;
   }
@@ -85,10 +86,11 @@
     opacity: 0.9;
     margin: 3px;
     width: 40vw;
+    min-width: 300px;
     color: #ccc;
     font-family: sanskrit;
     font-weight: 300;
-    font-size: 2vw;
+    font-size: calc(20px + 0.5vw);
     line-height: 1.3;
     align-items: center;
     background: grey;
@@ -124,12 +126,12 @@
 
   .acharya > div > span:first-child {
     color: #eee;
-    font-size: 1.5vw;
+    font-size: calc(12px + 0.5vw);
   }
 
   .photo {
-    width: 6vw;
-    height: 6vw;
+    width: calc(60px + 1vw);
+    height: calc(60px + 1vw);
     border: 1px solid #eee;
     border-radius: 5px;
     margin: 5px;
