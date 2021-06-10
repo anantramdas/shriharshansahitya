@@ -100,12 +100,14 @@
             };
             Spotlight.show(photos, options);
             Spotlight.pageCount = pageCount;
-            var button = Spotlight.addControl("goto-page", function(event){
-                var userInput = prompt(`Please enter page number between 1 - ${Spotlight.pageCount}`, Spotlight.currentPage);
-                if (!isNaN(userInput) && +userInput != Spotlight.currentPage && +userInput > 0 && +userInput <= Spotlight.pageCount) {
-                    Spotlight.goto(+userInput);
-                }
-            });
+            if (typeof spotlightButton == 'undefined') {
+                var spotlightButton = Spotlight.addControl("goto-page", function(event){
+                    var userInput = prompt(`Please enter page number between 1 - ${Spotlight.pageCount}`, Spotlight.currentPage);
+                    if (!isNaN(userInput) && +userInput != Spotlight.currentPage && +userInput > 0 && +userInput <= Spotlight.pageCount) {
+                        Spotlight.goto(+userInput);
+                    }
+                });
+            }
         }
     </script>
     <style>
