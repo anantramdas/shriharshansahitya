@@ -1,4 +1,28 @@
 var booksList = {
+    'vedant_darshan': {
+        pageCount: 387,
+        title: 'वेदान्त दर्शन (ब्रह्म सूत्र)',
+        intro: ``,
+        introAuthor: '',
+    },
+    'atha_aupnishda_brahma_bodh': {
+        pageCount: 222,
+        title: 'अथ औपनिषद ब्रह्म बोध',
+        intro: ``,
+        introAuthor: '',
+    },
+    'chidakash_ki_chinmayi_leela': {
+        pageCount: 244,
+        title: 'चिदाकाश की चिन्मयी लीला',
+        intro: ``,
+        introAuthor: '',
+    },
+    'chaturdham_yatra_vritta': {
+        pageCount: 639,
+        title: 'चर्तुधाम यात्रा वृत्त',
+        intro: ``,
+        introAuthor: '',
+    },
     'gita_gyaan': {
         pageCount: 285,
         title: 'गीता ज्ञान',
