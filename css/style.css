@@ -1,3 +1,14 @@
+@font-face {
+    font-family: kurale;
+    src: url(../fonts/Kurale.ttf);
+}
+
+body {
+  font-family: kurale;
+}
+
+
+
 .header {
     background-color: rgba(0,0,0, 0.4);
 }
@@ -17,7 +28,6 @@
 }
  .heading h2 {
      padding: 0px 0px 20px 0px;
-     font-size: 50px;
      font-weight: bold;
      color: #b32137;
      line-height: 50px;
