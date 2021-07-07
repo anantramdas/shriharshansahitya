@@ -79,8 +79,7 @@
       </nav>
    </header>
    <!-- end header -->
-   <div id = "chart" class="container-fluid d-flex justify-content-center flex-wrap">
-
+   <div id = "chart" class="container-fluid">
    </div>
    <!-- footer -->
    <footer>
@@ -94,6 +93,7 @@
       var chartHtml = '';
       var days = ['रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
       var sortedDates = {};
+      var sortedYears = new Set();
       $(document).ready(function () {
          var today = new Date();
          var isNext;
@@ -103,6 +103,7 @@
                for (var date of item.date) {
                   date = new Date(date);
                   sortedDates[date.getTime()] = sortedDates[date.getTime()] || [];
+                  sortedYears.add(date.getFullYear());
                   sortedDates[date.getTime()].push({
                      name: itemName,
                      type: item.type,
@@ -110,36 +111,44 @@
                }
             }
          }
-
+         sortedYears = Array.from(sortedYears);
+         sortedYears.sort();
+         sortedYears.reverse();
          var sortedDatesKeys = Object.keys(sortedDates);
          sortedDatesKeys.sort();
-
-         for (var dateStamp of sortedDatesKeys) {
-            var itemArr = sortedDates[dateStamp];
-            for (var item of itemArr) {
-               var itemName = item.name;
-               if (item.type == 'ekadashi') {
-                  itemName += ' एकादशी';
-               }
-               var itemDate = new Date(+dateStamp);
-               var itemDay = days[itemDate.getDay()];
-               var upcomingDate = '';
-               var dateString = formatDate(itemDate);
-               var daysLeft = itemDate >= today ? Math.ceil((itemDate.getTime() - today.getTime())/(1000 * 3600 * 24)) : -1;
-               var daysArr = ['आज', 'कल', 'परसों']
-               if (!isNext && daysLeft >= 0) {
-                  upcomingDate = daysLeft != 0 ? ' bg-warning text-dark' : ' bg-info text-white';
-                  if (daysLeft > 0) {
-                     isNext = true;
+         for (var year of sortedYears) {
+            chartHtml += `<hr class="hr-text" data-content="${replaceDigitsToHindi(year)}"><div class="d-flex justify-content-center flex-wrap">`;
+            for (var dateStamp of sortedDatesKeys) {
+               var itemArr = sortedDates[dateStamp];
+               for (var item of itemArr) {
+                  var itemDate = new Date(+dateStamp);
+                  if (itemDate.getFullYear() == year) {
+                     var itemName = item.name;
+                     if (item.type == 'ekadashi') {
+                        itemName += ' एकादशी';
+                     }
+                     var itemDay = days[itemDate.getDay()];
+                     var upcomingDate = '';
+                     var dateString = formatDate(itemDate);
+                     var daysLeft = itemDate >= today ? Math.ceil((itemDate.getTime() - today.getTime())/(1000 * 3600 * 24)) : -1;
+                     var daysArr = ['आज', 'कल', 'परसों']
+                     if (!isNext && daysLeft >= 0 && daysLeft < 31) {
+                        upcomingDate = daysLeft != 0 ? ' bg-warning text-dark' : ' bg-info text-white';
+                        if (daysLeft > 0) {
+                           isNext = true;
+                        }
+                     }
+                     if (daysLeft > 2 && daysLeft < 31) {
+                        daysLeft += ' दिन बाद';
+                     } else {
+                        daysLeft = daysArr[daysLeft] || '';
+                     }
+                     daysLeft = daysLeft ? `(${daysLeft})` : '';
+                     chartHtml += `<div class='card text-center flat${upcomingDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString}<br>${itemDay}वार</div></div>`;
                   }
                }
-               if (daysLeft > 2 && daysLeft < 31) {
-                  daysLeft += ' दिन बाद';
-               } else {
-                  daysLeft = daysArr[daysLeft] || '';
-               }
-               chartHtml += `<div class='card text-center flat${upcomingDate}'>${itemName}<br>${dateString}<br>${itemDay}वार<small class='text-right pr-1 text-dark'>${daysLeft}</small></div>`;
             }
+            chartHtml += `</div>`;
          }
          $('#chart').html(chartHtml);
          setTimeout(function() {
@@ -149,7 +158,10 @@
       var arrMonths = ["जनवरी","फ़रवरी","मार्च","अप्रैल","मई","जून","जुलाई","अगस्त","सितम्बर","अक्टूबर","नवम्बर","दिसम्बर"];
       var arrDigits = ["०","१","२","३","४","५","६","७","८","९"];
       function formatDate(date) {
-         return `${date.getDate()} ${arrMonths[date.getMonth()]} ${date.getFullYear()}`.replace(/./g, function(char) {
+         return replaceDigitsToHindi(`${date.getDate()} ${arrMonths[date.getMonth()]} ${date.getFullYear()}`);
+      }
+      function replaceDigitsToHindi(str) {
+         return str.toString().replace(/./g, function(char) {
             return arrDigits[char] || char;
          });
       }
