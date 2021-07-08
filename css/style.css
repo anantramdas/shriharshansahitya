@@ -4,7 +4,7 @@
 }
 
 body {
-  font-family: kurale;
+  font: 18px kurale;
 }
 
 .header {
@@ -25,7 +25,8 @@ body {
 }
 
 .heading h2 {
-  padding: 0px 0px 20px 0px;
+  padding: 0px 0px 15px 0px;
+  font-size: 38px;
   font-weight: bold;
   color: #b32137;
   line-height: 50px;
@@ -33,7 +34,7 @@ body {
 
 .heading span.desc {
   color: #141012;
-  font-size: 17px;
+  font-size: 18px;
   line-height: 32px;
 }
 
@@ -125,7 +126,7 @@ body {
 }
 
 .card.flat {
-  font-size: 17px;
+  font-size: 18px;
   width: 190px;
   height: 120px;
   margin: 15px;
