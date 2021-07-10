@@ -14,6 +14,7 @@
    </title>
    <meta name="description" content="Ekadashi Vrat Chart By Shri Ram Harshan Seva Sansthan Ayodhya">
    <meta name="author" content="">
+   <meta http-equiv="refresh" content="3600">
    <!-- bootstrap css -->
    <link rel="stylesheet" href="css/bootstrap.min.css">
    <!-- style css -->
@@ -46,39 +47,32 @@
 <!-- body -->
 
 <body class="main-layout home_page">
-   <!-- header -->
-   <header class="header">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler01"
-            aria-controls="navbarToggler01" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-         </button>
-         <div class="collapse navbar-collapse" id="navbarToggler01">
-            <a class="navbar-brand text-white" href="#">श्री रामहर्षण सेवा संस्थान, अयोध्या</a>
-            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-               <li class="nav-item">
-                  <a class="nav-link" href="#">परिचय</a>
-               </li>
-               <li class="nav-item">
-                  <a class="nav-link" href="#">साहित्य</a>
-               </li>
-               <li class="nav-item">
-                  <a class="nav-link" href="#">प्रवचन</a>
-               </li>
-               <li class="nav-item">
-                  <a class="nav-link" href="#">निर्णय पत्र</a>
-               </li>
-               <li class="nav-item">
-                  <a class="nav-link" href="#">आचार्य परम्परा</a>
-               </li>
-               <li class="nav-item">
-                  <a class="nav-link" href="#">सम्पर्क करें</a>
-               </li>
-            </ul>
-         </div>
-      </nav>
-   </header>
-   <!-- end header -->
+   <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler01"
+         aria-controls="navbarToggler01" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarToggler01">
+         <a class="navbar-brand text-white" href="#">श्री रामहर्षण सेवा संस्थान, अयोध्या</a>
+         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+               <a class="nav-link" href="#">परिचय</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="#">साहित्य</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="#">प्रवचन</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="#">निर्णय पत्र</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="#">सम्पर्क करें</a>
+            </li>
+         </ul>
+      </div>
+   </nav>
    <div id = "chart" class="container-fluid">
    </div>
    <!-- footer -->
@@ -113,7 +107,6 @@
          }
          sortedYears = Array.from(sortedYears);
          sortedYears.sort();
-         sortedYears.reverse();
          var sortedDatesKeys = Object.keys(sortedDates);
          sortedDatesKeys.sort();
          for (var year of sortedYears) {
@@ -122,6 +115,7 @@
                var itemArr = sortedDates[dateStamp];
                for (var item of itemArr) {
                   var itemDate = new Date(+dateStamp);
+                  var passedDate = itemDate < today ? ' disabled' : '';
                   if (itemDate.getFullYear() == year) {
                      var itemName = item.name;
                      if (item.type == 'ekadashi') {
@@ -144,7 +138,7 @@
                         daysLeft = daysArr[daysLeft] || '';
                      }
                      daysLeft = daysLeft ? `(${daysLeft})` : '';
-                     chartHtml += `<div class='card text-center flat${upcomingDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString}<br>${itemDay}वार</div></div>`;
+                     chartHtml += `<div class='card text-center flat${upcomingDate}${passedDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString}<br>${itemDay}वार</div></div>`;
                   }
                }
             }

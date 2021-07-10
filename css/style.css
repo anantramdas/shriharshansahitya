@@ -5,6 +5,183 @@
 
 body {
   font: 18px kurale;
+  background: #f8f4f2;
+}
+
+.spl-goto-page {
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+PHN2ZyBoZWlnaHQ9Ijk2cHgiIHZpZXdCb3g9IjAgMCA5NiA5NiIgd2lkdGg9Ijk2cHgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggdHJhbnNmb3JtPSJyb3RhdGUoOTAgNTAgNTApIiBmaWxsPSIjZmZmIiBkPSJNNzEuMzExLDgwQzY5LjY3LDg0LjY2LDY1LjIzLDg4LDYwLDg4SDIwYy02LjYzLDAtMTItNS4zNy0xMi0xMlYzNmMwLTUuMjMsMy4zNC05LjY3LDgtMTEuMzExVjc2YzAsMi4yMSwxLjc5LDQsNCw0SDcxLjMxMSAgeiIvPjxwYXRoIHRyYW5zZm9ybT0icm90YXRlKDkwIDUwIDUwKSIgZmlsbD0iI2ZmZiIgZD0iTTc2LDhIMzZjLTYuNjMsMC0xMiw1LjM3LTEyLDEydjQwYzAsNi42Myw1LjM3LDEyLDEyLDEyaDQwYzYuNjMsMCwxMi01LjM3LDEyLTEyVjIwQzg4LDEzLjM3LDgyLjYzLDgsNzYsOHogTTgwLDYwICBjMCwyLjIxLTEuNzksNC00LDRIMzZjLTIuMjEsMC00LTEuNzktNC00VjIwYzAtMi4yMSwxLjc5LTQsNC00aDQwYzIuMjEsMCw0LDEuNzksNCw0VjYweiIvPjwvc3ZnPg==');
+  background-size: 22px;
+}
+
+.a-box {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: 10px;
+}
+
+.page-count {
+  float: left;
+  color: grey;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.about-book {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+  padding: 120px 20px 20px 20px;
+  border-radius: 20px;
+  background: #fff;
+  margin: -120px 0px 0px 0px;
+  line-height: 19px;
+  font-size: 14px;
+  flex: 1 0 auto;
+}
+
+.book-title {
+  margin: 20px 0px 10px 0px;
+  color: rgb(92, 91, 91);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.book-intro {
+  font-size: 16px;
+  line-height: 1.5;
+  color: grey;
+  flex: 1;
+}
+
+.book-intro-author {
+  text-align: right;
+  font-weight: bold;
+  color: brown;
+}
+
+.button-panel {
+  display: flex;
+  margin-top: 5px;
+  justify-content: center;
+}
+
+a.button {
+  min-width: 100px;
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #000000;
+  margin: 0 0.4em 0 0.4em;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  font-weight: 300;
+  color: #000000;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+a.button:hover {
+  border-color: grey;
+  background-color: grey;
+  color: #fff;
+}
+
+@media all and (max-width:30em) {
+  a.button {
+      display: block;
+      margin: 0.4em auto;
+  }
+}
+
+.book {
+  width: 200px;
+  height: 300px;
+  margin: 30px;
+  display: flex;
+  align-items: flex-end;
+  perspective: 400px;
+}
+
+.book-hover {
+  transform-style: unset;
+  transform: rotateY(-30deg) !important;
+  transition: transform 1s ease;
+}
+
+.book__wrapper {
+  transform: rotateY(-10deg);
+  position: relative;
+  transform-style: preserve-3d;
+  width: 200px;
+  height: 300px;
+  transition: transform 1s ease;
+}
+
+.book__cover {
+  position: absolute;
+  background: #0d47a1aa;
+  width: 200px;
+  height: 300px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  box-shadow: 5px 5px 20px #666;
+  transform: rotateY(-10deg);
+  transition: transform 1s ease;
+}
+
+.book.small>.book__cover,
+.book.small>.book__wrapper,
+.book.small>.book__wrapper::after {
+  height: 200px;
+}
+
+.book.small>.book__wrapper::before {
+  height: calc(200px - 2 * 3px);
+}
+
+.book__wrapper::before {
+  content: ' ';
+  background: #fff;
+  height: calc(300px - 2 * 3px);
+  width: 20px;
+  top: 3px;
+  position: absolute;
+  transform: translateX(calc(200px - 20px / 2 - 3px)) rotateY(90deg) translateX(calc(20px / 2));
+}
+
+.book__wrapper::after {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  width: 200px;
+  height: 300px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  background: #01060f;
+  transform: translateZ(-20px);
+  box-shadow: -10px 0 50px 10px #666;
+}
+
+.book__wrapper.medium::before {
+  width: 50px;
+  transform: translateX(calc(200px - 50px / 2 - 3px)) rotateY(90deg) translateX(calc(50px / 2));
+}
+
+.book__wrapper.medium::after {
+  transform: translateZ(-50px);
+}
+
+.book__wrapper.large::before {
+  width: 80px;
+  transform: translateX(calc(200px - 80px / 2 - 3px)) rotateY(90deg) translateX(calc(80px / 2))
+}
+
+.book__wrapper.large::after {
+  transform: translateZ(-80px);
 }
 
 .header {
@@ -134,6 +311,14 @@ body {
   justify-content: center;
 }
 
+.card.disabled {
+  opacity: 0.4;
+}
+
+.card.bg-info > * {
+  color: #fff !important;
+}
+
 .hr-text {
   line-height: 1em;
   position: relative;
@@ -155,7 +340,7 @@ body {
 }
 .hr-text:after {
   content: attr(data-content);
-  font-size: 18px;
+  font-size: 24px;
   position: relative;
   display: inline-block;
   color: black;
@@ -163,4 +348,119 @@ body {
   line-height: 1.5em;
   color: #000;
   background-color: #fcfcfa;
+}
+
+#pdfviewer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: #000;
+  display: none;
+  overflow: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+#pdfviewer::-webkit-scrollbar {
+  display: none;
+}
+
+.pdfpage {
+  margin: 0 auto;
+  background: #000;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pdfcontrols {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: row;
+  visibility: hidden;
+  opacity: 0;
+  height: 50px;
+  transition: visibility 0s, opacity 0.5s linear;
+}
+
+#pdfcontrols.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+#pdfcontrols > div {
+  display: flex;
+  flex: 1;
+}
+
+#pdfcontrols > div.title {
+  color: #fff;
+  align-items: center;
+  padding-left: 10px;
+}
+
+#pdfcontrols > div.pageNo {
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+#pdfcontrols > div.controls {
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+  color: #fff;
+}
+
+#dimWrapper {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+#dimWrapper img {
+  flex: 1;
+  height: 100vh;
+  border-bottom: 1px solid black;
+  background: ;
+  object-fit: stretch;
+  width: 100%;
+  background: #fff url(../assets/loader.gif) no-repeat center;
+}
+
+#dimWrapper img.invert {
+   -webkit-filter: invert(1);
+   filter: invert(1);
+}
+
+#dimWrapper img.colored {
+   -webkit-filter: sepia(0.5);
+   filter: sepia(0.5);
+}
+
+#dimWrapper img.brighter {
+   -webkit-filter: brightness(1.5);
+   filter: brightness(1.5);
+}
+
+#dimWrapper img.dim {
+   -webkit-filter: brightness(0.5);
+   filter: brightness(0.5);
+}
+
+#dimWrapper img.morecontrast {
+   -webkit-filter: contrast(1.5);
+   filter: contrast(1.5);
+}
+
+#dimWrapper img.lesscontrast {
+   -webkit-filter: contrast(0.6);
+   filter: contrast(0.6);
 }
