@@ -59,7 +59,7 @@ function getImageDim(folder, count) {
 					objw[i] = objw[i] - avgWidth;
 					objh[i] = objh[i] - avgHeight;
 				}
-				console.log(`ah: ${avgHeight},\naw: ${avgWidth},\nhh: '${replaceRepeat(objh.join('|').replaceAll('|-','-'))}',\nww: '${replaceRepeat(objw.join('|').replaceAll('|-','-'))}',`);
+				console.log(`ah: ${avgHeight},\naw: ${avgWidth},\nhh: '${replaceRepeat(objh.join('|').replace(/\|-/g,'-'))}',\nww: '${replaceRepeat(objw.join('|').replace(/\|-/g,'-'))}',`);
 	    	}
 	    };
 	    img.src = `${'books'}/${folder}/${folder}_${i}.jpg`;
@@ -149,8 +149,8 @@ function openBook(bookName, book) {
 	var title = book['title'], pageCount = book['pageCount'], bookWidth = book['w'], bookHeight = book['h'];
 	var avgHeight = book['ah'];
 	var avgWidth = book['aw'];
-	var heightArr = expandRepeat(book['hh']).replaceAll('-', '|-').replaceAll('|', ' ').trim().split(' ');
-	var widthArr = expandRepeat(book['ww']).replaceAll('-', '|-').replaceAll('|', ' ').trim().split(' ');
+	var heightArr = expandRepeat(book['hh']).replace(/-/g, '|-').replace(/\|/g, ' ').trim().split(' ');
+	var widthArr = expandRepeat(book['ww']).replace(/-/g, '|-').replace(/\|/g, ' ').trim().split(' ');
 	window.pageWidth = getWindowWidth();
     window.pageHeight = getWindowHeight();
     newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
