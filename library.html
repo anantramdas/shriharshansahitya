@@ -38,6 +38,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="booklist.js"></script>
+    <script src="https://unpkg.com/current-device/umd/current-device.min.js"></script>
     <script>
         function bookActive(th) {
             th.querySelector(".book__wrapper").classList.add("book-hover");
@@ -77,7 +78,8 @@
                     }
                 }
             }
-            if (/Mobi/.test(navigator.userAgent)) {
+            
+            if (device.mobile()) {
                 window.addEventListener('scroll', function () {
                     clearTimeout(checkPosition);
                     timer = setTimeout(checkPosition, 700);
@@ -89,6 +91,11 @@
         })();
     </script>
     <script>
+        window.onpopstate = function() {
+            if (window.isBookOpen) {
+                closeBook();
+            }
+        };
         function createBooks() {
             if (typeof isWebPSupported == "undefined") {
                 checkWebPSupport('lossy', function (feature, isSupported) {
@@ -118,6 +125,8 @@
             var title = booksList[bookName]['title'];
             // getImageDim(bookName, pageCount);
             // return;
+            window.location.hash = 'preview';
+            window.isBookOpen = true;
             openBook(bookName, booksList[bookName]);
         }
     </script>
@@ -153,14 +162,16 @@
     </nav>
     <picture>
         <source media="(max-width: 200px)" srcset="assets/banner/lib_w_200.webp">
-        <source media="(max-width: 675px)" srcset="assets/banner/lib_w_675.webp">
+        <source media="(max-width: 606px)" srcset="assets/banner/lib_w_606.webp">
+        <source media="(max-width: 861px)" srcset="assets/banner/lib_w_861.webp">
         <source media="(max-width: 1400px)" srcset="assets/banner/lib_w_1400.webp">
         <img
             width="100%"
             sizes="(max-width: 1400px) 100vw, 1400px"
             srcset="
             assets/banner/lib_w_200.jpg 200w,
-            assets/banner/lib_w_675.jpg 675w,
+            assets/banner/lib_w_606.jpg 606w,
+            assets/banner/lib_w_861.jpg 861w,
             assets/banner/lib_w_1400.jpg 1400w"
             src="assets/banner/lib_w_1400.jpg"
             alt ="ॐ गुं गुरवे नमः

@@ -422,7 +422,6 @@ a.button:hover {
 }
 
 #dimWrapper img {
-  flex: 1;
   border-bottom: 1px solid black;
   object-fit: contain;
   width: 100%;

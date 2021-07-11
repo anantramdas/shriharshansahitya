@@ -75,14 +75,14 @@ checkWebPSupport('lossy', function (feature, isSupported) {
 });
 
 function getRatio(width, height, maxWidth, maxHeight) {
-	return Math.min(maxWidth / width, maxHeight / height);
+	return maxWidth / width;
 }
 
 function resize(width, height, maxWidth, maxHeight) {
     var ratio = getRatio(width, height, maxWidth, maxHeight);
     var newWidth = ratio * width;
     var newHeight = ratio * height;
-    return {width: newWidth, height: newHeight};
+    return {width: Math.min(newWidth, width), height: newHeight};
 }
 
 function pdfControls(pageCount) {
@@ -95,7 +95,7 @@ function pdfControls(pageCount) {
 	</div>
 	<div class="controls">
 		<img src="svg/page.svg" width="auto" height="80%"/>
-		<img onclick="closeBook();" src="svg/cross.svg" width="auto" height="80%"/>
+		<img onclick="window.history.back();" src="svg/cross.svg" width="auto" height="80%"/>
 	</div>
     </div>`;
 }
@@ -155,11 +155,15 @@ function openBook(bookName, book) {
     window.pageHeight = getWindowHeight();
     newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
 	newHeights = [], newWidths=[];
+	var sumHeight = 0;
 	for (var i=0;i<heightArr.length;i++) {
+		var newHeight = +heightArr[i] + avgHeight;
 		newHeights.push(+heightArr[i] + avgHeight);
 		newWidths.push(+widthArr[i] + avgWidth);
+		sumHeight += newHeight;
 		if (i == 0) {
 			newHeights.push(877); // not for sale page height
+			sumHeight += 877;
 			newWidths.push(620); //width
 		}
 	}
@@ -184,17 +188,17 @@ function openBook(bookName, book) {
 			}
 		});
 	}
-    var html = `${pdfControls(pageCount)}<div id='dimWrapper' oncontextmenu="return false;" onclick='toggleControls();' style='width:${newDim.width}px;'>`;
-    setInterval(function() {
-    	var newPageWidth = getWindowWidth();
-    	var newPageHeight = getWindowHeight();
-		if (pageWidth != newPageWidth || pageHeight != newPageHeight) {
-			window.pageWidth = newPageWidth;
-			window.pageHeight = newPageHeight;
-			newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
-		  	$('#dimWrapper').css({'height': newDim.height +'px', 'width': newDim.width + 'px'});	
-		}
-	 }, 1000);
+    var html = `${pdfControls(pageCount)}<div id='dimWrapper' oncontextmenu="return false;" onclick='toggleControls();' style='width:${newDim.width}px;height:${sumHeight}px'>`;
+  //   setInterval(function() {
+  //   	var newPageWidth = getWindowWidth();
+  //   	var newPageHeight = getWindowHeight();
+		// if (pageWidth != newPageWidth || pageHeight != newPageHeight) {
+		// 	window.pageWidth = newPageWidth;
+		// 	window.pageHeight = newPageHeight;
+		// 	newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
+		//   	$('#dimWrapper').css({'height': newDim.height +'px', 'width': newDim.width + 'px'});	
+		// }
+	 // }, 1000);
     for (let index = 1; index < pageCount; index++) {
         pages.push(`${source}/${bookName}/${bookName}_${index + 1}.${ext}`);
     }
@@ -204,10 +208,7 @@ function openBook(bookName, book) {
     	var widthRatio = newWidths[index] / newDim.width;
 		newHeights[index] = (newHeights[index] / widthRatio);
     	var customStyle = '';
-    	if (index == 1) {
-    		customStyle = 'background: #f7f7f7;object-fit: contain;';
-    	}
-    	html += `<div class='pdfpage' style="height:${newHeights[index]}px" tabindex="${index}">
+    	html += `<div class='pdfpage' style="flex:${newHeights[index]/sumHeight}" tabindex="${index}">
     		<img data-src='${page}' style="${customStyle}"/>
     	</div>`;
     	if (index > 0) {
@@ -228,6 +229,7 @@ function openBook(bookName, book) {
 }
 
 function closeBook() {
+	window.isBookOpen = false;
 	$('nav').css('position', 'sticky');
 	$('body').css('overflow', '');
 	viewer.hide();
