@@ -16,15 +16,70 @@ function checkWebPSupport(feature, callback) {
     img.src = "data:image/webp;base64," + kTestImages[feature];
 }
 
+function replaceRepeat(str) {
+	for (var i=0;i<=3;i++) {
+		str = str.replace(RegExp(`(\\|${i})*`, 'g'), function(match) {
+			return match.length ? (match.length / 2 > 2 ? `|${i}(${match.length/2})` : match) : "";
+		});
+		str = str.replace(RegExp(`(-${i})*`, 'g'), function(match) {
+			return match.length ? (match.length / 2 > 2 ? `-${i}(${match.length/2})` : match) : "";
+		});
+	}
+	return str;
+}
+
+function expandRepeat(str) {
+	for (var i=0;i<=3;i++) {
+		str = str.replace(RegExp(`\\|${i}\\((\\d*?)\\)`, 'g'), function(match, num) {
+			return `|${i}`.repeat(num);
+		});
+		str = str.replace(RegExp(`-${i}\\((\\d*?)\\)`, 'g'), function(match, num) {
+			return `-${i}`.repeat(num);
+		});
+	}
+	return str;
+}
+
+function getImageDim(folder, count) {
+	var objh = [], objw=[];
+	var allDone = 0;
+	var sumh = 0, sumw = 0;
+	for(var i=1;i<=count;i++) {
+		var img = new Image();
+	    img.onload = function () {
+	    	allDone++;
+	    	sumh+=this.naturalHeight;
+	    	sumw+=this.naturalWidth;
+	    	objh[this.src.replace(/.*?(\d*)\.jpg/,'$1') - 1] = this.naturalHeight;
+	    	objw[this.src.replace(/.*?(\d*)\.jpg/,'$1') - 1] = this.naturalWidth;
+	    	if (allDone == count) {
+	    		var avgHeight = Math.ceil(sumh/count);
+	    		var avgWidth = Math.ceil(sumw/count);
+	    		for(var i=0;i<=count - 1;i++) {
+					objw[i] = objw[i] - avgWidth;
+					objh[i] = objh[i] - avgHeight;
+				}
+				console.log(`ah: ${avgHeight},\naw: ${avgWidth},\nhh: '${replaceRepeat(objh.join('|').replaceAll('|-','-'))}',\nww: '${replaceRepeat(objw.join('|').replaceAll('|-','-'))}',`);
+	    	}
+	    };
+	    img.src = `${'books'}/${folder}/${folder}_${i}.jpg`;
+	}
+}
+
 var isWebPSupported;
 var viewer, pageNo, isScrolling, newDim, throttleTimeout, pdfPages, bookPageCount, bookTitle;
 var pageIndex = 0;
+var newHeights = [], newWidths=[];
 checkWebPSupport('lossy', function (feature, isSupported) {
     isWebPSupported = isSupported;
 });
 
+function getRatio(width, height, maxWidth, maxHeight) {
+	return Math.min(maxWidth / width, maxHeight / height);
+}
+
 function resize(width, height, maxWidth, maxHeight) {
-    var ratio = Math.min(maxWidth / width, maxHeight / height);
+    var ratio = getRatio(width, height, maxWidth, maxHeight);
     var newWidth = ratio * width;
     var newHeight = ratio * height;
     return {width: newWidth, height: newHeight};
@@ -66,13 +121,49 @@ function scrollEnd() {
 		}
 	}
 }
+function binarySearch(array, target) {
+  let startIndex = 0;
+  let endIndex = array.length - 1;
+  while(startIndex <= endIndex) {
+    let middleIndex = Math.floor((startIndex + endIndex) / 2);
+    if(target >= array[middleIndex] && (middleIndex == array.length - 1 || target < array[middleIndex + 1])) {
+      return middleIndex;
+    }
+    if(target > array[middleIndex]) {
+      startIndex = middleIndex + 1;
+    }
+    if(target < array[middleIndex]) {
+      endIndex = middleIndex - 1;
+    }
+  }
+  return -1;
+}
 function onBookScroll() {
-	pageIndex = Math.max(1, Math.ceil(viewer.scrollTop()/newDim.height)) - 1;
+	var topPos = viewer.scrollTop();
+	pageIndex = binarySearch(newHeights, topPos) + 1;
 	pageNo.html(pageIndex + 1);
 	clearTimeout(throttleTimeout);
 	throttleTimeout = 0;
 }
-function openBook(bookName, title, pageCount, bookWidth, bookHeight) {
+function openBook(bookName, book) {
+	var title = book['title'], pageCount = book['pageCount'], bookWidth = book['w'], bookHeight = book['h'];
+	var avgHeight = book['ah'];
+	var avgWidth = book['aw'];
+	var heightArr = expandRepeat(book['hh']).replaceAll('-', '|-').replaceAll('|', ' ').trim().split(' ');
+	var widthArr = expandRepeat(book['ww']).replaceAll('-', '|-').replaceAll('|', ' ').trim().split(' ');
+	window.pageWidth = getWindowWidth();
+    window.pageHeight = getWindowHeight();
+    newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
+	newHeights = [], newWidths=[];
+	for (var i=0;i<heightArr.length;i++) {
+		newHeights.push(+heightArr[i] + avgHeight);
+		newWidths.push(+widthArr[i] + avgWidth);
+		if (i == 0) {
+			newHeights.push(877); // not for sale page height
+			newWidths.push(620); //width
+		}
+	}
+
 	bookPageCount = pageCount;
 	bookTitle = title;
 	var ext = location.host != "" && isWebPSupported ? 'webp' : 'jpg';
@@ -81,9 +172,6 @@ function openBook(bookName, title, pageCount, bookWidth, bookHeight) {
         `${source}/${bookName}/${bookName}_1.${ext}`,
         `assets/not_for_sale.${ext}`,
     ];
-    window.pageWidth = getWindowWidth();
-    window.pageHeight = getWindowHeight();
-	newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
 	var scrollTimeout, throttle = 250;
 	if (typeof viewer == 'undefined') {
 		viewer = $('#pdfviewer');
@@ -96,7 +184,7 @@ function openBook(bookName, title, pageCount, bookWidth, bookHeight) {
 			}
 		});
 	}
-    var html = `${pdfControls(pageCount)}<div id='dimWrapper' oncontextmenu="return false;" onclick='toggleControls();' style='height:${pageCount * newDim.height}px;width:${newDim.width}px;'>`;
+    var html = `${pdfControls(pageCount)}<div id='dimWrapper' oncontextmenu="return false;" onclick='toggleControls();' style='width:${newDim.width}px;'>`;
     setInterval(function() {
     	var newPageWidth = getWindowWidth();
     	var newPageHeight = getWindowHeight();
@@ -113,17 +201,22 @@ function openBook(bookName, title, pageCount, bookWidth, bookHeight) {
 
     for (let index in pages) {
     	var page = pages[index];
+    	var widthRatio = newWidths[index] / newDim.width;
+		newHeights[index] = (newHeights[index] / widthRatio);
     	var customStyle = '';
     	if (index == 1) {
     		customStyle = 'background: #f7f7f7;object-fit: contain;';
     	}
-    	html += `<div class='pdfpage' tabindex="${index}">
+    	html += `<div class='pdfpage' style="height:${newHeights[index]}px" tabindex="${index}">
     		<img data-src='${page}' style="${customStyle}"/>
     	</div>`;
+    	if (index > 0) {
+			newHeights[index] += newHeights[index - 1];
+		}
     }
 
     html += '</div>';
-	
+
     $('nav').css('position', 'unset');
     $('body').css('overflow', 'hidden');
     viewer.html(html);

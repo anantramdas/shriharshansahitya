@@ -116,7 +116,9 @@
         function loadPdf(bookName, pageNo) {
             var pageCount = booksList[bookName]['pageCount'];
             var title = booksList[bookName]['title'];
-            openBook(bookName, title, pageCount, booksList[bookName]['w'], booksList[bookName]['h']);
+            // getImageDim(bookName, pageCount);
+            // return;
+            openBook(bookName, booksList[bookName]);
         }
     </script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
