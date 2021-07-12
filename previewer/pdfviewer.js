@@ -40,11 +40,11 @@ function getRatio(width, height, maxWidth, maxHeight) {
 }
 
 function resize(width, height, maxWidth, maxHeight) {
-    var ratio = getRatio(width, height, maxWidth, maxHeight);
+    var ratio = Math.min(getRatio(width, height, maxWidth, maxHeight), 1);
     var newWidth = ratio * width;
     var newHeight = ratio * height;
     return {
-        width: Math.min(newWidth, width),
+        width: newWidth,
         height: newHeight
     };
 }
@@ -159,7 +159,7 @@ function resizeBook() {
 	        sumHeight = arrDim.length;
 	        for (var index = 0; index < arrDim.length; index++) {
 		        var widthRatio = arrDim[index].width / newDim.width;
-		        sumHeight += (arrDim[index].height /= widthRatio);
+		        sumHeight += (arrDim[index].height / widthRatio);
 		    }
 		    viewer[0].scrollTo(0, oldPos * sumHeight);
 	        $('#dimWrapper').css({
@@ -226,13 +226,13 @@ function openBook(bookName, book) {
     }
     for (var index in pages) {
         var widthRatio = arrDim[index].width / newDim.width;
-        sumHeight += (arrDim[index].height /= widthRatio);
+        sumHeight += (arrDim[index].newHeight = arrDim[index].height / widthRatio);
     }
     var imgSrc = `src='assets/${bookName}.${isWebPSupported ? 'webp' : 'jpg'}'`;
     var isMobile = device.mobile();
     for (var index in pages) {
         var page = pages[index];
-        var height = arrDim[index].height;
+        var height = arrDim[index].newHeight;
         var tabIndex = isMobile ? '' : ` tabindex="${index}"`;
         html += `<div class='pdfpage' style="flex:${height/sumHeight}"${tabIndex}>
     		<img ${imgSrc} data-src='${page}'/>
@@ -244,8 +244,7 @@ function openBook(bookName, book) {
         }
         imgSrc = '';
     }
-    // sumHeight += 6000;
-    // newDim.width += 600;
+    
     html = `${pdfControls(bookPageCount)}<div id='dimWrapper' oncontextmenu="return false;" onclick='toggleControls();' style='width:${newDim.width}px;height:${sumHeight}px'>` + html + '</div>';
 
     $('nav').css('position', 'unset');

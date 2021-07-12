@@ -375,7 +375,6 @@ input[type=number] {
 
 .pdfpage {
   margin: 0 auto;
-  background: #000;
   width: 100%;
   border-bottom: 1px solid black;
   background: #fff;
