@@ -228,14 +228,14 @@ function openBook(bookName, book) {
         var widthRatio = arrDim[index].width / newDim.width;
         sumHeight += (arrDim[index].height /= widthRatio);
     }
-    var imgSrc = `assets/${bookName}.${isWebPSupported ? 'webp' : 'jpg'}`;
+    var imgSrc = `src='assets/${bookName}.${isWebPSupported ? 'webp' : 'jpg'}'`;
     var isMobile = device.mobile();
     for (var index in pages) {
         var page = pages[index];
         var height = arrDim[index].height;
         var tabIndex = isMobile ? '' : ` tabindex="${index}"`;
         html += `<div class='pdfpage' style="flex:${height/sumHeight}"${tabIndex}>
-    		<img src='${imgSrc}' data-src='${page}'/>
+    		<img ${imgSrc} data-src='${page}'/>
     	</div>`;
         if (index > 0) {
             arrDim[index].ratio = arrDim[index - 1].ratio + height / sumHeight;
@@ -268,12 +268,14 @@ function openBook(bookName, book) {
 }
 
 function closeBook() {
-    window.isBookOpen = false;
-    $('nav').css('position', 'sticky');
-    $('body').css('overflow', '');
-    closeFullscreen();
-    viewer.hide();
-    viewer.html('');
+	if (window.isBookOpen) {
+	    window.isBookOpen = false;
+	    $('nav').css('position', 'sticky');
+	    $('body').css('overflow', '');
+	    closeFullscreen();
+	    viewer.hide();
+	    viewer.html('');
+	}
 }
 
 /* Get the documentElement (<html>) to display the page in fullscreen */
