@@ -491,7 +491,7 @@ function bookTemplate(folderName) {
         <p class="book-title">${title}</p>
         <div class="book-intro">
             ${intro}
-            <div class="book-intro-author"><span class="page-count">(कुल पृष्ठ : ${pageCount})</span>${introAuthor}</div>
+            <div class="book-intro-author"><span class="page-count">(कुल पृष्ठ : ${pageCount + 1})</span>${introAuthor}</div>
         </div>
         <div class="button-panel">
             <a class="button" onclick="loadPdf('${folderName}');">पुस्तक पढ़ें</a>

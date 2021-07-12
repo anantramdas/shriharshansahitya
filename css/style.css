@@ -362,14 +362,32 @@ a.button:hover {
   display: none;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .pdfpage {
   margin: 0 auto;
   background: #000;
   width: 100%;
+  border-bottom: 1px solid black;
   background: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#pdfcontrols > .controls > img {
+  height: 60%;
+  width: auto;
+  padding: 0 5px;
 }
 
 #pdfcontrols {
@@ -400,12 +418,23 @@ a.button:hover {
   color: #fff;
   align-items: center;
   padding-left: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 #pdfcontrols > div.pageNo {
   justify-content: center;
   align-items: center;
   color: #fff;
+}
+
+#pdfcontrols > div.pageNo input {
+  text-align: right;
+  color: #fff;
+  border: 0;
+  width: 40px;
+  background: transparent;
 }
 
 #pdfcontrols > div.controls {
@@ -422,7 +451,6 @@ a.button:hover {
 }
 
 #dimWrapper img {
-  border-bottom: 1px solid black;
   object-fit: contain;
   width: 100%;
   height: 100%;

@@ -98,8 +98,7 @@
         };
         function createBooks() {
             if (typeof isWebPSupported == "undefined") {
-                checkWebPSupport('lossy', function (feature, isSupported) {
-                    isWebPSupported = isSupported;
+                checkWebPSupport(function() {
                     startBookCreation();
                 });
             } else {
@@ -126,7 +125,6 @@
             // getImageDim(bookName, pageCount);
             // return;
             window.location.hash = 'preview';
-            window.isBookOpen = true;
             openBook(bookName, booksList[bookName]);
         }
     </script>
