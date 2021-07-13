@@ -102,10 +102,11 @@ function toggleControls() {
 function scrollEnd() {
 	window.scrollPos = viewer.scrollTop();
     isScrolling = false;
-    for (var index = pageIndex - 1; index <= pageIndex + 1; index++) {
-        if (index >= 0 && index <= bookPageCount) {
-            var src = pdfPages[index].getAttribute('data-src');
-            pdfPages[index].setAttribute('src', src);
+    for (var index = Math.max(0, pageIndex - 1); index <= pageIndex + 5 && index <= bookPageCount; index++) {
+    	var src = pdfPages[index].getAttribute('data-src');
+        pdfPages[index].setAttribute('src', src);
+        if (!((index ? arrDim[index - 1].ratio : 0) * sumHeight - scrollPos <= pageHeight)) {
+        	break;
         }
     }
 }
