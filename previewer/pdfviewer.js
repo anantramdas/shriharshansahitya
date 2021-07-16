@@ -181,18 +181,20 @@ function gotoPage(pageNumber) {
 }
 var currentTitleIndex;
 function setTitle() {
-	var pageNums = Object.keys(booksToc[bookName]);
-	var i = binarySearch(pageNums, pageIndex);
-	if (i != currentTitleIndex) {
-		currentTitleIndex = i;
-		$(".activeToc").removeClass('activeToc');
-		if (i == -1) {
-			$("#pdfcontrols .title").html(bookTitle);
-		} else {
-			$("#pdfcontrols .title").html(booksToc[bookName][pageNums[i]]);
-			$(".tocItem").eq(currentTitleIndex).addClass('activeToc');
-		}
-	}
+    if (booksToc[bookName]) {
+    	var pageNums = Object.keys(booksToc[bookName]);
+    	var i = binarySearch(pageNums, pageIndex);
+    	if (i != currentTitleIndex) {
+    		currentTitleIndex = i;
+    		$(".activeToc").removeClass('activeToc');
+    		if (i == -1) {
+    			$("#pdfcontrols .title").html(bookTitle);
+    		} else {
+    			$("#pdfcontrols .title").html(booksToc[bookName][pageNums[i]]);
+    			$(".tocItem").eq(currentTitleIndex).addClass('activeToc');
+    		}
+    	}
+    }
 }
 
 function onBookScroll() {
