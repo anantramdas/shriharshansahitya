@@ -66,23 +66,58 @@ function onPageNoKeyUp(_this, event) {
 	}
 }
 
-function onPageNoFocus(_this) {
-	_this.setSelectionRange && _this.setSelectionRange(0, _this.value.length);
-}
-
-function pdfControls(pageCount) {
+function pdfControls() {
+	var tocIcon = booksToc[bookName] ? `<img onclick="openToc();" src="svg/list.svg"/>` : '';
     return `<div id='pdfcontrols' class='show'>
-	<div class="title">
-		<div>${bookTitle}</div>
-	</div>
 	<div class="pageNo">
-		<div><input onkeyup="onPageNoKeyUp(this, event);" onfocus="onPageNoFocus(this)" onblur="onPageNoBlur(this);" type="number" value="1">/${pageCount + 1}</div>
+		<div><input onkeyup="onPageNoKeyUp(this, event);" onblur="onPageNoBlur(this);" type="number" value="1">/${bookPageCount + 1}</div>
+	</div>
+	<div class="title">
+		${bookTitle}
 	</div>
 	<div class="controls">
-		<img src="svg/list.svg"/>
-		<img onclick="window.history.back();" src="svg/cross.svg"/>
+		${tocIcon}
+		<img onclick="window.history.back();closeBook();" src="svg/cross.svg"/>
 	</div>
     </div>`;
+}
+
+function renderToc() {
+	var items = booksToc[bookName];
+	var tocHtml = '';
+	for (var pageNum in items) {
+		var tocItem = items[pageNum];
+		tocHtml += `<div onclick='closeToc(${+pageNum + 1})' class='tocItem'>${tocItem}</div>`;
+	}
+	return `<div id='tocMenu'>
+	<div class="menu">
+		<div class="title">
+			${bookTitle}
+		</div>
+		<div class="toc">
+			${tocHtml}
+		</div>
+	</div>
+	<div onclick="closeToc();" style="flex-grow:1;">
+	</div>
+    </div>`;
+}
+
+function openToc() {
+	$("#tocMenu").addClass('show');
+	viewer.addClass('overflow-hidden');
+	var activeToc = $('.activeToc');
+	if (activeToc.length) {
+		activeToc[0].scrollIntoView({block: "center", inline: "start"});
+	}
+}
+
+function closeToc(pageNum) {
+	viewer.removeClass('overflow-hidden');
+	if (pageNum) {
+		gotoPage(pageNum);
+	}
+	$("#tocMenu").removeClass('show');
 }
 
 function getWindowWidth() {
@@ -111,13 +146,17 @@ function scrollEnd() {
     }
 }
 
-function binarySearch(array, target) {
+function binarySearch(array, target, prop) {
     var startIndex = 0;
     var endIndex = array.length - 1;
     while (startIndex <= endIndex) {
         var middleIndex = Math.floor((startIndex + endIndex) / 2);
-        var midValue = array[middleIndex].ratio;
-        var nextValue = array[middleIndex + 1].ratio;
+        var midValue = array[middleIndex];
+        var nextValue = array[middleIndex + 1];
+        if (prop) {
+        	midValue = midValue[prop];
+        	nextValue = nextValue[prop];
+        }
         if (target >= midValue && (middleIndex == array.length - 1 || target < nextValue)) {
             return middleIndex;
         }
@@ -134,17 +173,33 @@ function binarySearch(array, target) {
 function gotoPage(pageNumber) {
 	if (pageNumber > 0 && pageNumber <= bookPageCount + 1) {
 		var index = pageNumber - 1;
-		pdfPages[index].scrollIntoView({block: "start", inline: "start"});
+		viewer[0].scrollTo(0, index == 0 ? 0 : ((arrDim[index - 1].ratio * sumHeight) + 5));
 		return true;
 	} else {
 		return false;
 	}
 }
+var currentTitleIndex;
+function setTitle() {
+	var pageNums = Object.keys(booksToc[bookName]);
+	var i = binarySearch(pageNums, pageIndex);
+	if (i != currentTitleIndex) {
+		currentTitleIndex = i;
+		$(".activeToc").removeClass('activeToc');
+		if (i == -1) {
+			$("#pdfcontrols .title").html(bookTitle);
+		} else {
+			$("#pdfcontrols .title").html(booksToc[bookName][pageNums[i]]);
+			$(".tocItem").eq(currentTitleIndex).addClass('activeToc');
+		}
+	}
+}
 
 function onBookScroll() {
     var topPos = viewer.scrollTop();
-    pageIndex = binarySearch(arrDim, topPos / sumHeight) + 1;
+    pageIndex = binarySearch(arrDim, topPos / sumHeight, 'ratio') + 1;
     pageNo.val(pageIndex + 1);
+    setTitle();
     clearTimeout(throttleTimeout);
     throttleTimeout = 0;
 }
@@ -157,7 +212,7 @@ function resizeBook() {
 	        window.pageWidth = newPageWidth;
 	        window.pageHeight = getWindowHeight();
 	        newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
-	        sumHeight = arrDim.length;
+	        sumHeight = 0;
 	        for (var index = 0; index < arrDim.length; index++) {
 		        var widthRatio = arrDim[index].width / newDim.width;
 		        sumHeight += (arrDim[index].height / widthRatio);
@@ -172,6 +227,8 @@ function resizeBook() {
 }
 
 function openBook(bookName, book) {
+	currentTitleIndex = null;
+	window.bookName = bookName;
 	window.bookWidth = book['w'];
     window.bookHeight = book['h'];
     var avgHeight = book['ah'],
@@ -200,7 +257,7 @@ function openBook(bookName, book) {
 		}
     }
 
-    sumHeight = arrDim.length;
+    sumHeight = 0;
 
     var scrollTimeout, throttle = 250;
     if (typeof viewer == 'undefined') {
@@ -245,7 +302,7 @@ function openBook(bookName, book) {
         imgSrc = '';
     }
     
-    html = `${pdfControls(bookPageCount)}<div id='dimWrapper' oncontextmenu="return false;" onclick='toggleControls();' style='width:${newDim.width}px;height:${sumHeight}px'>` + html + '</div>';
+    html = `${pdfControls()}<div onclick='toggleControls();'><div id='dimWrapper' oncontextmenu="return false;" style='width:${newDim.width}px;height:${sumHeight}px'>` + html + '</div></div>' + renderToc();
 
     $('nav').css('position', 'unset');
     $('body').css('overflow', 'hidden');

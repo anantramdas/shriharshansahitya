@@ -358,6 +358,10 @@ a.button:hover {
   scrollbar-width: none;  /* Firefox */
 }
 
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
 #pdfviewer::-webkit-scrollbar {
   display: none;
 }
@@ -387,6 +391,7 @@ input[type=number] {
   height: 60%;
   width: auto;
   padding: 0 5px;
+  cursor: pointer;
 }
 
 #pdfcontrols {
@@ -403,44 +408,96 @@ input[type=number] {
   transition: visibility 0s, opacity 0.5s linear;
 }
 
-#pdfcontrols.show {
-  visibility: visible;
-  opacity: 1;
-}
-
-#pdfcontrols > div {
-  display: flex;
-  flex: 1;
+.show {
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 #pdfcontrols > div.title {
   color: #fff;
-  align-items: center;
-  padding-left: 10px;
+  text-align: center;
+  padding: 0 10px;
+  margin: auto 0;
+  flex-grow: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
+#tocMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s linear;
+}
+
+#tocMenu .menu {
+  background: #fff;
+  width: 300px;
+  border-right: 3px solid #ddd;
+  overflow-y: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+#tocMenu div.menu::-webkit-scrollbar {
+  display: none;
+}
+
+#tocMenu div.toc {
+  padding: 5px;
+  color: #000;
+}
+
+.tocItem {
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px; 
+  cursor: pointer;
+}
+
+.activeToc {
+  background: #ddd;
+}
+
+#tocMenu div.title {
+  background: #fff;
+  color: #000;
+  padding-left: 10px;
+  white-space: wrap;
+  text-align: center;
+}
+
 #pdfcontrols > div.pageNo {
+  margin: auto 0;
   justify-content: center;
   align-items: center;
   color: #fff;
+  width: 100px;
 }
 
 #pdfcontrols > div.pageNo input {
   text-align: right;
   color: #fff;
-  border: 0;
-  width: 40px;
+  border: 1px solid grey;
+  width: 45px;
   background: transparent;
 }
 
 #pdfcontrols > div.controls {
-  justify-content: flex-end;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  padding-right: 10px;
   color: #fff;
+  width: 90px;
 }
 
 #dimWrapper {

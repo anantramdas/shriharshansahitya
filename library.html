@@ -37,6 +37,7 @@
     <script src="previewer/pdfviewer.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="booktoc.js"></script>
     <script src="booklist.js"></script>
     <script src="js/current-device.min.js"></script>
     <script>
@@ -118,13 +119,13 @@
             bookShelf.innerHTML = templateHtml;
             window.bookElements = document.querySelectorAll('.book');
         }
-
+        var hashCounter = 0;
         function loadPdf(bookName, pageNo) {
             var pageCount = booksList[bookName]['pageCount'];
             var title = booksList[bookName]['title'];
             // getImageDim(bookName, pageCount);
             // return;
-            window.location.hash = 'preview';
+            window.location.hash = 'preview_'+ hashCounter++;
             openBook(bookName, booksList[bookName]);
         }
     </script>
