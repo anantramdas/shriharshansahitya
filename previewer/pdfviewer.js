@@ -228,6 +228,12 @@ function resizeBook() {
 	}
 }
 
+function getDomain() {
+    var arrDomain = ['srhssa', 'anantramdas', 'shriharshansahitya'];
+    var index = new Date().getDate() % 3;
+    return arrDomain[index];
+}
+
 function openBook(bookName, book) {
 	currentTitleIndex = null;
 	window.bookName = bookName;
@@ -276,7 +282,8 @@ function openBook(bookName, book) {
     var html = '';
     var pages = [];
     var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
-    var source = isLocalHost ? 'books' : isWebPSupported ? 'https://srhssa.github.io/shriharshanbooksoptimized' : 'https://srhssa.github.io/shriharshanbooks';
+    var domain = getDomain();
+    var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
     for (var counter = 1; counter <= bookPageCount; counter++) {
         pages.push(`${source}/${bookName}/${bookName}_${counter}.${ext}`);
         if (counter == 1) {
