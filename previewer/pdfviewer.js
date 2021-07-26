@@ -139,7 +139,10 @@ function scrollEnd() {
     isScrolling = false;
     for (var index = Math.max(0, pageIndex - 1); index <= pageIndex + 5 && index <= bookPageCount; index++) {
     	var src = pdfPages[index].getAttribute('data-src');
-        pdfPages[index].setAttribute('src', src);
+        if (src) {
+            pdfPages[index].setAttribute('src', src);
+            pdfPages[index].setAttribute('data-src', '');
+        }
         if (!((index ? arrDim[index - 1].ratio : 0) * sumHeight - scrollPos <= pageHeight)) {
         	break;
         }
@@ -209,7 +212,7 @@ function onBookScroll() {
 function resizeBook() {
 	if (window.isBookOpen) {
 		var newPageWidth = getWindowWidth();
-	    if (pageWidth != newPageWidth) {
+	    if (Math.abs(pageWidth - newPageWidth) > 20) {
 	        var oldPos = (viewer.scrollTop() || 0) / sumHeight;
 	        window.pageWidth = newPageWidth;
 	        window.pageHeight = getWindowHeight();

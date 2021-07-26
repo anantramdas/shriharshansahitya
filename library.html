@@ -80,7 +80,7 @@
                 }
             }
             
-            if (device.mobile()) {
+            if (device.mobile() || device.tablet()) {
                 window.addEventListener('scroll', function () {
                     clearTimeout(checkPosition);
                     timer = setTimeout(checkPosition, 700);
