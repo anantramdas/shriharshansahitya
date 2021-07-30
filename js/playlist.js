@@ -3,11 +3,15 @@ var playlistData = {
   'नाम रूप लीला धाम एवं रस निष्पत्ति': {link: 0, duration: 3549},
   'आचार्यानुवर्तन एवं परमात्म प्राप्ति': {link: 0, duration: 1930},
   'रसोपासना तथा सत्संग': {link: 0, duration: 1856},
-  'भगवान से अपनापन': {link: 0, duration: 958}, 
+  'भगवान से अपनापन': {link: 0, duration: 958},
 };
 
 var audioLinks = [
 	'https://ia601406.us.archive.org/25/items/shriharshanvani_1/',
+]
+
+var downloadLinks = [
+	'https://archive.org/download/shriharshanvani_1/',
 ]
 
 var playlistItems = [];
@@ -19,5 +23,6 @@ for(var file in playlistData) {
 		title: file,
 		duration: listItem.duration,
 		weblink: audioLinks[listItem.link] + file + '.mp3',
+		downloadLink: downloadLinks[listItem.link] + file + '.mp3',
 	});
 }

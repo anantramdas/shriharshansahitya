@@ -13,7 +13,8 @@ html {
 
 body {
   font: 18px kurale;
-  background: #f8f4f2;
+  overflow: hidden;
+  background: #F3E7D0;
 }
 
 #playerWindow {
@@ -23,10 +24,11 @@ body {
   padding: 0;
   margin: 0;
   position: fixed;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
   right: 0;
   bottom: 0;
   left: 0;
-  overflow: hidden;
   background: #bb71f3;
   background: -moz-linear-gradient(-45deg, #bb71f3 0%, #3d4d91 100%);
   background: -webkit-linear-gradient(-45deg, #bb71f3 0%, #3d4d91 100%);
@@ -41,17 +43,19 @@ body {
 /* Top Info */
 #track {
   width: 100%;
-  margin-top: 3px;
+  margin: 3px 0 0 5px;
   padding: 0px 5px;
   text-align: center;
   font-size: 22px;
   opacity: 0.9;
   font-weight: 300;
   color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.33);
+}
+#track > span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.33);
 }
 #timerbar {
   display: flex;
@@ -80,6 +84,19 @@ body {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.33);
 }
 
+#playerWindow.mini #timerbar {
+  display: none;
+}
+
+#playerWindow.mini #track {
+  text-align: left;
+  align-items: center;
+  width: 70%;
+  height: 100%;
+  display: flex;
+  min-width: 0;
+}
+
 /* Controls */
 .controlsOuter {
   position: absolute;
@@ -96,6 +113,47 @@ body {
   justify-content: space-around;
   align-items: center;
   flex-direction: row;
+}
+
+#playerWindow.mini {
+  height: 80px;
+}
+
+#togglePlayer {
+  background: #fff url(../svg/chevron-up.svg) no-repeat center;
+  transform: rotate(180deg);
+  background-size: 30px 30px;
+  background-position: center;
+  height: 40px;
+  width: 40px;
+  position: fixed;
+  bottom: 140px;
+  right: 3px;
+  border-radius: 50%;
+  display: none;
+  cursor: pointer;
+}
+
+#togglePlayer.mini {
+  transform: rotate(0deg);
+  bottom: 60px;
+}
+
+#playerWindow.mini #controlsInner > * {
+  display: none;
+}
+
+#playerWindow.mini #controlsInner > .midBtn {
+  display: flex;
+}
+
+#playerWindow.mini .controlsOuter {
+  justify-content: flex-end;
+  bottom: 4%;
+}
+
+#playerWindow.mini #controlsInner {
+  width: min(40vw, 135px);
 }
 
 .playerbtn {
@@ -151,20 +209,85 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  border: 1px solid black;
   border-radius: 5px;
-  margin: 15px;
-  padding: 15px;
-  background: grey;
+  margin: 20px 5px;
+  padding: 5px 0;
   color: #fff;
+  background: linear-gradient(#777777, #5f5f5f);
+  box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.25);
+}
+.bgImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+}
+.bgRow {
+  display: flex;
+  flex-direction: row;
+}
+#list {
+  height: 90vh;
+  width: 70%;
+  padding-bottom: 100px;
+  overflow-y: scroll;
+}
+.bgImage img {
+  height: 50vh;
+}
+@media only screen and (max-width: 990px) {
+  .bgRow {
+    flex-direction: column;
+  }
+  body {
+    overflow: scroll;
+  }
+  .bgImage {
+    width: 100%;
+  }
+  #list {
+    height: auto;
+    width: 100%;
+    overflow-y: hidden;
+  }
+}
+.list-item > .title {
+  flex: 1;
+}
+.download {
+  text-align: right;
+  padding-right: 5px;
+}
+.download a {
+  display: inline-block;
+  height: 50px;
+  width: 50px;
+  background: url(../svg/download.svg) no-repeat;
+  background-position: center;
+  background-size: 35px 35px;
+  cursor: pointer;
 }
 .list-item.playing {
-  opacity: 0.5;
+  opacity: 0.6;
 }
-.list-item > img {
+.list-item > .ico {
   width: 40px;
   height: 40px;
   margin: 0 15px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  background: url(../svg/play.svg) no-repeat;
+  background-size: 25px 25px;
+  background-position: 9px center;
+}
+.list-item.playing > .ico {
+  background-image: url(../svg/pause.svg);
+  border-width: 0;
+  border-radius: initial;
+}
+
+.list-item.paused > .ico {
+  background-image: url(../svg/play.svg) !important;
 }
 
 /* Progress */
@@ -194,7 +317,7 @@ body {
   left: 0;
   width: 0%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.25);
   z-index: -1;
 }
 
@@ -217,6 +340,10 @@ body {
   text-align: center;
   position: absolute;
   display: none;
+}
+
+#playerWindow.mini #seektime {
+  margin: 10px 5px 0 5px;
 }
 
 .to-right {

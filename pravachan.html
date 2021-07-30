@@ -17,25 +17,13 @@
    <link rel="stylesheet" href="css/bootstrap.min.css">
    <link rel="stylesheet" href="css/player.css">
    <!-- fevicon -->
-   <link rel="icon" sizes="16x16 32x32 64x64" href="./favicon/favicon.ico">
-   <link rel="icon" type="image/png" sizes="196x196" href="./favicon/favicon-192.png">
-   <link rel="icon" type="image/png" sizes="160x160" href="./favicon/favicon-160.png">
-   <link rel="icon" type="image/png" sizes="96x96" href="./favicon/favicon-96.png">
-   <link rel="icon" type="image/png" sizes="64x64" href="./favicon/favicon-64.png">
-   <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32.png">
-   <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16.png">
-   <link rel="apple-touch-icon" href="./favicon/favicon-57.png">
-   <link rel="apple-touch-icon" sizes="114x114" href="./favicon/favicon-114.png">
-   <link rel="apple-touch-icon" sizes="72x72" href="./favicon/favicon-72.png">
-   <link rel="apple-touch-icon" sizes="144x144" href="./favicon/favicon-144.png">
-   <link rel="apple-touch-icon" sizes="60x60" href="./favicon/favicon-60.png">
-   <link rel="apple-touch-icon" sizes="120x120" href="./favicon/favicon-120.png">
-   <link rel="apple-touch-icon" sizes="76x76" href="./favicon/favicon-76.png">
-   <link rel="apple-touch-icon" sizes="152x152" href="./favicon/favicon-152.png">
-   <link rel="apple-touch-icon" sizes="180x180" href="./favicon/favicon-180.png">
-   <meta name="msapplication-TileColor" content="#FFFFFF">
-   <meta name="msapplication-TileImage" content="./favicon/favicon-144.png">
-   <meta name="msapplication-config" content="./favicon/browserconfig.xml">
+   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+   <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+   <link rel="manifest" href="./site.webmanifest">
+   <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
+   <meta name="msapplication-TileColor" content="#da532c">
+   <meta name="theme-color" content="#ffffff">
    <!-- Tweaks for older IEs-->
    <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -49,23 +37,20 @@
     if (index == playingIndex) {
       playingAudio = listItems.eq(playingIndex);
       if (playingAudio.hasClass('paused')) {
-        playingAudio.find('img').attr('src', 'svg/pause.svg');
         playingAudio.removeClass('paused');
       } else {
-        playingAudio.find('img').attr('src', 'svg/play.svg');
         playingAudio.addClass('paused');
       }
     } else {
       if (playingIndex > -1) {
         playingAudio = listItems.eq(playingIndex);
-        playingAudio.find('img').attr('src', 'svg/play.svg');
         playingAudio.removeClass('playing paused');
       } else {
         $(playerWindow).show();
+        $(togglePlayer).show();
       }
       playingIndex = index;
       playingAudio = listItems.eq(playingIndex);
-      playingAudio.find('img').attr('src', 'svg/pause.svg');
       playingAudio.addClass('playing');
     }
   }
@@ -88,8 +73,9 @@
       var listItem = playlistItems[index];
       htmlList += `
       <div class='list-item' onclick="playPauseAudio(${index})">
-        <img src="svg/play.svg"></img>
+        <div class="ico"></div>
         <div class="title">${listItem.title}</div>
+        <div class="download"><a href="${playlistItems[index].downloadLink}"></a></div>
       </div>`;
     }
     document.querySelector('#list').innerHTML = htmlList;
@@ -123,12 +109,20 @@
          </ul>
       </div>
    </nav>
-   <div id="list">
+   <div class="bgRow">
+     <div class="bgImage">
+      <picture>
+        <source type='image/webp' srcset='assets/sarkar_bg.webp'>
+        <img src="assets/sarkar_bg.jpg">
+      </picture>
+     </div>
+     <div id="list">
+     </div>
    </div>
    <div style="height: 180px;">
    </div>
-   <div id="playerWindow">
-      <div id="track"></div>
+   <div id="playerWindow" class="mini">
+      <div id="track"><span id="trackInfo"></span></div>
 
       <div id="timerbar">
         <div id="timer">0:00</div>
@@ -139,7 +133,9 @@
       <div id="waveform"></div>
       <div id="bar"></div>
       <div id="progress"></div>
-      <div id="seekbar"><div id="seektime"></div></div>
+      <div id="seekbar">
+        <div id="seektime"></div>
+      </div>
 
       <!-- Controls -->
       <div class="controlsOuter">
@@ -156,6 +152,7 @@
         </div>
       </div>
    </div>
+   <div id="togglePlayer" class="mini"></div>
    <audio id="audioPlayer">
    </audio>
    <script src="js/howler.core.min.js"></script>

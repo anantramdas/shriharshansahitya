@@ -9,7 +9,7 @@
  */
 
 // Cache references to DOM elements.
-var elms = ['plus10','minus10','audioPlayer','seektime','controlsInner','track', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'bar', 'wave', 'loading', 'playlist', 'list', 'volume', 'barEmpty', 'barFull', 'sliderBtn', 'playerWindow', 'seekbar'];
+var elms = ['togglePlayer','plus10','minus10','audioPlayer','seektime','controlsInner','trackInfo', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'bar', 'wave', 'loading', 'playlist', 'list', 'volume', 'barEmpty', 'barFull', 'sliderBtn', 'playerWindow', 'seekbar'];
 elms.forEach(function(elm) {
   window[elm] = document.getElementById(elm);
 });
@@ -24,7 +24,7 @@ var Player = function(playlist) {
   this.index = 0;
 
   // Display the title of the first track.
-  track.innerHTML = '1. ' + playlist[0].title;
+  trackInfo.innerHTML = '1. ' + playlist[0].title;
 };
 Player.prototype = {
   /**
@@ -45,7 +45,7 @@ Player.prototype = {
     } else {
       sound = data.howl = new Howl({
         player: audioPlayer,
-        src: data.weblink,
+        src: data.file,
         duration: data.duration,
         html5: true, // Force to HTML5 so that the audio can stream in (best for large files).
         onplay: function() {
@@ -111,7 +111,7 @@ Player.prototype = {
     sound.play();
 
     // Update the track display.
-    track.innerHTML = (index + 1) + '. ' + data.title;
+    trackInfo.innerHTML = (index + 1) + '. ' + data.title;
 
     // Show the pause button.
     if (sound.state() === 'loaded') {
@@ -164,7 +164,7 @@ Player.prototype = {
         index = 0;
       }
     }
-
+    listItems[index].scrollIntoView({behavior: "smooth", block: "center"});
     self.skipTo(index);
   },
 
@@ -287,6 +287,11 @@ Player.prototype = {
   }
 };
 
+function toggleAudioPlayer() {
+  $(playerWindow).toggleClass('mini');
+  $(togglePlayer).toggleClass('mini');
+}
+
 // Setup our new audio player class and pass it the playlist.
 var player = new Player(playlistItems);
 var mapper = {
@@ -315,6 +320,9 @@ touchMouse(controlsInner, 'mouseup mousemove mousedown', function(event) {
 // Bind our player controls.
 touchMouse(playBtn, 'click', function(event) {
   player.play();
+});
+touchMouse(togglePlayer, 'click', function(event) {
+  toggleAudioPlayer();
 });
 touchMouse(pauseBtn, 'click', function(event) {
   player.pause();
@@ -346,8 +354,12 @@ var eventMap = {
       playerWidth = window.innerWidth;
       seekbar.style.left = (clientX * 100 / playerWidth) + '%';
     }
+    event.stopPropagation();
+    event.preventDefault();
   },
   mouseup: function(clientX) {
+    event.stopPropagation();
+    event.preventDefault();
     if (isPlayerMouseDown) {
       isPlayerMouseDown = false;
       player.seek((clientX / window.innerWidth));
@@ -357,6 +369,8 @@ var eventMap = {
   },
   mousemove: function (clientX) {
     if (isPlayerMouseDown) {
+      event.stopPropagation();
+      event.preventDefault();
       seekbar.style.left = (clientX * 100 / playerWidth) + '%';
       var seekPercent = clientX / playerWidth;
       seektime.style.display = 'inline-block';

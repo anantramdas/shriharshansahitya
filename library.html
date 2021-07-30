@@ -8,37 +8,23 @@
     </title>
     <meta name="keywords" content="रामहर्षण दास, ram harshan das, bhakti, भक्ति, podi, पोड़ी, sita ram, श्री प्रेम रामायण, गीता ज्ञान, वेदान्त दर्शन, प्रेम वल्लरी, विनय वल्लरी">
     <meta name="description" content="स्वामी जी द्वारा रचित अमूल्य भक्ति साहित्य, ग्रंथ - श्री प्रेम रामायण, प्राप्ति दर्शन, गीता ज्ञान, वेदान्त दर्शन, प्रेम वल्लरी, विनय वल्लरी आदि, आश्रम - श्री राम हर्षण कुंज अयोध्या तथा श्री राम मंत्रार्थ मंडपम अयोध्या, Books of Shrimad Ram Harshan Das Ji">
-    <link rel="shortcut icon" href="./favicon/favicon.ico">
-    <link rel="icon" sizes="16x16 32x32 64x64" href="./favicon/favicon.ico">
-    <link rel="icon" type="image/png" sizes="196x196" href="./favicon/favicon-192.png">
-    <link rel="icon" type="image/png" sizes="160x160" href="./favicon/favicon-160.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="./favicon/favicon-96.png">
-    <link rel="icon" type="image/png" sizes="64x64" href="./favicon/favicon-64.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16.png">
-    <link rel="apple-touch-icon" href="./favicon/favicon-57.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="./favicon/favicon-114.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="./favicon/favicon-72.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="./favicon/favicon-144.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="./favicon/favicon-60.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="./favicon/favicon-120.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="./favicon/favicon-76.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./favicon/favicon-152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/favicon-180.png">
-    <meta name="msapplication-TileColor" content="#FFFFFF">
-    <meta name="msapplication-TileImage" content="./favicon/favicon-144.png">
-    <meta name="msapplication-config" content="./favicon/browserconfig.xml">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./site.webmanifest">
+    <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <style>
         @font-face {
             font-family: kurale;
             src: url(fonts/Kurale.ttf);
         }
     </style>
-    <script src="previewer/pdfviewer.js"></script>
+    <script src="js/pdfviewer.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="booktoc.js"></script>
-    <script src="booklist.js"></script>
     <script src="js/current-device.min.js"></script>
     <script>
         function bookActive(th) {
@@ -95,9 +81,15 @@
         window.onpopstate = function() {
             if (window.isBookOpen) {
                 closeBook();
+            } else if (isFiltered) {
+                inputBox.value = "";
+                isFiltered = false;
+                $('.block').show();
             }
         };
         function createBooks() {
+            history.replaceState(null, null, ' ');
+            inputBox.value = '';
             if (typeof isWebPSupported == "undefined") {
                 checkWebPSupport(function() {
                     startBookCreation();
@@ -106,17 +98,20 @@
                 startBookCreation();
             }
         }
-
+        var bookShelf, iconShelf;
         function startBookCreation() {
-            var templateHtml = "";
+            var templateHtml = "", miniTemplateHtml = "";
             for (const bookName in booksList) {
                 if (Object.hasOwnProperty.call(booksList, bookName)) {
                     const bookObj = booksList[bookName];
                     templateHtml += bookTemplate(bookName);
+                    miniTemplateHtml += bookTemplate(bookName, true);
                 }
             }
-            var bookShelf = document.getElementById('bookShelf');
+            bookShelf = document.getElementById('bookShelf');
+            iconShelf = document.getElementById('iconShelf');
             bookShelf.innerHTML = templateHtml;
+            iconShelf.innerHTML = miniTemplateHtml;
             window.bookElements = document.querySelectorAll('.book');
         }
         var hashCounter = 0;
@@ -127,6 +122,10 @@
             // return;
             window.location.hash = 'preview_'+ hashCounter++;
             openBook(bookName, booksList[bookName]);
+        }
+        function toggleList() {
+            bookShelf.classList.toggle('ico');
+            iconShelf.classList.toggle('ico');
         }
     </script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -177,10 +176,26 @@
 अनन्त श्री विभूषित श्रीमद् रामहर्षण दास जी का अनमोल भक्ति साहित्य" style="white-space: pre;" />
     </picture>
     <div class="container-fluid">
+        <div class="toggle">
+            <div class="wrapper">
+              <div class="search-input">
+                <a href="" target="_blank" hidden></a>
+                <input type="text" placeholder="Type to search..">
+                <div class="autocom-box">
+                  <!-- here list are inserted from javascript -->
+                </div>
+              </div>
+            </div>
+            <div class="listView">
+                <img onclick="toggleList();" src="svg/list.svg"/>
+            </div>
+        </div>
         <div id="bookShelf" class="d-flex justify-content-center flex-wrap"></div>
+        <div id="iconShelf" class="ico d-flex justify-content-center flex-wrap"></div>
     </div>
     <div id='pdfviewer'>
     </div>
+    <script src="booklist.js"></script>
 </body>
 
 </html>
