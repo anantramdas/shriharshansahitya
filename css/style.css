@@ -92,6 +92,21 @@ a.button:hover {
   }
 }
 
+#bookShelf.ico, #iconShelf.ico {
+  display: none !important;
+}
+
+#iconShelf .download {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 6px;
+  width: 40px;
+  object-fit: contain;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 .book {
   width: 200px;
   height: 300px;
@@ -126,6 +141,10 @@ a.button:hover {
   box-shadow: 5px 5px 20px #666;
   transform: rotateY(-10deg);
   transition: transform 1s ease;
+}
+
+#iconShelf .book__cover {
+  transform: rotateY(0);
 }
 
 .book.small>.book__cover,
@@ -514,32 +533,100 @@ input[type=number] {
   background-size: 40px 40px;
 }
 
-#dimWrapper img.invert {
-   -webkit-filter: invert(1);
-   filter: invert(1);
+.toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
 }
 
-#dimWrapper img.colored {
-   -webkit-filter: sepia(0.5);
-   filter: sepia(0.5);
+.listView img {
+  width: 30px;
+  padding: 1px;
 }
 
-#dimWrapper img.brighter {
-   -webkit-filter: brightness(1.5);
-   filter: brightness(1.5);
+.listView {
+  background: grey;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin: 5px;
 }
 
-#dimWrapper img.dim {
-   -webkit-filter: brightness(0.5);
-   filter: brightness(0.5);
+/* search box */
+
+.wrapper {
+  max-width: 450px;
+  margin: 5px;
 }
 
-#dimWrapper img.morecontrast {
-   -webkit-filter: contrast(1.5);
-   filter: contrast(1.5);
+.wrapper .search-input{
+  background: #fff;
+  width: 250px;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 0px 1px 5px 3px rgba(0,0,0,0.12);
 }
 
-#dimWrapper img.lesscontrast {
-   -webkit-filter: contrast(0.6);
-   filter: contrast(0.6);
+.search-input input{
+  height: 45px;
+  width: 100%;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 18px;
+  box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
 }
+
+.search-input.active input{
+  border-radius: 5px 5px 0 0;
+}
+
+.search-input .autocom-box{
+  padding: 0;
+  opacity: 0;
+  position: absolute;
+  top: 46px;
+  z-index: 1000;
+  pointer-events: none;
+  width: 250px;
+  background: white;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.search-input.active .autocom-box{
+  padding: 10px 8px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.autocom-box li{
+  list-style: none;
+  padding: 8px 12px;
+  display: none;
+  width: 100%;
+  cursor: default;
+  border-radius: 3px;
+}
+
+.search-input.active .autocom-box li{
+  display: block;
+}
+.autocom-box li:hover{
+  background: #efefef;
+}
+
+.search-input .icon{
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  height: 55px;
+  width: 55px;
+  text-align: center;
+  line-height: 55px;
+  font-size: 20px;
+  color: #644bff;
+  cursor: pointer;
+}
+/* search box */
