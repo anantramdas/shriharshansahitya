@@ -270,6 +270,9 @@ body {
 .list-item.playing {
   opacity: 0.6;
 }
+.buffering {
+  opacity: 0.8;
+}
 .list-item > .ico {
   width: 40px;
   height: 40px;
