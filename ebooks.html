@@ -8,13 +8,17 @@
     </title>
     <meta name="keywords" content="रामहर्षण दास, ram harshan das, bhakti, भक्ति, podi, पोड़ी, sita ram, श्री प्रेम रामायण, गीता ज्ञान, वेदान्त दर्शन, प्रेम वल्लरी, विनय वल्लरी">
     <meta name="description" content="स्वामी जी द्वारा रचित अमूल्य भक्ति साहित्य, ग्रंथ - श्री प्रेम रामायण, प्राप्ति दर्शन, गीता ज्ञान, वेदान्त दर्शन, प्रेम वल्लरी, विनय वल्लरी आदि, आश्रम - श्री राम हर्षण कुंज अयोध्या तथा श्री राम मंत्रार्थ मंडपम अयोध्या, Books of Shrimad Ram Harshan Das Ji">
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-    <link rel="manifest" href="./site.webmanifest">
-    <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+    <!-- fevicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+	<link rel="manifest" href="./site.webmanifest">
+	<link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="theme-color" content="#ffffff">
+	<!-- remove this later when app released -->
+	<link rel="stylesheet" href="css/overlay.css">
+	<script src="js/overlay.js"></script>
     <style>
         @font-face {
             font-family: kurale;
@@ -88,6 +92,7 @@
             }
         };
         function createBooks() {
+            startChecking();
             history.replaceState(null, null, ' ');
             inputBox.value = '';
             if (typeof isWebPSupported == "undefined") {
@@ -134,30 +139,31 @@
 
 <body onload="createBooks();">
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler01" aria-controls="navbarToggler01" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarToggler01">
-            <a class="navbar-brand text-white" href="#">श्री रामहर्षण सेवा संस्थान, अयोध्या</a>
-            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                <li class="nav-item">
-                   <a class="nav-link" href="#">परिचय</a>
-                </li>
-                <li class="nav-item">
-                   <a class="nav-link" href="library.html">साहित्य</a>
-                </li>
-                <li class="nav-item">
-                   <a class="nav-link" href="#">प्रवचन</a>
-                </li>
-                <li class="nav-item">
-                   <a class="nav-link" href="nirnay_patra.html">निर्णय पत्र</a>
-                </li>
-                <li class="nav-item">
-                   <a class="nav-link" href="#">सम्पर्क करें</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler01" aria-controls="navbarToggler01" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon">
+			</span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarToggler01">
+			<a class="navbar-brand text-white" href="./">श्री रामहर्षण सेवा संस्थान, अयोध्या</a>
+			<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+				<li class="nav-item">
+					<a class="nav-link" href="biography.html">परिचय</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="library.html">साहित्य</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="audio.html">प्रवचन</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="nirnay_patra.html">निर्णय पत्र</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="contact_us.html">सम्पर्क करें</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
     <picture>
         <source media="(max-width: 200px)" srcset="assets/banner/lib_w_200.webp">
         <source media="(max-width: 606px)" srcset="assets/banner/lib_w_606.webp">
@@ -195,6 +201,17 @@
     </div>
     <div id='pdfviewer'>
     </div>
+    <div class="overlay">
+		<div class="topleft">
+			<p>श्री हर्षण साहित्य </p>
+		</div>
+		<div class="middle">
+			<h1>COMING SOON </h1>
+		</div>
+		<div class="bottomleft">
+			<p>स्वामी जी का अनमोल साहित्य </p>
+		</div>
+	</div>
     <script src="booklist.js"></script>
 </body>
 

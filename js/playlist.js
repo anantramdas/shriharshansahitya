@@ -1,5 +1,5 @@
 // d - duration
-var playlistData = {
+var lecturePlaylistData = {
   "अनन्त जन्मों की कमाई तथा लक्ष्य प्राप्ति की प्रतिज्ञा": {
     "d": 883
   },
@@ -293,23 +293,83 @@ var playlistData = {
   },
 };
 
+var gayanPlaylistData = {
+    "लीला सुधा सिंधु - पद क्रमांक १": {
+        "d": 52, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक २": {
+        "d": 80, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक ५": {
+        "d": 116, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १२": {
+        "d": 103, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १७": {
+        "d": 132, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक २०": {
+        "d": 120, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १३२": {
+        "d": 96, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १३५": {
+        "d": 78, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १३९": {
+        "d": 88, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १४२": {
+        "d": 108, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १४५": {
+        "d": 96, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १४८": {
+        "d": 110, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १४९": {
+        "d": 107, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १६२": {
+        "d": 76, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक १६७": {
+        "d": 175, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक ४०३": {
+        "d": 72, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक ४३६": {
+        "d": 70, "l": 1,
+    },
+    "लीला सुधा सिंधु - पद क्रमांक ४४४": {
+        "d": 78, "l": 1,
+    },
+};
+
 var audioLinks = [
 	'https://archive.org/download/shri_harshan_vani/',
+	'https://archive.org/download/pad_gayan/',
 ]
 
 var downloadLinks = [
 	'https://archive.org/download/shri_harshan_vani/',
+	'https://archive.org/download/pad_gayan/',
 ]
-
+var playlistData = window.location.href.indexOf("source=gayan") > -1 ? gayanPlaylistData : lecturePlaylistData;
 var playlistItems = [];
 
 for(var file in playlistData) {
 	var listItem = playlistData[file];
+	var source = listItem.l || 0;
 	playlistItems.push({
 		file: './audio/' + file + '.mp3',
 		title: file,
 		duration: listItem.duration,
-		weblink: audioLinks[0] + file + '.mp3',
-		downloadLink: downloadLinks[0] + file + '.mp3',
+		weblink: audioLinks[source] + file + '.mp3',
+		downloadLink: downloadLinks[source] + file + '.mp3',
 	});
 }

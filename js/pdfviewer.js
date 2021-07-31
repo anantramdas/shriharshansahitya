@@ -134,7 +134,7 @@ function toggleControls() {
     }
 }
 
-function scrollEnd() {
+function scrollEnd(skipSave) {
 	window.scrollPos = viewer.scrollTop();
     isScrolling = false;
     for (var index = Math.max(0, pageIndex - 1); index <= pageIndex + 5 && index <= bookPageCount; index++) {
@@ -146,6 +146,9 @@ function scrollEnd() {
         if (!((index ? arrDim[index - 1].ratio : 0) * sumHeight - scrollPos <= pageHeight)) {
         	break;
         }
+    }
+    if (!skipSave) {
+        localStorage[bookName] = pageIndex + 1;
     }
 }
 
@@ -317,12 +320,17 @@ function openBook(bookName, book) {
     html = `${pdfControls()}<div onclick='toggleControls();'><div id='dimWrapper' oncontextmenu="return false;" style='width:${newDim.width}px;height:${sumHeight}px'>` + html + '</div></div>' + renderToc();
 
     $('nav').css('position', 'unset');
-    $('body').css('overflow', 'hidden');
+    $('body').css('overflow-y', 'hidden');
     viewer.html(html);
     pdfPages = $(".pdfpage > img");
-    scrollEnd();
     viewer.show();
-    viewer.scrollTop(0);
+    var savedIndex = +localStorage[bookName];
+    if (savedIndex > 0 && savedIndex <= arrDim.length) {
+        gotoPage(savedIndex);
+    } else {
+        scrollEnd(true);
+        viewer.scrollTop(0);
+    }
     pageNo = $('.pageNo input');
     if (typeof window.isBookOpen == 'undefined') {
 	    window.addEventListener("resize", function() {
@@ -339,7 +347,7 @@ function closeBook() {
 	if (window.isBookOpen) {
 	    window.isBookOpen = false;
 	    $('nav').css('position', 'sticky');
-	    $('body').css('overflow', '');
+	    $('body').css('overflow-y', 'scroll');
 	    viewer.hide();
 	    viewer.html('');
 	}
