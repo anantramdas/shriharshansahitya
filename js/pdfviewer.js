@@ -290,8 +290,10 @@ function openBook(bookName, book) {
     var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
     var domain = getDomain();
     var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
+    var folder = !isLocalHost && isWebPSupported ? (book.folderWebP || bookName) : bookName;
+
     for (var counter = 1; counter <= bookPageCount; counter++) {
-        pages.push(`${source}/${bookName}/${bookName}_${counter}.${ext}`);
+        pages.push(`${source}/${folder}/${bookName}_${counter}.${ext}`);
         if (counter == 1) {
         	pages.push(`assets/not_for_sale.${ext}`);
         }
@@ -300,8 +302,7 @@ function openBook(bookName, book) {
         var widthRatio = arrDim[index].width / newDim.width;
         sumHeight += (arrDim[index].newHeight = arrDim[index].height / widthRatio);
     }
-    var folder = isWebPSupported ? (book.folderWebP || bookName) : bookName;
-    var imgSrc = `src='assets/${folder}.${isWebPSupported ? 'webp' : 'jpg'}'`;
+    var imgSrc = `src='assets/${bookName}.${isWebPSupported ? 'webp' : 'jpg'}'`;
     var isMobile = device.mobile();
     for (var index in pages) {
         var page = pages[index];
