@@ -300,7 +300,8 @@ function openBook(bookName, book) {
         var widthRatio = arrDim[index].width / newDim.width;
         sumHeight += (arrDim[index].newHeight = arrDim[index].height / widthRatio);
     }
-    var imgSrc = `src='assets/${bookName}.${isWebPSupported ? 'webp' : 'jpg'}'`;
+    var folder = isWebPSupported ? (book.folderWebP || bookName) : bookName;
+    var imgSrc = `src='assets/${folder}.${isWebPSupported ? 'webp' : 'jpg'}'`;
     var isMobile = device.mobile();
     for (var index in pages) {
         var page = pages[index];
