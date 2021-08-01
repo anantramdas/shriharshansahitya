@@ -107,6 +107,18 @@ var finalDates = {
 		type: 'utsav',
 		date: ['Apr 21, 2021'],
 	},
+	'पाटोत्सव - अभिषेक <br>(श्री सिद्धि सदन)': {
+		type: 'utsav',
+		date: ['May 12, 2021'],
+	},
+	'राजगद्दी <br>(श्री सिद्धि सदन)': {
+		type: 'utsav',
+		date: ['May 13, 2021'],
+	},
+	'श्री बड़े महाराजजी का भण्डारा': {
+		type: 'utsav',
+		date: ['May 14, 2021'],
+	},
 	'श्री जानकी नवमी': {
 		type: 'utsav',
 		date: ['May 21, 2021'],
@@ -115,9 +127,29 @@ var finalDates = {
 		type: 'utsav',
 		date: ['May 25, 2021'],
 	},
+	'पाटोत्सव - अभिषेक <br>(श्री मंत्रार्थ मंडपम्)': {
+		type: 'utsav',
+		date: ['Jun 13, 2021'],
+	},
+	'श्री सरकार की जयंती': {
+		type: 'utsav',
+		date: ['Jun 14, 2021'],
+	},
+	'श्री लक्ष्मीनिधि जयंती': {
+		type: 'utsav',
+		date: ['Jun 15, 2021'],
+	},
+	'श्री महाराजजी का भण्डारा': {
+		type: 'utsav',
+		date: ['May 16, 2021'],
+	},
 	'श्रीसरयूजी की जयंती': {
 		type: 'utsav',
 		date: ['Jun 24, 2021'],
+	},
+	'श्रीसाकेतवासी महाराज जी की जयंती': {
+		type: 'utsav',
+		date: ['Jul 7, 2021'],
 	},
 	'रथ यात्रा': {
 		type: 'utsav',
@@ -127,9 +159,23 @@ var finalDates = {
 		type: 'utsav',
 		date: ['Jul 24, 2021'],
 	},
+	'झूलनोत्सव<br>(साजा, छत्तीसगढ़ में)': {
+		type: 'utsav',
+		date: ['Jul 27, 2021'],
+		enddate: ['Aug 4, 2021'],
+	},
+	'झूलनोत्सव<br>(श्री अयोध्याजी में)': {
+		type: 'utsav',
+		date: ['Aug 11, 2021'],
+		enddate: ['Aug 22, 2021'],
+	},
 	'गो. तुलसीदास की जयंती': {
 		type: 'utsav',
 		date: ['Aug 15, 2021'],
+	},
+	'स्वरूप सम्मेलन': {
+		type: 'utsav',
+		date: ['Aug 20, 2021'],
 	},
 	'रक्षा बंधन': {
 		type: 'utsav',
@@ -159,10 +205,15 @@ var finalDates = {
 		type: 'utsav',
 		date: ['Oct 20, 2021'],
 	},
-	'श्री राम मंत्रानुष्ठान': {
+	'श्री राम मंत्रानुष्ठान<br>(श्री अयोध्याजी में)': {
 		type: 'utsav',
 		date: ['Oct 20, 2021'],
-		enddate: ['Oct 30, 2021']
+		enddate: ['Oct 30, 2021'],
+	},
+	'सम्पूर्ण रामलीला<br>(श्री अयोध्याजी में)': {
+		type: 'utsav',
+		date: ['Oct 18, 2021'],
+		enddate: ['Nov 19, 2021'],
 	},
 	'श्री हनुमान जयन्ती': {
 		type: 'utsav',
@@ -200,4 +251,107 @@ var finalDates = {
 		type: 'utsav',
 		date: ['Mar 22, 2022'],
 	},
+}
+
+
+
+var chartHtml = '';
+var days = ['रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
+var sortedDates = {};
+var sortedYears = new Set();
+var arrMonths = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितम्बर", "अक्टूबर", "नवम्बर", "दिसम्बर"];
+var arrDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
+var recentFestivals = {};
+
+function formatDate(date) {
+	return replaceDigitsToHindi(`${date.getDate()} ${arrMonths[date.getMonth()]} ${date.getFullYear()}`);
+}
+
+function replaceDigitsToHindi(str) {
+	return str.toString().replace(/./g, function(char) {
+		return arrDigits[char] || char;
+	});
+}
+function getNirnayHtml(isAskingRecent) {
+	var today = new Date();
+	today.setHours(0, 0, 0, 0); // today midnight
+	var isNext;
+	for(var itemName in finalDates) {
+		var item = finalDates[itemName];
+		item.enddate = item.enddate || [];
+		if(item.date) {
+			for(var index in item.date) {
+				date = new Date(item.date[index]);
+				sortedDates[date.getTime()] = sortedDates[date.getTime()] || [];
+				sortedYears.add(date.getFullYear());
+				sortedDates[date.getTime()].push({
+					name: itemName,
+					type: item.type,
+					endDate: new Date(item.enddate[index] || item.date[index]),
+				});
+			}
+		}
+	}
+	sortedYears = Array.from(sortedYears);
+	sortedYears.sort();
+	var sortedDatesKeys = Object.keys(sortedDates);
+	sortedDatesKeys.sort();
+	for(var year of sortedYears) {
+		chartHtml += `<hr class="hr-text" data-content="${replaceDigitsToHindi(year)}"><div class="d-flex justify-content-center flex-wrap">`;
+		for(var dateStamp of sortedDatesKeys) {
+			var itemArr = sortedDates[dateStamp];
+			for(var item of itemArr) {
+				var itemDate = new Date(+dateStamp);
+				var itemEndDate = item.endDate;
+				var passedDate = itemEndDate < today ? ' disabled' : '';
+				if(itemDate.getFullYear() == year) {
+					var itemName = item.name;
+					if(item.type == 'ekadashi') {
+						itemName += ' एकादशी';
+					}
+					var itemDay = days[itemDate.getDay()];
+					var upcomingDate = '';
+					var dateString = formatDate(itemDate);
+					var endDateString = formatDate(itemEndDate);
+					var daysLeft = itemDate >= today ? Math.ceil((itemDate.getTime() - today.getTime()) / (1000 * 3600 * 24)) : -1;
+					var daysArr = ['आज', 'कल', 'परसों']
+					if (today >= itemDate && today <= itemEndDate) {
+						daysLeft = 0;
+					}
+					if((!isNext || daysLeft == 1) && daysLeft >= 0 && daysLeft < 31) {
+						upcomingDate = daysLeft != 0 ? ' bg-warning text-dark' : ' bg-info text-white';
+						if(daysLeft > 0) {
+							isNext = true;
+						}
+					}
+					if(daysLeft > 2 && daysLeft < 31) {
+						daysLeft += ' दिन बाद';
+					} else {
+						daysLeft = daysArr[daysLeft] || '';
+					}
+					if (daysLeft) {
+						recentFestivals[itemName] = {day: daysLeft, date: `${dateString}${itemEndDate > itemDate ? ' से प्रारम्भ' : ''}`};
+						daysLeft = `(${daysLeft})`;
+						if (isAskingRecent && isNext) {
+							return;
+						}
+					} else {
+						daysLeft = '';
+					}
+					if (itemEndDate > itemDate) {
+						chartHtml += `<div class='card text-center flat${upcomingDate}${passedDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString} से<br>${endDateString} तक</div></div>`;
+					} else {
+						chartHtml += `<div class='card text-center flat${upcomingDate}${passedDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString}<br>${itemDay}वार</div></div>`;
+					}
+				}
+			}
+		}
+		chartHtml += `</div>`;
+	}
+	return chartHtml;
+}
+
+function getRecentFestivals() {
+	getNirnayHtml(true);
+	return recentFestivals;
 }

@@ -16,15 +16,6 @@
 	<link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
 	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="theme-color" content="#ffffff">
-	<!-- remove this later when app released -->
-	<link rel="stylesheet" href="css/overlay.css">
-	<script src="js/overlay.js"></script>
-    <style>
-        @font-face {
-            font-family: kurale;
-            src: url(fonts/Kurale.ttf);
-        }
-    </style>
     <script src="js/pdfviewer.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -92,7 +83,6 @@
             }
         };
         function createBooks() {
-            startChecking();
             history.replaceState(null, null, ' ');
             inputBox.value = '';
             if (typeof isWebPSupported == "undefined") {
@@ -144,7 +134,7 @@
 			</span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarToggler01">
-			<a class="navbar-brand text-white" href="./">श्री रामहर्षण सेवा संस्थान, अयोध्या</a>
+			<a class="navbar-brand text-white" href="./">श्री हर्षण साहित्य</a>
 			<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 				<li class="nav-item">
 					<a class="nav-link" href="biography.html">परिचय</a>
@@ -201,17 +191,9 @@
     </div>
     <div id='pdfviewer'>
     </div>
-    <div class="overlay">
-		<div class="topleft">
-			<p>श्री हर्षण साहित्य </p>
-		</div>
-		<div class="middle">
-			<h1>COMING SOON </h1>
-		</div>
-		<div class="bottomleft">
-			<p>स्वामी जी का अनमोल साहित्य </p>
-		</div>
-	</div>
+    <footer>
+        श्री रामहर्षण सेवा संस्थान, अयोध्या
+    </footer>
     <script src="booklist.js"></script>
 </body>
 

@@ -39,7 +39,7 @@
 			</span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarToggler01">
-			<a class="navbar-brand text-white" href="./">श्री रामहर्षण सेवा संस्थान, अयोध्या</a>
+			<a class="navbar-brand text-white" href="./">श्री हर्षण साहित्य</a>
 			<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 				<li class="nav-item">
 					<a class="nav-link" href="biography.html">परिचय</a>
@@ -59,78 +59,26 @@
 			</ul>
 		</div>
 	</nav>
+	<div class="heading">
+		<h2>श्री वैष्णव एकादशी निर्णय-पत्रम्</h2>
+	</div>
 	<div id="chart" class="container-fluid">
 	</div>
+	<center>
+		<div>डाउनलोड करें</div>
+		<a href="https://archive.org/download/nirnay_patra/nirnay_patra_2021-2022.jpg" target="_blank">निर्णय पत्र २०२१ - २२</a>
+	</center>
 	<!-- footer -->
 	<footer>
+		श्री रामहर्षण सेवा संस्थान, अयोध्या
 	</footer>
 	<!-- end footer -->
 	<script src="js/jquery.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/nirnay_chart.js"></script>
 	<script type="text/javascript">
-	var chartHtml = '';
-	var days = ['रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
-	var sortedDates = {};
-	var sortedYears = new Set();
 	$(document).ready(function() {
-		var today = new Date();
-		today.setHours(0, 0, 0, 0); // today midnight
-		var isNext;
-		for(var itemName in finalDates) {
-			var item = finalDates[itemName];
-			if(item.date) {
-				for(var date of item.date) {
-					date = new Date(date);
-					sortedDates[date.getTime()] = sortedDates[date.getTime()] || [];
-					sortedYears.add(date.getFullYear());
-					sortedDates[date.getTime()].push({
-						name: itemName,
-						type: item.type,
-					});
-				}
-			}
-		}
-		sortedYears = Array.from(sortedYears);
-		sortedYears.sort();
-		var sortedDatesKeys = Object.keys(sortedDates);
-		sortedDatesKeys.sort();
-		for(var year of sortedYears) {
-			chartHtml += `<hr class="hr-text" data-content="${replaceDigitsToHindi(year)}"><div class="d-flex justify-content-center flex-wrap">`;
-			for(var dateStamp of sortedDatesKeys) {
-				var itemArr = sortedDates[dateStamp];
-				for(var item of itemArr) {
-					var itemDate = new Date(+dateStamp);
-					var passedDate = itemDate < today ? ' disabled' : '';
-					if(itemDate.getFullYear() == year) {
-						var itemName = item.name;
-						if(item.type == 'ekadashi') {
-							itemName += ' एकादशी';
-						}
-						var itemDay = days[itemDate.getDay()];
-						var upcomingDate = '';
-						var dateString = formatDate(itemDate);
-						var daysLeft = itemDate >= today ? Math.ceil((itemDate.getTime() - today.getTime()) / (1000 * 3600 * 24)) : -1;
-						var daysArr = ['आज', 'कल', 'परसों']
-						if(!isNext && daysLeft >= 0 && daysLeft < 31) {
-							upcomingDate = daysLeft != 0 ? ' bg-warning text-dark' : ' bg-info text-white';
-							if(daysLeft > 0) {
-								isNext = true;
-							}
-						}
-						if(daysLeft > 2 && daysLeft < 31) {
-							daysLeft += ' दिन बाद';
-						} else {
-							daysLeft = daysArr[daysLeft] || '';
-						}
-						daysLeft = daysLeft ? `(${daysLeft})` : '';
-						chartHtml += `<div class='card text-center flat${upcomingDate}${passedDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString}<br>${itemDay}वार</div></div>`;
-					}
-				}
-			}
-			chartHtml += `</div>`;
-		}
-		$('#chart').html(chartHtml);
+		$('#chart').html(getNirnayHtml());
 		setTimeout(function() {
 			$('.card.bg-warning')[0].scrollIntoView({
 				behavior: "smooth",
@@ -139,18 +87,6 @@
 			});
 		}, 500);
 	});
-	var arrMonths = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितम्बर", "अक्टूबर", "नवम्बर", "दिसम्बर"];
-	var arrDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
-
-	function formatDate(date) {
-		return replaceDigitsToHindi(`${date.getDate()} ${arrMonths[date.getMonth()]} ${date.getFullYear()}`);
-	}
-
-	function replaceDigitsToHindi(str) {
-		return str.toString().replace(/./g, function(char) {
-			return arrDigits[char] || char;
-		});
-	}
 	</script>
 </body>
 

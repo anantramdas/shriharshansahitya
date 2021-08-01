@@ -319,7 +319,8 @@ a.button:hover {
 .card.flat {
   font-size: 18px;
   width: 190px;
-  height: 120px;
+  height: auto;
+  min-height: 120px;
   margin: 15px;
   display: flex;
   justify-content: center;
@@ -632,3 +633,28 @@ input[type=number] {
   cursor: pointer;
 }
 /* search box */
+
+#playerWrap {
+  min-height: 315px;
+}
+#festivals {
+  display: flex;
+  justify-content: center;
+}
+.fest {
+  color: #000 !important;
+  display: inline-block;
+  text-align: center;
+  margin: 5px;
+  padding: 5px 8px;
+  border: 1px solid black;
+  min-width: 290px;
+  border-radius: 5px;
+}
+
+footer {
+  background: grey;
+  color: #fff;
+  padding: 25px 15px;
+  font-size: larger;
+}
