@@ -235,14 +235,56 @@ var finalDates = {
 		type: 'utsav',
 		date: ['Nov 13, 2021'],
 	},
+	'अयोध्या की चौदह कोशी परिक्रमा': {
+		type: 'utsav',
+		date: ['Nov 12, 2021'],
+		label: ['१०.२२ बजे(दिन) के बाद'],
+	},
+	'श्रीसिद्धिसदन विहारी विहारिणी जू का विवाहोत्सव': {
+		type: 'utsav',
+		date: ['Nov 24, 2021'],
+	},
+	'श्री सीताराम विवाहोत्सव समैया - श्रीअयोध्या जी': {
+		type: 'utsav',
+		date: ['Dec 5, 2021'],
+		enddate: ['Dec 10, 2021'],
+	},
+	'मकर संक्राति पुण्यकाल': {
+		type: 'utsav',
+		date: ['Jan 15, 2022'],
+	},
+	// 'पाटोत्सव - श्री अवधबिहारीबिहारिणीजू<br>(खेराकला कैलारस)': {
+	// 	type: 'utsav',
+	// 	date: ['Jan 21, 2022'],
+	// 	enddate: ['Jan 23, 2022'],
+	// },
 	'श्री रामानन्दाचार्य जयंती': {
 		type: 'utsav',
 		date: ['Jan 24, 2022'],
 	},
+	'श्री स्वामी जी का भंडारा': {
+		type: 'utsav',
+		date: ['Feb 1, 2022'],
+	},
+	// 'श्रीजानकीजीवनलालजू का पाटोत्सव (साजा में)': {
+	// 	type: 'utsav',
+	// 	date: ['Feb 3, 2022'],
+	// 	enddate: ['Feb 5, 2022'],
+	// },
 	'बसंत पंचमी': {
 		type: 'utsav',
 		date: ['Feb 05, 2022'],
 	},
+	// 'श्रीमिथिलाबिहारी विहारिणी जू का पाटोत्सव (शाहनगर)': {
+	// 	type: 'utsav',
+	// 	date: ['Feb 9, 2022'],
+	// 	enddate: ['Feb 11, 2022'],
+	// },
+	// 'श्री विवाहमण्डपबिहारी बिहारिणीजू का पाटोत्सव (छत्तरपुर म.प्र.)': {
+	// 	type: 'utsav',
+	// 	date: ['Feb 16, 2022'],
+	// 	enddate: ['Feb 18, 2022'],
+	// },
 	'श्री फागोत्सव': {
 		type: 'utsav',
 		date: ['Mar 18, 2022'],
@@ -279,6 +321,7 @@ function getNirnayHtml(isAskingRecent) {
 	for(var itemName in finalDates) {
 		var item = finalDates[itemName];
 		item.enddate = item.enddate || [];
+		item.label = item.label || [];
 		if(item.date) {
 			for(var index in item.date) {
 				date = new Date(item.date[index]);
@@ -288,6 +331,7 @@ function getNirnayHtml(isAskingRecent) {
 					name: itemName,
 					type: item.type,
 					endDate: new Date(item.enddate[index] || item.date[index]),
+					label: item.label[index],
 				});
 			}
 		}
@@ -341,7 +385,7 @@ function getNirnayHtml(isAskingRecent) {
 					if (itemEndDate > itemDate) {
 						chartHtml += `<div class='card text-center flat${upcomingDate}${passedDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString} से<br>${endDateString} तक</div></div>`;
 					} else {
-						chartHtml += `<div class='card text-center flat${upcomingDate}${passedDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString}<br>${itemDay}वार</div></div>`;
+						chartHtml += `<div class='card text-center flat${upcomingDate}${passedDate}'>${itemName}<div class='text-dark'><small class='d-block'>${daysLeft}</small>${dateString}<br>${item.label ? item.label : (itemDay + 'वार')}</div></div>`;
 					}
 				}
 			}
