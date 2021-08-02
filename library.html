@@ -23,13 +23,21 @@
     <script src="js/current-device.min.js"></script>
     <script>
         function bookActive(th) {
-            th.querySelector(".book__wrapper").classList.add("book-hover");
-            th.querySelector(".book__cover").classList.add("book-hover");
+            try {
+                th.querySelector(".book__wrapper").classList.add("book-hover");
+                th.querySelector(".book__cover").classList.add("book-hover");
+            } catch(e) {
+
+            }
         }
 
         function bookInactive(th) {
-            th.querySelector(".book__wrapper").classList.remove("book-hover");
-            th.querySelector(".book__cover").classList.remove("book-hover");
+            try {
+                th.querySelector(".book__wrapper").classList.remove("book-hover");
+                th.querySelector(".book__cover").classList.remove("book-hover");
+            } catch(e) {
+
+            }
         }
         (function () {
             window.bookElements = null;
