@@ -338,9 +338,9 @@ function openBook(bookName, book) {
 	    window.addEventListener("resize", function() {
 			resizeBook();
 		}, false);
-	    device.onChangeOrientation(function() {
-		    resizeBook();
-		});
+	 //    device.onChangeOrientation(function() {
+		//     resizeBook();
+		// });
 	}
 	window.isBookOpen = true;
 }
