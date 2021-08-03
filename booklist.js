@@ -187,7 +187,7 @@ var booksList = {
         pageCount: 150,
         title: 'वैष्णवीय विज्ञान',
         intro: `वेद काल से लेकर वर्तमान काल तक अनेक ग्रंथ लिखे जा चुके हैं। दास ने वैष्णवीय-विज्ञान लिखने का चापल्य वैष्णव समाज की कमी की पूर्ति के लिए नहीं किया है, अपितु सिन्धु को एक अंजली जल... समर्पित करने के समान कैंकर्य किया...`,
-        introAuthor: '— ग्रंथ लेखक<br>श्री राम हर्षण दास',
+        introAuthor: '— ग्रंथ लेखक<br>श्री रामहर्षण दास जी',
         w: 476,
         h: 751,
         ah: 811,
@@ -223,7 +223,7 @@ var booksList = {
         pageCount: 224,
         title: 'प्रपत्ति दर्शन',
         intro: `प्राचीन ग्रन्थों में वैष्णवाचार्यों से वर्णित शरणागति धर्म का ज्ञान मुमुक्षुओ को सुलभ ही रहा है किन्तु इन ग्रन्थों की प्रपत्ति परक वार्तायें सहजतया सबके समझ में नहीं आती, ... इसलिए दास ने स्वाश्रित प्रपन्न भक्तों के हितार्थ स्वरचित सरल सूत्रों की, सरल व्याख्या लिखकर, ...`,
-        introAuthor: '— श्री राम हर्षण दास',
+        introAuthor: '— श्री रामहर्षण दास जी',
         w: 476,
         h: 779,
         ah: 775,
@@ -295,7 +295,7 @@ var booksList = {
         pageCount: 97,
         title: 'विशुद्ध ब्रह्म-बोध',
         intro: `विद्या, वास्तव में ब्रह्मविद्या ही है, जो साक्षात् सच्चिदानन्द स्वरूपिणी है... अस्तु वही ब्रह्मज्ञान जो परम्परागत सद्गुरुओं से सदशिष्यों को प्रदान किया जाता था और किया जा रहा है, इस ग्रंथ में अपनी बुद्धि के अनुसार गुरु-शिष्य के संवाद रूप में प्रस्तुत किया गया है।`,
-        introAuthor: '— श्री राम हर्षण दास',
+        introAuthor: '— श्री रामहर्षण दास जी',
         w: 476,
         h: 699,
         ah: 779,
@@ -467,6 +467,7 @@ var booksList = {
 
 function bookTemplate(folderName, isMiniLayout) {
     var title = booksList[folderName]['title'];
+    var downloadLink = `https://archive.org/download/shri_harshan_sahitya/${title}.pdf`;
     var intro = booksList[folderName]['intro'];
     var introAuthor = booksList[folderName]['introAuthor'];
     var pageCount = booksList[folderName]['pageCount'];
@@ -501,7 +502,7 @@ function bookTemplate(folderName, isMiniLayout) {
         </div>
         <div class="button-panel">
             <a class="button" onclick="loadPdf('${folderName}');">पुस्तक पढ़ें</a>
-            <a class="button">डाउनलोड करें</a>
+            <a class="button" href="${downloadLink}">डाउनलोड करें</a>
         </div>
     </div>
 </div>`;
