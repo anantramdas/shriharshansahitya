@@ -57,6 +57,11 @@ function onPageNoBlur(_this) {
 	} else {
 		_this.value = currentPage;
 	}
+    viewer.css('overflow', 'scroll');
+}
+
+function onPageNoFocus(_this) {
+    viewer.css('overflow', 'hidden');
 }
 
 function onPageNoKeyUp(_this, event) {
@@ -70,7 +75,7 @@ function pdfControls() {
 	var tocIcon = booksToc[bookName] ? `<img onclick="openToc();" src="svg/list.svg"/>` : '';
     return `<div id='pdfcontrols' class='show'>
 	<div class="pageNo">
-		<div><input onkeyup="onPageNoKeyUp(this, event);" onblur="onPageNoBlur(this);" type="number" value="1">/${bookPageCount + 1}</div>
+		<div><input onkeyup="onPageNoKeyUp(this, event);" onfocus="onPageNoFocus(this);" onblur="onPageNoBlur(this);" type="number" value="1">/${bookPageCount + 1}</div>
 	</div>
 	<div class="title">
 		${bookTitle}
@@ -136,6 +141,7 @@ function toggleControls() {
 
 function scrollEnd(skipSave) {
 	window.scrollPos = viewer.scrollTop();
+    window.oldPos = (window.scrollPos || 0) / sumHeight;
     isScrolling = false;
     for (var index = Math.max(0, pageIndex - 1); index <= pageIndex + 5 && index <= bookPageCount; index++) {
     	var src = pdfPages[index].getAttribute('data-src');
@@ -216,7 +222,6 @@ function resizeBook() {
 	if (window.isBookOpen) {
 		var newPageWidth = getWindowWidth();
 	    if (Math.abs(pageWidth - newPageWidth) > 20) {
-	        var oldPos = (viewer.scrollTop() || 0) / sumHeight;
 	        window.pageWidth = newPageWidth;
 	        window.pageHeight = getWindowHeight();
 	        newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
@@ -225,11 +230,11 @@ function resizeBook() {
 		        var widthRatio = arrDim[index].width / newDim.width;
 		        sumHeight += (arrDim[index].height / widthRatio);
 		    }
-		    viewer[0].scrollTo(0, oldPos * sumHeight);
-	        $('#dimWrapper').css({
-	            'height': sumHeight + 'px',
-	            'width': newDim.width + 'px'
-	        });
+            $('#dimWrapper').css({
+                'height': sumHeight + 'px',
+                'width': newDim.width + 'px'
+            });
+            viewer[0].scrollTo(0, (window.oldPos || 0) * sumHeight);
 	    }
 	}
 }
