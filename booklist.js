@@ -485,7 +485,7 @@ function bookTemplate(folderName, isMiniLayout) {
         return `
             <div class="block ${folderName} book${isMini}" onclick="loadPdf('${folderName}');">
                 ${thumbnail}
-                <img class="download" src="svg/download.svg" />
+                <a onclick="event.stopPropagation();" href="${downloadLink}"><img class="download" src="svg/download.svg" /></a>
             </div>
         `;
     }
