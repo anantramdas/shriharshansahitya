@@ -16,11 +16,6 @@
 	<link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
 	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="theme-color" content="#ffffff">
-    <script src="js/pdfviewer.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="booktoc.js"></script>
-    <script src="js/current-device.min.js"></script>
     <script>
         function bookActive(th) {
             try {
@@ -69,7 +64,7 @@
                 }
             }
             
-            if (device.mobile() || device.tablet()) {
+            if (isMobile.phone || isMobile.tablet) {
                 window.addEventListener('scroll', function () {
                     clearTimeout(checkPosition);
                     timer = setTimeout(checkPosition, 700);
@@ -194,7 +189,7 @@
                 <img onclick="toggleList();" src="svg/list.svg"/>
             </div>
         </div>
-        <div id="bookShelf" class="d-flex justify-content-center flex-wrap"></div>
+        <div id="bookShelf" class="d-flex justify-content-center flex-wrap">Loading...<br></div>
         <div id="iconShelf" class="ico d-flex justify-content-center flex-wrap"></div>
     </div>
     <div id='pdfviewer'>
@@ -202,6 +197,11 @@
     <footer>
         श्री रामहर्षण सेवा संस्थान, अयोध्या
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/ismobilejs@1/dist/isMobile.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="js/pdfviewer.min.js"></script>
+    <script src="booktoc.js"></script>
     <script src="booklist.js"></script>
 </body>
 

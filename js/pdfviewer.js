@@ -247,6 +247,7 @@ function getDomain() {
 
 function openBook(bookName, book) {
 	currentTitleIndex = null;
+    var missingPages = book['missing'] = book['missing'] || {};
 	window.bookName = bookName;
 	window.bookWidth = book['w'];
     window.bookHeight = book['h'];
@@ -296,9 +297,16 @@ function openBook(bookName, book) {
     var domain = getDomain();
     var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
     var folder = !isLocalHost && isWebPSupported ? (book.folderWebP || bookName) : bookName;
-
-    for (var counter = 1; counter <= bookPageCount; counter++) {
+    var missingTotal = 0;
+    for (var pg in missingPages) {
+        missingTotal += missingPages[pg];
+    }
+    for (var counter = 1; counter <= bookPageCount - missingTotal; counter++) {
+        var missingPg = missingPages[counter] || 0;
         pages.push(`${source}/${folder}/${bookName}_${counter}.${ext}`);
+        for (var mIndex = 0; mIndex < missingPg; mIndex++) {
+            pages.push(`${source}/${folder}/${bookName}_${counter}.${mIndex + 1}.${ext}`);
+        }
         if (counter == 1) {
         	pages.push(`assets/not_for_sale.${ext}`);
         }
@@ -364,17 +372,19 @@ function closeBook() {
 // function getImageDim(folder, count) {
 //     var objh = [],
 //         objw = [];
+//     var winMapper = {};
 //     var allDone = 0;
 //     var sumh = 0,
 //         sumw = 0;
-//     for (var i = 1; i <= count; i++) {
+//     var basePath = window.location.href.replace('library.html', '');
+//     for (var i = 1, k = 1, j = 0; i <= count; i++) {
 //         var img = new Image();
 //         img.onload = function() {
 //             allDone++;
 //             sumh += this.naturalHeight;
 //             sumw += this.naturalWidth;
-//             objh[this.src.replace(/.*?(\d*)\.jpg/, '$1') - 1] = this.naturalHeight;
-//             objw[this.src.replace(/.*?(\d*)\.jpg/, '$1') - 1] = this.naturalWidth;
+//             objh[winMapper[this.src] - 1] = this.naturalHeight;
+//             objw[winMapper[this.src] - 1] = this.naturalWidth;
 //             if (allDone == count) {
 //                 var avgHeight = Math.ceil(sumh / count);
 //                 var avgWidth = Math.ceil(sumw / count);
@@ -385,7 +395,17 @@ function closeBook() {
 //                 console.log(`ah: ${avgHeight},\naw: ${avgWidth},\nhh: '${replaceRepeat(objh.join('|').replace(/\|-/g,'-'))}',\nww: '${replaceRepeat(objw.join('|').replace(/\|-/g,'-'))}',`);
 //             }
 //         };
-//         img.src = `${'books'}/${folder}/${folder}_${i}.jpg`;
+//         var lbl;
+//         var mis = booksList[folder]['missing'] || {};
+//         var misCount = mis[j] || 0;
+//         if (mis[j] && k <= misCount) {
+//             lbl = j + '.' + k;
+//             k++;
+//         } else {
+//             k = 1;
+//             lbl = j = j + 1;
+//         }
+//         winMapper[basePath + (img.src = `${'books'}/${folder}/${folder}_${lbl}.jpg`)] = i;
 //     }
 // }
 // function replaceRepeat(str) {
