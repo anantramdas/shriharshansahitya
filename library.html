@@ -71,6 +71,9 @@
                 });
                 window.addEventListener('resize', init);
             }
+            $(window).on('beforeunload', function() {
+                $(window).scrollTop(0);
+            });
             init();
             checkPosition();
         });
@@ -100,7 +103,8 @@
         var bookShelf, iconShelf;
         function startBookCreation() {
             var templateHtml = "", miniTemplateHtml = "";
-            for (const bookName in booksList) {
+            var booksArr = getSortedBooks();
+            for (var bookName of booksArr) {
                 if (Object.hasOwnProperty.call(booksList, bookName)) {
                     const bookObj = booksList[bookName];
                     templateHtml += bookTemplate(bookName);

@@ -245,7 +245,18 @@ function resizeBook() {
 //     return arrDomain[index];
 // }
 
+function getSortedBooks() {
+    return window.sortedBooks = window.sortedBooks || (window.localStorage['sort'] || Object.keys(booksList).join('|')).split('|');
+}
+
+function saveBookSortOrder(bookName) {
+    var sortedBooks = getSortedBooks();
+    sortedBooks.sort(function(x,y){ return x == bookName ? -1 : y == bookName ? 1 : 0; });
+    window.localStorage['sort'] = sortedBooks.join('|');
+}
+
 function openBook(bookName, book) {
+    saveBookSortOrder(bookName);
 	currentTitleIndex = null;
     var missingPages = book['missing'] = book['missing'] || {};
 	window.bookName = bookName;
