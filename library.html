@@ -34,7 +34,7 @@
 
             }
         }
-        (function () {
+        var initilizer = (function () {
             window.bookElements = null;
             var windowHeight, windowWidth;
             var timer = null;
@@ -73,7 +73,7 @@
             }
             init();
             checkPosition();
-        })();
+        });
     </script>
     <script>
         window.onpopstate = function() {
@@ -87,6 +87,7 @@
         };
         function createBooks() {
             history.replaceState(null, null, ' ');
+            initilizer();
             inputBox.value = '';
             if (typeof isWebPSupported == "undefined") {
                 checkWebPSupport(function() {

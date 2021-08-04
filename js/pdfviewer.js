@@ -316,7 +316,7 @@ function openBook(bookName, book) {
         sumHeight += (arrDim[index].newHeight = arrDim[index].height / widthRatio);
     }
     var imgSrc = `src='assets/${bookName}.${isWebPSupported ? 'webp' : 'jpg'}'`;
-    var isMobile = device.mobile();
+    var isMobile = isMobile.phone || isMobile.tablet;
     for (var index in pages) {
         var page = pages[index];
         var height = arrDim[index].newHeight;
