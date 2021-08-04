@@ -239,11 +239,11 @@ function resizeBook() {
 	}
 }
 
-function getDomain() {
-    var arrDomain = ['srhssa', 'anantramdas', 'shriharshansahitya'];
-    var index = new Date().getDate() % 3;
-    return arrDomain[index];
-}
+// function getDomain() {
+//     var arrDomain = ['srhssa', 'anantramdas', 'shriharshansahitya'];
+//     var index = new Date().getDate() % 3;
+//     return arrDomain[index];
+// }
 
 function openBook(bookName, book) {
 	currentTitleIndex = null;
@@ -294,8 +294,9 @@ function openBook(bookName, book) {
     var html = '';
     var pages = [];
     var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
-    var domain = getDomain();
-    var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
+    // var domain = getDomain();
+    // var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
+    var source = isLocalHost ? 'books' : isWebPSupported ? `https://shriharshanbooksoptimized.pages.dev/` : `https://shriharshanbooks.pages.dev/`;
     var folder = !isLocalHost && isWebPSupported ? (book.folderWebP || bookName) : bookName;
     var missingTotal = 0;
     for (var pg in missingPages) {
@@ -316,11 +317,11 @@ function openBook(bookName, book) {
         sumHeight += (arrDim[index].newHeight = arrDim[index].height / widthRatio);
     }
     var imgSrc = `src='assets/${bookName}.${isWebPSupported ? 'webp' : 'jpg'}'`;
-    var isMobile = isMobile.phone || isMobile.tablet;
+    var _isMobile = isMobile.phone || isMobile.tablet;
     for (var index in pages) {
         var page = pages[index];
         var height = arrDim[index].newHeight;
-        var tabIndex = isMobile ? '' : ` tabindex="${index}"`;
+        var tabIndex = _isMobile ? '' : ` tabindex="${index}"`;
         html += `<div class='pdfpage' style="flex:${height/sumHeight}"${tabIndex}>
     		<img ${imgSrc} data-src='${page}'/>
     	</div>`;
