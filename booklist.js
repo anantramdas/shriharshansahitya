@@ -471,7 +471,7 @@ var booksList = {
 
 function bookTemplate(folderName, isMiniLayout) {
     var title = booksList[folderName]['title'];
-    var downloadLink = `https://archive.org/download/shri_harshan_sahitya/${title}.pdf`;
+    var downloadLink = '#';//`https://archive.org/download/shri_harshan_sahitya/${title}.pdf`;
     var intro = booksList[folderName]['intro'];
     var introAuthor = booksList[folderName]['introAuthor'];
     var pageCount = booksList[folderName]['pageCount'];
