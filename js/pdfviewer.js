@@ -1,5 +1,5 @@
 var isWebPSupported;
-var viewer, pageNo, isScrolling, newDim, throttleTimeout, pdfPages, bookPageCount, bookTitle;
+var viewer, pageNo, isScrolling, newDim, throttleTimeout, pdfPages, bookPageCount, bookTotalPages, bookTitle;
 var pageIndex = 0;
 var arrDim = [];
 var sumHeight = 0;
@@ -75,7 +75,7 @@ function pdfControls() {
 	var tocIcon = booksToc[bookName] ? `<img onclick="openToc();" src="svg/list.svg"/>` : '';
     return `<div id='pdfcontrols' class='show'>
 	<div class="pageNo">
-		<div><input onkeyup="onPageNoKeyUp(this, event);" onfocus="onPageNoFocus(this);" onblur="onPageNoBlur(this);" type="number" value="1">/${bookPageCount + 1}</div>
+		<div><input onkeyup="onPageNoKeyUp(this, event);" onfocus="onPageNoFocus(this);" onblur="onPageNoBlur(this);" type="number" value="1">/${bookTotalPages + 1}</div>
 	</div>
 	<div class="title">
 		${bookTitle}
@@ -109,6 +109,7 @@ function renderToc() {
 }
 
 function openToc() {
+    return;
 	$("#tocMenu").addClass('show');
 	viewer.addClass('overflow-hidden');
 	var activeToc = $('.activeToc');
@@ -269,13 +270,14 @@ function openBook(bookName, book) {
     	width: expandRepeat(book['ww'])
     };
     bookPageCount = book['pageCount'];
+    bookTotalPages = book['totalPages'];
     bookTitle = book['title'];
     arrDim = [];
     pageIndex = 0;
     window.pageWidth = getWindowWidth();
     window.pageHeight = getWindowHeight();
     newDim = resize(bookWidth, bookHeight, pageWidth, pageHeight);
-    for (var i = 0; i < arrBookDim.height.length; i++) {
+    for (var i = 0; i < bookPageCount; i++) {
     	arrDim.push({
 		    width: +arrBookDim.width[i] + avgWidth,
 		    height: +arrBookDim.height[i] + avgHeight,
@@ -319,7 +321,8 @@ function openBook(bookName, book) {
         for (var mIndex = 0; mIndex < missingPg; mIndex++) {
             pages.push(`${source}/${folder}/${bookName}_${counter}.${mIndex + 1}.${ext}`);
         }
-        if (counter == 1) {
+        // if (counter == 1) {
+        if (counter == bookPageCount - missingTotal) {
         	pages.push(`assets/not_for_sale.${ext}`);
         }
     }
