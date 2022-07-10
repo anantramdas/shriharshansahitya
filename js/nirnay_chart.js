@@ -1,107 +1,99 @@
 var finalDates = {
 	'कामदा': {
 		type: 'ekadashi',
-		date: ['Apr 23, 2021'],
+		date: ['Apr 23, 2021', 'Apr 12, 2022'],
 	},
 	'बरुथिनी': {
 		type: 'ekadashi',
-		date: ['May 7, 2021'],
+		date: ['May 7, 2021', 'Apr 26, 2022'],
 	},
 	'मोहिनी': {
 		type: 'ekadashi',
-		date: ['May 23, 2021'],
+		date: ['May 23, 2021', 'May 12, 2022'],
 	},
-	'अचला': {
+	'अपरा': {
 		type: 'ekadashi',
-		date: ['Jun 6, 2021'],
+		date: ['Jun 6, 2021', 'May 26, 2022'],
 	},
 	'निर्जला': {
 		type: 'ekadashi',
-		date: ['Jun 21, 2021'],
+		date: ['Jun 21, 2021', 'Jun 10, 2022'],
 	},
 	'योगिनी': {
 		type: 'ekadashi',
-		date: ['Jul 5, 2021'],
+		date: ['Jul 5, 2021', 'Jun 24, 2022'],
 	},
 	'हरिशयनी': {
 		type: 'ekadashi',
-		date: ['Jul 20, 2021'],
+		date: ['Jul 20, 2021', 'Jul 10, 2022'],
 	},
 	'कामिका': {
 		type: 'ekadashi',
-		date: ['Aug 4, 2021'],
+		date: ['Aug 4, 2021', 'Jul 24, 2022'],
 	},
-	'पुत्रदा': {
+	'पुण्यदा': {
 		type: 'ekadashi',
-		date: ['Aug 18, 2021'],
+		date: ['Aug 18, 2021', 'Aug 08, 2022'],
 	},
 	'अजा': {
 		type: 'ekadashi',
-		date: ['Sep 3, 2021'],
+		date: ['Sep 3, 2021', 'Aug 23, 2022'],
 	},
 	'पद्मा': {
 		type: 'ekadashi',
-		date: ['Sep 17, 2021'],
+		date: ['Sep 17, 2021', 'Sep 06, 2022'],
 	},
 	'इन्दिरा': {
 		type: 'ekadashi',
-		date: ['Oct 2, 2021'],
+		date: ['Oct 2, 2021', 'Sep 21, 2022'],
 	},
 	'पापंकुशा': {
 		type: 'ekadashi',
-		date: ['Oct 16, 2021'],
+		date: ['Oct 16, 2021', 'Oct 06, 2022'],
 	},
-	'रम्भा': {
+	'रमा': {
 		type: 'ekadashi',
-		date: ['Nov 1, 2021'],
+		date: ['Nov 1, 2021', 'Oct 21, 2022'],
 	},
 	'प्रबोधिनी': {
 		type: 'ekadashi',
-		date: ['Nov 15, 2021'],
+		date: ['Nov 15, 2021', 'Nov 04, 2022'],
 	},
 	'उत्पन्ना': {
 		type: 'ekadashi',
-		date: ['Nov 30, 2021'],
+		date: ['Nov 30, 2021', 'Nov 20, 2022'],
 	},
 	'मोक्षदा': {
 		type: 'ekadashi',
-		date: ['Dec 14, 2021'],
+		date: ['Dec 14, 2021', 'Dec 04, 2022'],
 	},
 	'सफला': {
 		type: 'ekadashi',
-		date: ['Dec 30, 2021'],
+		date: ['Dec 30, 2021', 'Dec 19, 2022'],
 	},
 	'पुत्रदा': {
 		type: 'ekadashi',
-		date: ['Jan 13, 2022'],
+		date: ['Jan 13, 2022', 'Jan 02, 2023'],
 	},
 	'षट्तिला': {
 		type: 'ekadashi',
-		date: ['Jan 28, 2022'],
+		date: ['Jan 28, 2022', 'Jan 18, 2023'],
 	},
 	'जया': {
 		type: 'ekadashi',
-		date: ['Feb 12, 2022'],
+		date: ['Feb 12, 2022', 'Feb 01, 2023'],
 	},
 	'विजया': {
 		type: 'ekadashi',
-		date: ['Feb 27, 2022'],
+		date: ['Feb 27, 2022', 'Feb 16, 2023'],
 	},
 	'आमलकी': {
 		type: 'ekadashi',
-		date: ['Mar 14, 2022'],
+		date: ['Mar 14, 2022', 'Mar 03, 2023'],
 	},
 	'पापमोचनी': {
 		type: 'ekadashi',
-		date: ['Mar 28, 2022'],
-	},
-	'पद्मिनी': {
-		type: 'ekadashi',
-		date: [],
-	},
-	'परमा': {
-		type: 'ekadashi',
-		date: [],
+		date: ['Mar 28, 2022', 'Mar 18, 2022'],
 	},
 	'श्री राम नवमी': {
 		type: 'utsav',
