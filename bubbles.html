@@ -37,7 +37,7 @@
 			}
 			#score {
 				background: radial-gradient(circle 80px, #56ab2f, #a8e063);
-				right: 50px;
+				right: 3%;
 				top: 30px;
 				color: white;
 			}
@@ -51,6 +51,9 @@
 			var gems = ['सी', 'ता', 'रा', 'म'];
 			var answer = '';
 			function onBust(th, index) {
+				if (index == 0) {
+					answer = '';
+				}
 				answer += index;
 				if (answer.length > 3) {
 					if (answer == '0123') {
@@ -63,7 +66,7 @@
 			}
 			function createNode() {
 				var half = $(window).height() / 2;
-				var left = Math.floor((Math.random() * $(window).width()));
+				var left = Math.floor((Math.random() * ($(window).width() - 50)));
 				var top = half + Math.floor((Math.random() * half));
 				var duration = Math.max(10 * top/$(window).height(), 1);
 				var index = nid%4;
@@ -75,7 +78,7 @@
 				$('#node'+nodeId).remove();
 			}
 			$(document).ready(function(){
-				setInterval(createNode, 1500);
+				setInterval(createNode, 1200);
 			});
 		</script>
 	</head>
