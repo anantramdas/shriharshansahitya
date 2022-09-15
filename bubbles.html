@@ -7,6 +7,7 @@
 			html, body {
 				margin: 0;
 				padding: 0;
+				user-select: none;
 			}
 			@font-face {
 			  font-family: kurale;
@@ -31,6 +32,15 @@
   				background-repeat: no-repeat;
 				cursor: pointer;
 			}
+			#ans {
+				position: fixed;
+				bottom: 5px;
+				left: 15px;
+				padding: 5px 8px;
+				border-radius: 7px;
+				background: white;
+				opacity: 0.8;
+			}
 			.node {
 				background: radial-gradient(#fceabb, #f8b500);
 				animation: goTop linear forwards;
@@ -51,6 +61,7 @@
 			var gems = ['सी', 'ता', 'रा', 'म'];
 			var answer = '';
 			function onBust(th, index) {
+				var userAns = $("#ans");
 				if (index == 0) {
 					answer = '';
 				}
@@ -62,6 +73,11 @@
 					}
 					answer = '';
 				}
+				var ansHTML = '';
+				for (const c of answer) {
+					ansHTML += gems[c%4];
+				}
+				userAns.html(ansHTML);
 				$(th).remove();
 			}
 			function createNode() {
@@ -88,5 +104,6 @@
 		<div id="score" z-index="100000">
 			0
 		</div>
+		<div id="ans" z-index="100001"></div>
 	</body>
 </html>
