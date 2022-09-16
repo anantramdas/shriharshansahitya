@@ -8,6 +8,7 @@
 				margin: 0;
 				padding: 0;
 				user-select: none;
+				-webkit-tap-highlight-color: transparent;
 			}
 			@font-face {
 			  font-family: kurale;
@@ -19,7 +20,7 @@
 				background-color: #222;
 				font-family: kurale;
 			}
-			.node, #score {
+			.node {
 				position: fixed;
 				display: flex;
 				justify-content: center;
@@ -34,15 +35,38 @@
 			}
 			#ans {
 				position: fixed;
-				bottom: 5px;
-				left: 15px;
-				padding: 5px 8px;
-				border-radius: 7px;
-				background: white;
-				opacity: 0.8;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				left: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #909090;
+				font-family: kurale;
+				font-size: 35px;
+			}
+			#startGame {
+				width: 80px;
+				height: 80px;
+				border-radius: 10px;
+			}
+			.hidden {
+				display: none;
+				width: 100%;
+			}
+			.wrong {
+				color: red !important;
+			}
+			.right {
+				color: green !important;
 			}
 			.node {
 				animation: goTop linear forwards;
+				transition: opacity .5s;
+			}
+			.node.hide {
+				opacity: 0;
 			}
 			.node.bg0{
 				background: radial-gradient(#fff, #ff8ab2);
@@ -57,10 +81,14 @@
 				background: radial-gradient(#cfcfcf, #fff);
 			}
 			#score {
-				background: radial-gradient(circle 80px, #56ab2f, #a8e063);
-				right: 3%;
-				top: 30px;
 				color: white;
+			}
+			#score, #timer, #output {
+				display:block;
+				text-align: center;
+			}
+			#timer {
+				font-size: 20px;
 			}
 			@keyframes goTop {
 				to {top: -100px;}
@@ -71,25 +99,31 @@
 			var gems = ['सी', 'ता', 'रा', 'म'];
 			var answer = '';
 			var dividers, divides = [];
+			var startTime, timer;
 			function onBust(th, index) {
-				var userAns = $("#ans");
-				if (index == 0) {
-					answer = '';
+				var userAns = $("#output");
+				if (answer == '') {
+					userAns.removeClass("right");
 				}
 				answer += index;
-				if (answer.length > 3) {
-					if (answer == '0123') {
-						score++;
-						$("#score").html(score);
-					}
-					answer = '';
-				}
 				var ansHTML = '';
 				for (const c of answer) {
 					ansHTML += gems[c%4];
 				}
+				if (answer == '0123') {
+					score++;
+					$("#score").html(score);
+					answer = '';
+					userAns.addClass("right");
+				}
+				if (!"0123".startsWith(answer)) {
+					userAns.addClass('wrong');
+					answer = '';
+				} else{
+					userAns.removeClass('wrong');
+				}
 				userAns.html(ansHTML);
-				$(th).remove();
+				$(th).addClass('hide');
 			}
 			function shuffle(array) {
 				let counter = array.length;
@@ -120,17 +154,40 @@
 			function removeMe(nodeId) {
 				$('#node'+nodeId).remove();
 			}
-			$(document).ready(function(){
-				setInterval(createNode, 1200);
-			});
+			function onStart() {
+				$("#startGame").hide();
+				startTime = new Date();
+				timer = $("#timer");
+				$(".hidden").show();
+				setInterval(createNode, 700);
+				setInterval(updateTimer, 1000);
+			}
+			function updateTimer() {
+				var now = new Date().getTime();
+				var distance = now - startTime;
+
+				// Time calculations for days, hours, minutes and seconds
+				// var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+				var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+				var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+				timer.html(hours + "h "
+				+ minutes + "m " + seconds + "s ");
+			}
 		</script>
 	</head>
 	<body>
+		<div id="ans">
+			<div class="hidden">
+				<span id="output"><br></span>
+				<span id="score">0</span>
+				<span id="timer"></span>
+			</div>
+			<button id="startGame" onclick="onStart()">Play</button>
+			</div>
+		</div>
 		<div id="frame">
 		</div>
-		<div id="score" z-index="100000">
-			0
-		</div>
-		<div id="ans" z-index="100001"></div>
 	</body>
 </html>
