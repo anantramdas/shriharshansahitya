@@ -10,6 +10,20 @@
 				user-select: none;
 				-webkit-tap-highlight-color: transparent;
 			}
+			#msgBox {
+				background: rgba(0, 0, 0, 0.9);
+				color: white;
+				position: fixed;
+				display: none;
+				justify-content: center;
+				align-items: center;
+				font-size: 35px;
+				top:0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				font-weight: 500px;
+			}
 			@font-face {
 			  font-family: kurale;
 			  src: url(fonts/Kurale.ttf);
@@ -126,6 +140,17 @@
 			var answer = '';
 			var dividers, divides = [];
 			var startTime, timer, lastBubble;
+			var msgBox;
+			function showMsg(msg) {
+				msgBox = msgBox || $("#msgBox");
+				msgBox.html(msg);
+				msgBox.css('display', 'flex');
+				setTimeout(hideMsg, 7000);
+			}
+			function hideMsg() {
+				msgBox.hide();
+				msgBox.html('');
+			}
 			function onBust(th, index) {
 				if (th != lastBubble) {
 					lastBubble = th;
@@ -141,7 +166,7 @@
 					if (answer == '0123') {
 						score++;
 						if (score % 25 == 0) {
-							alert(chaupai.pop().replace("।","।\n").trim() + '॥');
+							showMsg(chaupai.pop().replace("।","।<br>").trim() + '॥');
 						}
 						$("#score").html(localStorage.bScore = score);
 						answer = '';
@@ -218,5 +243,6 @@
 		</div>
 		<div id="frame">
 		</div>
+		<div id="msgBox" z-index="100000" onclick="hideMsg()"></div>
 	</body>
 </html>
