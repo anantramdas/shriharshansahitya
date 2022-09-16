@@ -25,10 +25,10 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				font-size: 22px;
+				font-size: 25px;
 				font-weight: 500px;
-				width: 50px;
-				height: 50px;
+				width: 60px;
+				height: 60px;
 				border-radius: 50%;
   				background-repeat: no-repeat;
 				cursor: pointer;
@@ -69,16 +69,16 @@
 				opacity: 0;
 			}
 			.node.bg0{
-				background: radial-gradient(#fff, #ff8ab2);
+				background: radial-gradient(#fff, #f8b500);
 			}
 			.node.bg1{
-				background: radial-gradient(#fff, #77c3ff);
+				background: radial-gradient(#fff, #f8b500);
 			}
 			.node.bg2{
-				background: radial-gradient(#fceabb, #f8b500);
+				background: radial-gradient(#cfcfcf, #77c3ff);
 			}
 			.node.bg3{
-				background: radial-gradient(#cfcfcf, #fff);
+				background: radial-gradient(#cfcfcf, #77c3ff);
 			}
 			#score {
 				color: white;
@@ -142,11 +142,11 @@
 				var duration = 10 * top/h;
 				var index = nid%4;
 				if (divides.length == 0) {
-					dividers = parseInt($(window).width() / 50);
+					dividers = parseInt($(window).width() / 60);
 					divides = Array.from(Array(dividers).keys());
 					divides = shuffle(divides);
 				}
-				var left = divides.pop() * 50;
+				var left = divides.pop() * 60;
 				$('#frame').append( `<div id='node${nid}' class='node bg${index}' onclick='onBust(this, ${index})' style='animation-duration:${duration}s;top:${top}px;left:${left}px;' z-index=${nid}>${gems[index]}</div>` );
 				setTimeout(removeMe,duration * 1000, nid);
 				nid++;
