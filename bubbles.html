@@ -94,37 +94,8 @@
 				to {top: -100px;}
 			}
 		</style>
-		<script type="text/javascript">
-			var nid = 0, score = 0;
-			var gems = ['सी', 'ता', 'रा', 'म'];
-			var answer = '';
-			var dividers, divides = [];
-			var startTime, timer;
-			function onBust(th, index) {
-				var userAns = $("#output");
-				if (answer == '') {
-					userAns.removeClass("right");
-				}
-				answer += index;
-				var ansHTML = '';
-				for (const c of answer) {
-					ansHTML += gems[c%4];
-				}
-				if (answer == '0123') {
-					score++;
-					$("#score").html(score);
-					answer = '';
-					userAns.addClass("right");
-				}
-				if (!"0123".startsWith(answer)) {
-					userAns.addClass('wrong');
-					answer = '';
-				} else{
-					userAns.removeClass('wrong');
-				}
-				userAns.html(ansHTML);
-				$(th).addClass('hide');
-			}
+		<script>
+			var chaupai=`एहि महँ रघुपति नाम उदारा। अति पावन पुरान श्रुति सारा ॥मंगल भवन अमंगल हारी। उमा सहित जेहि जपत पुरारी ॥बंदउँ नाम राम रघुवर को। हेतु कृसानु भानु हिमकर को ॥बिधि हरि हरमय बेद प्रान सो। अगुन अनूपम गुन निधान सो ॥महामंत्र जोइ जपत महेसू। कासीं मुकुति हेतु उपदेसू ॥महिमा जासु जान गनराउ। प्रथम पूजिअत नाम प्रभाऊ ॥जान आदिकबि नाम प्रतापू। भयउ सुद्ध करि उलटा जापू ॥सहस नाम सम सुनि सिव बानी। जपि जेई पिय संग भवानी ॥हरषे हेतु हेरि हर ही को। किय भूषन तिय भूषन ती को ॥नाम प्रभाउ जान सिव नीको। कालकूट फलु दीन्ह अमी को ॥एकु छत्रु एकु मुकुटमनि सब बरननि पर जोउ। तुलसी रघुबर नाम के बरन बिराजत दोउ ॥जाना चहहिं गूढ़ गति जेऊ। नाम जीहँ जपि जानहिं तेऊ ॥साधक नाम जपहिं लय लाएँ। होहिं सिद्ध अनिमादिक पाएँ ॥जपहिं नामु जन आरत भारी। मिटहिं कुसंकट होहिं सुखारी ॥चहुँ जुग चहुँ श्रुति नाम प्रभाऊ। कलि बिसेषि नहिं आन उपाऊ ॥सकल कामना हीन जे राम भगति रस लीन। नाम सुप्रेम पियूष हद तिन्हहुँ किए मन मीन ॥नामु सप्रेम जपत अनयासा। भगत होहिं मुद मंगल बासा ॥राम एक तापस तिय तारी। नाम कोटि खल कुमति सुधारी ॥सहित दोष दुख दास दुरासा। दलइ नामु जिमि रबि निसि नासा ॥भंजेउ राम आपु भव चापू। भव भय भंजन नाम प्रतापू ॥दंडक बनु प्रभु कीन्ह सुहावन। जन मन अमित नाम किए पावन ॥निसिचर निकर दले रघुनंदन। नामु सकल कलि कलुष निकंदन ॥सबरी गीध सुसेवकनि सुगति दीन्हि रघुनाथ। नाम उधारे अमित खल बेद बिदित गुन गाथ ॥नामु लेत भवसिंधु सुखाहीं। करहु बिचारु सुजन मन माहीं ॥सेवक सुमिरत नामु सप्रीती। बिनु श्रम प्रबल मोह दलु जीती ॥फिरत सनेहँ मगन सुख अपनें। नाम प्रसाद सोच नहिं सपनें ॥नाम प्रसाद संभु अबिनासी। साजु अमंगल मंगल रासी ॥सुक सनकादि सिद्ध मुनि जोगी। नाम प्रसाद ब्रह्मसुख भोगी ॥नारद जानेउ नाम प्रतापू। जग प्रिय हरि हरि हर प्रिय आपू ॥नामु जपत प्रभु कीन्ह प्रसादू। भगत सिरोमनि भे प्रहलादू ॥ध्रुवँ सगलानि जपेउ हरि नाऊँ। पायउ अचल अनूपम ठाऊँ ॥सुमिरि पवनसुत पावन नामू। अपने बस करि राखे रामू ॥अपतु अजामिलु गजु गनिकाऊ। भए मुकुत हरि नाम प्रभाऊ ॥कहौं कहाँ लगि नाम बड़ाई। रामु न सकहिं नाम गुन गाई ॥ कलि केवल मल मूल मलीना। पाप पयोनिधि जन जन मीना ॥नाम कामतरु काल कराला। सुमिरत समन सकल जग जाला ॥राम नाम कलि अभिमत दाता। हित परलोक लोक पितु माता ॥नहिं कलि करम न भगति बिबेकू। राम नाम अवलंबन एकू ॥कालनेमि कलि कपट निधानू। नाम सुमति समरथ हनुमानू ॥ राम नाम नरकेसरी कनककसिपु कलिकाल। जापक जन प्रहलाद जिमि पालिहि दलि सुरसाल ॥रीझत राम सनेह निसोतें। को जग मंद मलिनमति मोतें ॥सठ सेवक की प्रीति रुचि रखिहहिं राम कृपालु। उपल किए जलजान जेहिं सचिव सुमति कपि भालु ॥`;
 			function shuffle(array) {
 				let counter = array.length;
 				while (counter > 0) {
@@ -135,6 +106,45 @@
 					array[index] = temp;
 				}
 				return array;
+			}
+			chaupai = shuffle(chaupai.split("॥"));
+		</script>
+		<script type="text/javascript">
+			var nid = 0, score = 0;
+			var gems = ['सी', 'ता', 'रा', 'म'];
+			var answer = '';
+			var dividers, divides = [];
+			var startTime, timer, lastBubble;
+			function onBust(th, index) {
+				if (th != lastBubble) {
+					lastBubble = th;
+					var userAns = $("#output");
+					if (answer == '') {
+						userAns.removeClass("right");
+					}
+					answer += index;
+					var ansHTML = '';
+					for (const c of answer) {
+						ansHTML += gems[c%4];
+					}
+					if (answer == '0123') {
+						score++;
+						if (score % 10 == 0) {
+							alert(chaupai.pop().replace("।","।\n"));
+						}
+						$("#score").html(localStorage.bScore = score);
+						answer = '';
+						userAns.addClass("right");
+					}
+					if (!"0123".startsWith(answer)) {
+						userAns.addClass('wrong');
+						answer = '';
+					} else{
+						userAns.removeClass('wrong');
+					}
+					userAns.html(ansHTML);
+					$(th).addClass('hide');
+				}
 			}
 			function createNode() {
 				var h = $(window).height();
@@ -147,7 +157,7 @@
 					divides = shuffle(divides);
 				}
 				var left = divides.pop() * 60;
-				$('#frame').append( `<div id='node${nid}' class='node bg${index}' onclick='onBust(this, ${index})' style='animation-duration:${duration}s;top:${top}px;left:${left}px;' z-index=${nid}>${gems[index]}</div>` );
+				$('#frame').append( `<div id='node${nid}' class='node bg${index}' onclick='onBust(this, ${index})' ontouchstart='onBust(this, ${index})' style='animation-duration:${duration}s;top:${top}px;left:${left}px;' z-index=${nid}>${gems[index]}</div>` );
 				setTimeout(removeMe,duration * 1000, nid);
 				nid++;
 			}
@@ -159,6 +169,7 @@
 				startTime = new Date();
 				timer = $("#timer");
 				$(".hidden").show();
+				$("#score").html(score = localStorage.bScore || 0);
 				setInterval(createNode, 700);
 				setInterval(updateTimer, 1000);
 			}
