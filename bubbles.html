@@ -16,7 +16,14 @@
 			#frame {
 				width: 100%;
 				height: 100%;
-				background: grey;
+				background-color: #222;
+				background-image:
+					radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+					radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+					radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+					radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+					background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
+					background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
 				font-family: kurale;
 			}
 			.node, #score {
@@ -42,8 +49,19 @@
 				opacity: 0.8;
 			}
 			.node {
-				background: radial-gradient(#fceabb, #f8b500);
 				animation: goTop linear forwards;
+			}
+			.node.bg0{
+				background: radial-gradient(#fff, #ff8ab2);
+			}
+			.node.bg1{
+				background: radial-gradient(#fff, #77c3ff);
+			}
+			.node.bg2{
+				background: radial-gradient(#fceabb, #f8b500);
+			}
+			.node.bg3{
+				background: radial-gradient(#cfcfcf, #fff);
 			}
 			#score {
 				background: radial-gradient(circle 80px, #56ab2f, #a8e063);
@@ -60,6 +78,7 @@
 			var nid = 0, score = 0;
 			var gems = ['सी', 'ता', 'रा', 'म'];
 			var answer = '';
+			var dividers, divides = [];
 			function onBust(th, index) {
 				var userAns = $("#ans");
 				if (index == 0) {
@@ -80,13 +99,29 @@
 				userAns.html(ansHTML);
 				$(th).remove();
 			}
+			function shuffle(array) {
+				let counter = array.length;
+				while (counter > 0) {
+					let index = Math.floor(Math.random() * counter);
+					counter--;
+					let temp = array[counter];
+					array[counter] = array[index];
+					array[index] = temp;
+				}
+				return array;
+			}
 			function createNode() {
-				var half = $(window).height() / 2;
-				var left = Math.floor((Math.random() * ($(window).width() - 50)));
-				var top = half + Math.floor((Math.random() * half));
-				var duration = Math.max(10 * top/$(window).height(), 1);
+				var h = $(window).height();
+				var top = h * 2 / 3 + Math.floor((Math.random() * h / 3));
+				var duration = 10 * top/h;
 				var index = nid%4;
-				$('#frame').append( `<div id='node${nid}' class='node' onclick='onBust(this, ${index})' style='animation-duration:${duration}s;top:${top}px;left:${left}px;' z-index=${nid}>${gems[index]}</div>` );
+				if (divides.length == 0) {
+					dividers = parseInt($(window).width() / 50);
+					divides = Array.from(Array(dividers).keys());
+					divides = shuffle(divides);
+				}
+				var left = divides.pop() * 50;
+				$('#frame').append( `<div id='node${nid}' class='node bg${index}' onclick='onBust(this, ${index})' style='animation-duration:${duration}s;top:${top}px;left:${left}px;' z-index=${nid}>${gems[index]}</div>` );
 				setTimeout(removeMe,duration * 1000, nid);
 				nid++;
 			}
@@ -98,7 +133,7 @@
 			});
 		</script>
 	</head>
-	<body>
+	<body ondragstart="return false;" ondrop="return false;">
 		<div id="frame">
 		</div>
 		<div id="score" z-index="100000">
