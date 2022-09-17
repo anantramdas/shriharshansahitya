@@ -17,6 +17,7 @@
 				display: none;
 				justify-content: center;
 				align-items: center;
+				text-align: center;
 				font-size: 35px;
 				top:0;
 				right: 0;
@@ -151,14 +152,14 @@
 				msgBox.hide();
 				msgBox.html('');
 			}
-			function onBust(th, index) {
+			function onBust(th, _index) {
 				if (th != lastBubble) {
 					lastBubble = th;
 					var userAns = $("#output");
 					if (answer == '') {
 						userAns.removeClass("right");
 					}
-					answer += index;
+					answer += _index;
 					var ansHTML = '';
 					for (const c of answer) {
 						ansHTML += gems[c%4];
