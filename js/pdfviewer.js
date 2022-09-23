@@ -109,7 +109,6 @@ function renderToc() {
 }
 
 function openToc() {
-    return;
 	$("#tocMenu").addClass('show');
 	viewer.addClass('overflow-hidden');
 	var activeToc = $('.activeToc');
@@ -321,8 +320,8 @@ function openBook(bookName, book) {
         for (var mIndex = 0; mIndex < missingPg; mIndex++) {
             pages.push(`${source}/${folder}/${bookName}_${counter}.${mIndex + 1}.${ext}`);
         }
-        // if (counter == 1) {
-        if (counter == bookPageCount - missingTotal) {
+        if (counter == 1) {
+        // if (counter == bookPageCount - missingTotal) {
         	pages.push(`assets/not_for_sale.${ext}`);
         }
     }
