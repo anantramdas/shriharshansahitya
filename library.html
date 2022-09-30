@@ -16,6 +16,11 @@
 	<link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
 	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="theme-color" content="#ffffff">
+    <style type="text/css">
+        .visitCount {
+            opacity: 0
+        }
+    </style>
     <script>
         function bookActive(th) {
             try {
@@ -162,7 +167,7 @@
 			</ul>
 		</div>
 	</nav>
-    <picture>
+    <picture ondblclick="document.querySelector('.visitCount').style.opacity=1">
         <source media="(max-width: 200px)" srcset="assets/banner/lib_w_200.webp">
         <source media="(max-width: 606px)" srcset="assets/banner/lib_w_606.webp">
         <source media="(max-width: 861px)" srcset="assets/banner/lib_w_861.webp">
@@ -201,6 +206,7 @@
     </div>
     <footer>
         श्री रामहर्षण सेवा संस्थान, अयोध्या
+        <img class="visitCount" src='https://counter.websiteout.net/compte.php?S=shriharshansahitya.in&C=36&D=0&N=0&M=0'/>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/ismobilejs@1/dist/isMobile.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
