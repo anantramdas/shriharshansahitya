@@ -1,0 +1,129 @@
+<html>
+	<head>
+		<title>Naam Dhan Blocks</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="js/jquery.min.js"></script>
+		<style type="text/css">
+			html, body {
+				margin: 0;
+				padding: 0;
+				user-select: none;
+				-webkit-tap-highlight-color: transparent;
+			}
+			@font-face {
+			  font-family: kurale;
+			  src: url(fonts/Kurale.ttf);
+			}
+			.block0,.block1 {
+				color: #f8b500;
+			}
+			.block2,.block3 {
+				color: #77c3ff;
+			}
+			#startGame {
+				z-index: 1000;
+				position: fixed;
+				left: 49%;
+				top: 49%;
+			}
+			#frame {
+				width: 100%;
+				height: 100%;
+				background-color: #222;
+				font-family: kurale;
+				position: fixed;
+				top: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			ul {
+				position: absolute;
+				bottom: 0;
+				padding: 0;
+				margin: 0;
+			}
+			li div {
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+				width: 40px;
+				height: 40px;
+				border: 1px solid white;
+				color: white;
+				font-size: larger;
+			}
+			.zeroOpacity {
+				color: transparent !important;
+			}
+		</style>
+		<script>
+			function shuffle(array) {
+				let counter = array.length;
+				while (counter > 0) {
+					let index = Math.floor(Math.random() * counter);
+					counter--;
+					let temp = array[counter];
+					array[counter] = array[index];
+					array[index] = temp;
+				}
+				return array;
+			}
+		</script>
+		<script type="text/javascript">
+			var nid = 0, score = 0;
+			var gems = ['सी', 'ता', 'रा', 'म'];
+			var ulArr;
+			var ans = [];
+			function isValid(k) {
+				if (k%4 == ans.length) {
+					ans.push(1);
+					if (ans.length == 4) {
+						ans.length = 0;
+					}
+					return true;
+				}
+				return false;
+			}
+			function bust(th, k, i) {
+				if (isValid(k)) {
+					ulArr[i] -= 1;
+					if (ulArr[i] == 0) {
+						$(th).parent().hide();
+					}
+					$(th).attr('onclick','').addClass('zeroOpacity');
+				}
+			}
+			
+			function onStart(th) {
+				th && th.remove();
+				var w = $(window).width();
+				var h = $(window).height();
+				var horizontal_blocks = (w/40) - ((w/40) % 4) - 1;
+				var vertical_blocks = (h/40) - ((h/40) % 4) - 1;
+				horizontal_blocks -= horizontal_blocks % 2;
+				vertical_blocks -= vertical_blocks % 2;
+				var keys = shuffle(Array.from(Array(horizontal_blocks * vertical_blocks).keys()));
+				var list = $("#frame>ul");
+				var l = 1;
+				ulArr = Array(vertical_blocks).fill(horizontal_blocks);
+				for(var i=0; i<vertical_blocks; i++) {
+					lst = "<li>"
+					for(var j=1; j<=horizontal_blocks; j++) {
+						var k = keys.pop();
+						lst += (`<div class="block${k%4}" onclick="bust(this,${k},${i})">${gems[k%4]}</div>`);
+					}
+					lst += "</li>";
+					list.append(lst);
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<button id="startGame" onclick="onStart(this)">Play</button>
+		<div id="frame">
+			<ul>
+			</ul>
+		</div>
+	</body>
+</html>
