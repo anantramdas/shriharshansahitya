@@ -56,6 +56,7 @@
 			}
 			.zeroOpacity {
 				color: transparent !important;
+				background: transparent !important;
 			}
 			#score {
 				position: fixed;
@@ -64,8 +65,37 @@
 				color: white;
 				padding: 5px 10px;
 			}
+			#timer {
+				position: fixed;
+				top: 0;
+				left: 0;
+				color: white;
+				padding: 5px 10px;
+			}
+			button {
+				font-family: kurale;
+				width: 50px;
+				height: 50px;
+			}
+			.highlight {
+				background: white;
+			}
 		</style>
 		<script>
+			var startTime, timer;
+			function updateTimer() {
+				var now = new Date().getTime();
+				var distance = now - startTime;
+
+				// Time calculations for days, hours, minutes and seconds
+				// var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+				var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+				var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+				timer.html(hours + "h "
+				+ minutes + "m " + seconds + "s ");
+			}
 			function shuffle(array) {
 				let counter = array.length;
 				while (counter > 0) {
@@ -84,6 +114,15 @@
 			var ulArr;
 			var ans = [];
 			var score=0;
+			function showHint(event) {
+				$(".block"+ans.length).addClass('highlight');
+				setTimeout(function() {
+					$(".highlight").removeClass('highlight');
+				}, 500);
+				event.preventDefault();
+				event.stopPropagation();
+				return false;
+			}
 			function isValid(k) {
 				if (k%4 == ans.length) {
 					ans.push(1);
@@ -107,6 +146,9 @@
 			
 			function onStart(th) {
 				th && th.remove();
+				timer = $("#timer");
+				startTime = new Date();
+				setInterval(updateTimer, 1000);
 				var w = $(window).width();
 				var h = $(window).height();
 				var horizontal_blocks = parseInt(w/47);
@@ -133,13 +175,15 @@
 			}
 		</script>
 	</head>
-	<body>
+	<body oncontextmenu="showHint(event)">
 		<button id="startGame" onclick="onStart(this)">Play</button>
 		<div id="frame">
 			<ul>
 			</ul>
 		</div>
 		<div id="score">
+		</div>
+		<div id="timer">
 		</div>
 	</body>
 </html>
