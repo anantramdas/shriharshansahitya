@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Minify</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86">
+        <script src="verses.js"></script>
+        <script src="tika.js"></script>
+        <script>
+            var arrWords = {};
+            var arrRepeatedWords = [];
+            var regEx = RegExp(/[ \(\),\n\t"-\.।|!?]/);
+            function compileVerse(verse, v) {
+                if (v > 0) {
+                    return verse = (verse || '').replace(/ */g, (a)=> a.length || '')
+                                    .replace(/॥.*॥/g, '');
+                } else {
+                    return verse;
+                }
+            }
+            function minify() {
+                for(var chIndex in chapters) {
+					var chContent = json[`ch${+chIndex+1}`];
+                    var verses = versesJson[`ch${+chIndex+1}`];
+                    if(!chContent) continue;
+                    var totalVerses = Math.max(...Object.keys(chContent));
+					var tika;
+					for (var v=0; v <= totalVerses; v++) {
+						tika = chContent[v];
+                        verses[v] = compileVerse(verses[v], v);
+						if (tika) {
+                            var arr = tika.split(regEx);
+                            for(var item of arr) {
+                                if (item.length > 1 && item.indexOf("<") == -1) {
+							        arrWords[item] = (arrWords[item] || 0) + 1;
+                                }
+                            }
+						}
+					}
+                }
+                for(var word in arrWords) {
+                    var count = arrWords[word];
+                    if (count > 1) {
+                        arrRepeatedWords.push(word);
+                    }
+                }
+                arrRepeatedWords.sort();
+                arrWords = {};
+                for(var wIndex in arrRepeatedWords) {
+                    var word = arrRepeatedWords[+wIndex];
+                    arrWords[word] = +wIndex + 3000; //3000 unicode value after Devnagri char range
+                }
+
+                for(var chIndex in chapters) {
+					var chContent = json[`ch${+chIndex+1}`];
+                    if(!chContent) continue;
+                    var totalVerses = Math.max(...Object.keys(chContent));
+					var tika;
+					for (var v=0; v <= totalVerses; v++) {
+						tika = chContent[v];
+						if (tika) {
+                            var arr = tika.split(regEx);
+                            var sIndex = 0;
+                            var newStr = "";
+                            for(var i in arr) {
+                                var word = arr[i];
+                                var substr = tika.substring(sIndex, tika.indexOf(word, sIndex));
+                                var hasSpaceBefore = substr[substr.length - 1] == ' ';
+                                var hasSpaceAfter = tika[sIndex + substr.length + word.length] == ' ';
+                                var sym = hasSpaceBefore ? (hasSpaceAfter ? 7000 : 4000) : 0;
+                                newStr += (hasSpaceBefore && arrWords[word] ? substr.substring(0, substr.length - 1) : substr) 
+                                        + (arrWords[word] ? String.fromCharCode(sym + arrWords[word]) : word);
+                                sIndex +=  word.length + substr.length + (sym >= 7000 && arrWords[word] ? 1 : 0);
+                            }
+                            chContent[v] = newStr + tika.substring(sIndex);
+						}
+					}
+                }
+                document.write('copy(JSON.stringify(json)); -> tika.min.js<br>');
+                document.write('copy(arrRepeatedWords.join(",")); -> tika.min.js<br>');
+                document.write('copy(JSON.stringify(versesJson).replace(/"(\\d*)":/g, \'$1:\')); -> verses.min.js<br>');
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="minify()">minify</button>
+    </body>
+</html>

@@ -1,0 +1,121 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>गीता ज्ञान</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86">
+		<style>
+			@font-face {
+			  font-family: Shobhika;
+			  src: url(Shobhika.otf);
+			}
+			body {
+				font-size: larger;
+				font-family: Shobhika;
+			}
+			.spA {
+				color: grey;
+			}
+			.spB {
+				color: darkviolet;
+			}
+			.spD {
+				color: brown;
+			}
+			.spS {
+				color: darkmagenta;
+			}
+			h1 {
+				text-align: center;
+			}
+			.verse {
+				font-weight: bold;
+				display: flex;
+    			flex-direction: column;
+    			align-items: center;
+			}
+			.tika {
+				text-align: justify;
+				/* display: none; */
+			}
+			.sp {
+				display: block;
+				text-align: center;
+				color: black;
+				font-size: larger;
+			}
+			.alignLeft {
+				align-items: flex-start;
+			}
+		</style>
+		<script src="tika.js"></script>
+		<script src="verses.js"></script>
+		<script>
+			var currentSpeaker = "D", spIndex=0;
+			function getVerse(vData, cls = 'sp') {
+				var prevSpeaker = currentSpeaker;
+				vData = vData
+				.replace("। ","।<br>")
+				.replaceAll(" ","&nbsp;")
+				.replace(/[ABDS]/, (c,i)=> `${spIndex = i ? "<br>" : ""}<b class="sp">${speakers[currentSpeaker = c || currentSpeaker]}</b><br>`);
+				vData = `<span><span class='${cls}${spIndex ? prevSpeaker : currentSpeaker}'>`+ vData.replace("।", "।</span>" +
+				"<span class='"+cls+ currentSpeaker +"'>") + "</span></span>";
+				return `<p class="verse">${vData
+				.replaceAll("\n","<br>")
+				.replaceAll("@","<br>&emsp;&emsp;&emsp;")}</p>`;
+			}
+			//copied from minify.html - it must be same there
+			var regEx = RegExp(/[ \(\),\n\t"-\.।|!?]/);
+			function compileVerse(verse, num) {
+				if (isVerseMini) {
+					return verse.replace(/\d/g,(n)=>" ".repeat(n))
+							+ "॥" + num.toString().replace(/\d/g,(n)=>String.fromCharCode(2406 + +n)) + "॥";
+				} else {
+					return verse;
+				}
+			}
+			function compileTika(str) {
+				var newStr = str;
+				if (isTikaMin && str) {
+					newStr = '';
+					for(var i in str) {
+						var code = str.charCodeAt(i);
+						var blockVal = code >= 10000 ? 10000 : (code >= 7000 ? 7000 : (code >= 3000 ? 3000 : 0));
+						newStr += blockVal ? (blockVal >= 7000 ? " " : "") + wordList[code - blockVal] + (blockVal >= 10000 ? " " : "") : str[i];
+					}
+				}
+				return newStr;
+			}
+			function onLoad() {
+				if (typeof wordList != "undefined" && wordList.length >= 3000) alert('limit increased above 3000, char block fails');
+				var strHtml = "";
+				for(var chIndex in chapters) {
+					var chap = chapters[chIndex];
+					var chContent = json[`ch${+chIndex+1}`];
+					var verses = versesJson[`ch${+chIndex+1}`];
+					if(!chContent) continue;
+					var totalVerses = Math.max(...Object.keys(chContent));
+					strHtml += (`<h1>${chap} अध्याय\n</h1>`);
+					var tika;
+					for (var v=1; v <= totalVerses; v++) {
+						tika = chContent[v] = compileTika(chContent[v]);
+						verses[v] = compileVerse(verses[v], v);
+						strHtml += `${getVerse(verses[v])}`;
+						if (tika) {
+							strHtml += `<p class="tika">&emsp;${tika.replaceAll('\n','<br>').replaceAll('\t','&emsp;')}</p>`;
+						}
+					}
+					tika = chContent[0] = compileTika(chContent[0]);
+					if (tika) {
+						strHtml += `<p class="verse alignLeft">${verses[0]} :-</p><p class="tika">&emsp;${tika}</p>`;
+					}
+					strHtml += `${getVerse(verses['end'], 'end')}`;
+				}
+				document.body.innerHTML = strHtml;
+			}
+		</script>
+	</head>
+	<body onload="onLoad()">
+		
+	</body>
+</html>
