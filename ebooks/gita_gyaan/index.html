@@ -56,12 +56,12 @@
 				var prevSpeaker = currentSpeaker;
 				vData = vData
 				.replace("। ","।<br>")
-				.replaceAll(" ","&nbsp;")
+				.replace(/ /g,"&nbsp;")
 				.replace(/[ABDS]/, (c,i)=> `${spIndex = i ? "<br>" : ""}<b class="sp">${speakers[currentSpeaker = c || currentSpeaker]}</b><br>`);
 				vData = `<span><span class='${cls}${spIndex ? prevSpeaker : currentSpeaker}'>`+ vData.replace("।", "।</span><span class='"+cls+ currentSpeaker +"'>") + "</span></span>";
 				return `<p class="verse">${vData
-				.replaceAll("\n","<br>")
-				.replaceAll("@","<br>&emsp;&emsp;&emsp;")}</p>`;
+				.replace(/\n/g,"<br>")
+				.replace(/@/g,"<br>&emsp;&emsp;&emsp;")}</p>`;
 			}
 			function onLoad() {
 				if (typeof wordList != "undefined" && wordList.length >= 3000) alert('limit increased above 3000, char block fails');
@@ -78,7 +78,7 @@
 						tika = chContent[v];
 						strHtml += `${getVerse(verses[v])}`;
 						if (tika) {
-							strHtml += `<p class="tika">&emsp;${tika.replaceAll('\n','<br>').replaceAll('\t','&emsp;')}</p>`;
+							strHtml += `<p class="tika">&emsp;${tika.replace(/\n/g,'<br>').replace(/\t/g,'&emsp;')}</p>`;
 						}
 					}
 					tika = chContent[0];
