@@ -58,8 +58,7 @@
 				.replace("। ","।<br>")
 				.replaceAll(" ","&nbsp;")
 				.replace(/[ABDS]/, (c,i)=> `${spIndex = i ? "<br>" : ""}<b class="sp">${speakers[currentSpeaker = c || currentSpeaker]}</b><br>`);
-				vData = `<span><span class='${cls}${spIndex ? prevSpeaker : currentSpeaker}'>`+ vData.replace("।", "।</span>" +
-				"<span class='"+cls+ currentSpeaker +"'>") + "</span></span>";
+				vData = `<span><span class='${cls}${spIndex ? prevSpeaker : currentSpeaker}'>`+ vData.replace("।", "।</span><span class='"+cls+ currentSpeaker +"'>") + "</span></span>";
 				return `<p class="verse">${vData
 				.replaceAll("\n","<br>")
 				.replaceAll("@","<br>&emsp;&emsp;&emsp;")}</p>`;
@@ -84,7 +83,7 @@
 					}
 					tika = chContent[0];
 					if (tika) {
-						strHtml += `<p class="verse alignLeft">${verses[0]} :-</p><p class="tika">&emsp;${tika}</p>`;
+						strHtml += `<p class="verse alignLeft">${verses[0] || 'तात्पर्यार्थ'} :-</p><p class="tika">&emsp;${tika}</p>`;
 					}
 					strHtml += `${getVerse(verses['end'], 'end')}`;
 				}
