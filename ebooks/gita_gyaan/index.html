@@ -48,8 +48,8 @@
 				align-items: flex-start;
 			}
 		</style>
-		<script src="tika.min.js"></script>
-		<script src="verses.min.js"></script>
+		<script src="tika.js"></script>
+		<script src="verses.js"></script>
 		<script>
 			var currentSpeaker = "D", spIndex=0;
 			function getVerse(vData, cls = 'sp') {
@@ -64,28 +64,6 @@
 				.replaceAll("\n","<br>")
 				.replaceAll("@","<br>&emsp;&emsp;&emsp;")}</p>`;
 			}
-			//copied from minify.html - it must be same there
-			var regEx = RegExp(/[ \(\),\n\t"-\.।|!?]/);
-			function compileVerse(verse, num) {
-				if (isVerseMini) {
-					return verse.replace(/\d/g,(n)=>" ".repeat(n))
-							+ "॥" + num.toString().replace(/\d/g,(n)=>String.fromCharCode(2406 + +n)) + "॥";
-				} else {
-					return verse;
-				}
-			}
-			function compileTika(str) {
-				var newStr = str;
-				if (isTikaMin && str) {
-					newStr = '';
-					for(var i in str) {
-						var code = str.charCodeAt(i);
-						var blockVal = code >= 10000 ? 10000 : (code >= 7000 ? 7000 : (code >= 3000 ? 3000 : 0));
-						newStr += blockVal ? (blockVal >= 7000 ? " " : "") + wordList[code - blockVal] + (blockVal >= 10000 ? " " : "") : str[i];
-					}
-				}
-				return newStr;
-			}
 			function onLoad() {
 				if (typeof wordList != "undefined" && wordList.length >= 3000) alert('limit increased above 3000, char block fails');
 				var strHtml = "";
@@ -98,14 +76,13 @@
 					strHtml += (`<h1>${chap} अध्याय\n</h1>`);
 					var tika;
 					for (var v=1; v <= totalVerses; v++) {
-						tika = chContent[v] = compileTika(chContent[v]);
-						verses[v] = compileVerse(verses[v], v);
+						tika = chContent[v];
 						strHtml += `${getVerse(verses[v])}`;
 						if (tika) {
 							strHtml += `<p class="tika">&emsp;${tika.replaceAll('\n','<br>').replaceAll('\t','&emsp;')}</p>`;
 						}
 					}
-					tika = chContent[0] = compileTika(chContent[0]);
+					tika = chContent[0];
 					if (tika) {
 						strHtml += `<p class="verse alignLeft">${verses[0]} :-</p><p class="tika">&emsp;${tika}</p>`;
 					}
