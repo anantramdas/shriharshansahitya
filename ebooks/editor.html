@@ -1,0 +1,173 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="raw_books/aatma_vishleshan.js"></script>
+	<script src="jquery.min.js"></script>
+	<script>
+		var makeBookHtml = function (bookSrc) {
+			return "<span>" + bookSrc.replaceAll("\n", "&para;<br>").split(" ").join("</span> <span>") + "</span>";
+		}
+	</script>
+	<script>
+		var removeBr = function(e) {
+			e && e.cancelable && e.preventDefault();
+			for (var i = startIndex; i <= endIndex ; i++) {
+				$(wordList[i]).html($(wordList[i]).html().replaceAll("¶<br>", ""));
+			}
+			clearSelection();
+		}
+		function extractText() {
+			return $("#content").text().replaceAll("¶","\n");
+		}
+		var txthistory = "";
+		var onUndo = function () {
+			if(confirm("Are you sure for this action?")) {
+				$("#content").html(makeBookHtml(txthistory));
+				$("#undoBtn").hide();
+			}
+		}
+		var onWordEdit = function() {
+			txthistory = extractText();
+			var val = "", wordCount = endIndex - startIndex + 1;
+			for (var i = startIndex; i <= endIndex; i++) {
+				val += $(wordList[i]).html();
+				val += i == endIndex ? "" : " ";
+			}
+			val = val.replaceAll('&nbsp;', ' ');
+			val = val.replaceAll('¶<br>', '!n');
+			val = prompt("", val);
+			if (val != null) {
+				val = val.replaceAll(' ', '&nbsp;').replaceAll('!n', '&para;<br>');
+				var newWords = val.split(' ');
+				if (wordCount == newWords.length) {
+					$(wordList[endIndex]).html(val);
+				} else {
+					for (var i = startIndex, j=0; i <= endIndex; i++, j++) {
+						$(wordList[i]).html(newWords[j] || "");
+					}
+					if (wordCount < newWords.length) {
+						var finalHtml = "";
+						for (var i = startIndex+wordCount; i <= startIndex+newWords.length; i++, j++) {
+							finalHtml += (newWords[j] || "");
+						}
+						$(wordList[i]).html(finalHtml);
+					}
+				}
+			}
+			if (txthistory) {
+				$("#undoBtn").show();
+			}
+			clearSelection();
+		}
+		var selStart = false, startIndex = -1, endIndex = -1;
+		var longPressTimer, longPressed;
+		var onWordSelectStart = function(e) {
+			e && e.cancelable && e.preventDefault();
+			selStart = true;
+			var wordIndex = wordList.index(this);
+			if (startIndex == -1) {
+				startIndex = wordIndex;
+			} else if (wordIndex < startIndex) {
+				$(wordList[startIndex]).removeClass("selected");
+				startIndex = wordIndex;
+			}
+			if (endIndex == -1) {
+				endIndex = startIndex;
+			}
+			longPressTimer = setTimeout(function() {
+				longPressed = true;
+			}, 500);
+		}
+		var onWordSelectEnd = function(e) {
+			e && e.cancelable && e.preventDefault();
+			clearTimeout(longPressTimer);
+			selStart = false;
+			endIndex = wordList.index(this);
+			if (!longPressed && $(this).hasClass('selected')) {
+				for (var i = startIndex; i <= endIndex ; i++) {
+					clearSelection();
+				}
+			} else if (startIndex == endIndex) {
+				$(this).addClass('selected');
+				removeNewLine.show();
+			} else {
+				for (var i = startIndex; i <= endIndex ; i++) {
+					$(wordList[i]).addClass('selected');
+					removeNewLine.show();
+				}
+			}
+			if (longPressed) {
+				setTimeout(onWordEdit, 10);
+				longPressed = false;
+			}
+		}
+		var wordList, removeNewLine;
+		function onLoad(text) {
+			if (typeof text == "string") {
+				text = makeBookHtml(text);
+			} else {
+				text = makeBookHtml(bookTxt);
+			}
+			$("#content").html(text);
+			removeNewLine = $("#removeNewLine");
+			wordList  = $("#content > span");
+			wordList.on('touchstart mousedown', onWordSelectStart);
+			wordList.on('touchend mouseup', onWordSelectEnd);
+			removeNewLine.click(removeBr);
+			$("#content").click(clearSelection);
+		}
+		var clearSelection = function () {
+			startIndex = endIndex = -1;
+			$(".selected").removeClass("selected");
+			removeNewLine.hide();
+		}
+	</script>
+	<style>
+		body {
+			user-select: none;
+		}
+		#content > span {
+			cursor: pointer;
+		}
+		#content > span.selected {
+			background-color: #ccc;
+		}
+		#removeNewLine,  #undoBtn {
+			display: none;
+			position: fixed;
+			bottom: 0;
+			right: 0;
+			font-size: 100px;
+			text-align: center;
+			width: 150px;
+			height: 150px;
+			color: white;
+			border-radius: 50%;
+			background-color: green;
+		}
+		#undoBtn {
+			background-color: red;
+			left: 0;
+			right: null;
+		}
+	</style>
+</head>
+<body onLoad="onLoad()">
+	<p id="content">
+	</p>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<div id="tools">
+		<div id="removeNewLine">
+			¶
+		</div>
+		<div id="undoBtn" onclick="onUndo()">
+			!
+		</div>
+	</div>
+</body>
+</html>
