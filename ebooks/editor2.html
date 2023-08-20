@@ -1,0 +1,107 @@
+<html>
+<head>
+	<!-- basic -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- mobile metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86">
+	<script src="raw_books/aatma_vishleshan.js"></script>
+	<script src="jquery.min.js"></script>
+	<script>
+		var chunkIndex = 0, bookChunks = [];
+		var onPageLoad = function () {
+			$("#content").keydown(onKeyDown);
+			$("#content").keyup(onKeyUp);
+			bookTxt = bookTxt.replaceAll("\n", "¶\n")
+			chunkify(bookTxt);
+			loadChunk();
+		}
+		var chunkify = function(text, charLength = 200) {
+			var len = parseInt(text.length / charLength);
+			var offset = 0, chunk = '', lastPos = 0;
+			for(var i = 0; i <= len; i++) {
+				offset = text.indexOf(" ", charLength + lastPos) - (charLength + lastPos);
+				offset = offset > -1 ? offset : text.length;
+				chunk = text.substr(lastPos, charLength + offset);
+				lastPos += chunk.length;
+				chunk = i ? chunk.substring(1) : chunk;
+				bookChunks.push(chunk);
+			}
+		}
+		var keyBackSpace = 8, keyEnter = 13, keyDel = 46, keySpace = 32;
+		var onKeyDown = function(e) {
+			console.log(e.keyCode);
+			if (e.keyCode == keyEnter) {
+				e.preventDefault();
+				insertAtCursor("¶\n");
+			}
+			e.stopPropagation();
+			//e.preventDefault();
+		}
+		var onKeyUp = function(e) {
+			
+			e.stopPropagation();
+		}
+		function insertAtCursor (textToInsert) {
+			// make sure we have focus in the right input
+			// input.focus();
+			// and just run the command
+			document.execCommand('insertText', false /*no UI*/, textToInsert);
+		}
+		$(document).ready(onPageLoad);
+	</script>
+	<script>
+		function loadChunk() {
+			$("#content").html(bookChunks[chunkIndex]);
+			$("#chunkNo").html(chunkIndex + 1);
+		}
+		function moveBack() {
+			if (chunkIndex > 0) {
+				chunkIndex--;
+				loadChunk();
+			}
+		}
+		function moveNext() {
+			if (chunkIndex < bookChunks.length - 1) {
+				chunkIndex++;
+				loadChunk();
+			}
+		}
+	</script>
+	<style>
+		#content {
+			width: 100%;
+			height: 50%;
+			font-size: 18px;
+		}
+		#tools {
+			display: flex;
+			flex-direction: row;
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 50px;
+		}
+		#prev, #next, #chunkNo {
+			border: 1px solid black;
+			width: 50%;
+			padding: 15px;
+			text-align: center;
+			font: 14pt Arial;
+		}
+		#chunkNo {
+			width: 20px;
+		}
+	</style>
+</head>
+<body>
+	<textarea id="content"></textarea>
+	<div id="tools">
+		<button id="prev" onclick="moveBack()">Back</button>
+		<div id="chunkNo">1</div>
+		<button id="next" onclick="moveNext()">Next</button>
+	</div>
+</body>
+</html>
