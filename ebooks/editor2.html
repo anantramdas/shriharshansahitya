@@ -32,10 +32,10 @@
 		var keyBackSpace = 8, keyEnter = 13, keyDel = 46, keySpace = 32;
 		var onKeyDown = function(e) {
 			console.log(e.keyCode);
-			if (e.keyCode == keyEnter) {
+			// if (e.keyCode == keyEnter) {
 				e.preventDefault();
-				insertAtCursor("¶\n");
-			}
+				insertAtCursor(e.keyCode);
+			// }
 			e.stopPropagation();
 			//e.preventDefault();
 		}
