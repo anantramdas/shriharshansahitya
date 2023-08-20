@@ -33,14 +33,14 @@
 		var onKeyDown = function(e) {
 			console.log(e.keyCode);
 			// if (e.keyCode == keyEnter) {
-				e.preventDefault();
-				insertAtCursor(e.keyCode);
+				
 			// }
 			e.stopPropagation();
 			//e.preventDefault();
 		}
 		var onKeyUp = function(e) {
-			
+			e.preventDefault();
+				insertAtCursor(e.keyCode);
 			e.stopPropagation();
 		}
 		function insertAtCursor (textToInsert) {
