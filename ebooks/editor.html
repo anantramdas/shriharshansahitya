@@ -116,6 +116,7 @@
 			removeNewLine.click(removeBr);
 			$("#content").click(clearSelection);
 		}
+		$(document).ready(function() {onLoad(bookTxt)});
 		var clearSelection = function () {
 			startIndex = endIndex = -1;
 			$(".selected").removeClass("selected");
@@ -152,7 +153,7 @@
 		}
 	</style>
 </head>
-<body onLoad="onLoad()">
+<body>
 	<p id="content">
 	</p>
 	<br>
