@@ -122,6 +122,12 @@
 			$(".selected").removeClass("selected");
 			removeNewLine.hide();
 		}
+
+		if(typeof String.prototype.replaceAll === "undefined") {
+			String.prototype.replaceAll = function(match, replace) {
+			return this.replace(new RegExp(match, 'g'), function() {return replace});
+			}
+		}
 	</script>
 	<style>
 		body {
