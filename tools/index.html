@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<title>My Tools</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script>
+			var tools = ['bubbles', 'blocks', 'phonetic typing'];
+			function showTools() {
+				var html = '';
+				for(var i in tools){
+					html += '<a href="'+tools[i]+'.html">'+tools[i]+'</a><br>';
+				}
+				document.body.innerHTML = html;
+			}
+		</script>
+		<style type="text/css">
+			html, body {
+				margin: 10;
+				padding: 10;
+				user-select: none;
+				font-family: kurale;
+				font-size: 20px;
+				-webkit-tap-highlight-color: transparent;
+			}
+		</style>
+	</head>
+	<body onload="showTools()">
+		
+	</body>
+</html>

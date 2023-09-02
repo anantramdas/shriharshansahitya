@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Phonetic Hindi typing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+body{color:#330066;background:#FFFFFF;font-family:Verdana;scrollbar-base-color:#33CC00;scrollbar-track-color:#F3FFCE;scrollbar-arrow-color:#FFFFFF;}p{margin:0.6em 0 0.6em 0;}#pa{margin:0.6em 2% 0.6em 15%;}.pt{font-size:75%;}.bf{cursor:pointer;font-size:12px;color:#666666;}textarea{scrollbar-base-color:transparent;scrollbar-track-color:transparent;font-family:Arial;color:#5B5B5B;}.bt td:hover {color:blue;}.lat { font-family:Chandas, Arial Unicode MS;}.deva { color:blue; font-family:Chandas, Arial Unicode MS; font-size:120%; }.cadr { width:90%; color:blue; font-family:Chandas, Arial Unicode MS; font-size:20pt; padding:5px; scrollbar-base-color:transparent; scrollbar-track-color:transparent; }.bt td{color:#CC0033;cursor:pointer;width:28pt;text-align:center;border:1px blue solid;border-radius:5px;font:20pt Chandas, Arial Unicode MS;}table{text-align:center}
+</style>
+<script type="text/javascript">
+function alpha(){var item=this.innerHTML;var i=document.conversion.saisie;i.focus();if(i.selectionStart != i.value.length){var s = i.selectionStart;i.value=i.value.slice(0,s)+item+i.value.slice(i.selectionEnd);i.scrollTop;i.selectionStart=s+item.length;i.selectionEnd=i.selectionStart;}else{i.value += item;}}
+function copy() { 
+document.querySelector('.cadr').select();
+document.execCommand("copy");
+}
+function transcrire(e) {
+if ((e.keyCode<37 || e.keyCode>40)){
+var i=document.conversion.saisie;
+var s=i.selectionStart;
+var len=i.value.length;
+i.value = i.value.replace(/x/g, "्").replace(/z/g, "ॅ").replace(/a/g, "अ").replace(/A/g, "आ").replace(/i/g, "इ").replace(/I/g, "ई").replace(/u/g, "उ").replace(/U/g, "ऊ").replace(/अअ/g, "आ").replace(/इइ/g, "ई").replace(/उउ/g, "ऊ").replace(/e/g, "ए").replace(/o/g, "ओ").replace(/अइ/g, "ऐ").replace(/अउ/g, "औ").replace(/िइ/g, "ी").replace(/ुउ/g, "ू").replace(/्अ/g, "\u200b").replace(/\u200bअ/g, "ा").replace(/\u200bइ/g, "ै").replace(/\u200bउ/g, "ौ").replace(/्आ/g, "ा").replace(/्इ/g, "ि").replace(/्ई/g, "ी").replace(/्उ/g, "ु").replace(/्ऊ/g, "ू").replace(/्ऋ/g, "ृ").replace(/्ॠ/g, "ॄ").replace(/्ऌ/g, "ॢ").replace(/्ॡ/g, "ॣ").replace(/्ए/g, "े").replace(/्ओ/g, "ो").replace(/् /g, " ").replace(/n/g, "न्").replace(/k/g, "क्").replace(/g/g, "ग्").replace(/c/g, "च्").replace(/j/g, "ज्").replace(/T/g, "ट्").replace(/D/g, "ड्").replace(/N/g, "ण्").replace(/t/g, "त्").replace(/d/g, "द्").replace(/p/g, "प्").replace(/b/g, "ब्").replace(/m/g, "म्").replace(/q/g, "क़्").replace(/Q/g, "क़्").replace(/क़्/g, "क़्").replace(/X/g, "ख़्").replace(/ख़्/g, "ख़्").replace(/Y/g, "ग़्").replace(/ग़्/g, "ग़्").replace(/Z/g, "ज़्").replace(/ज़्/g, "ज़्").replace(/[fF]/g, "फ़्").replace(/फ़्/g, "फ़्").replace(/R/g, "ड़्").replace(/ड़्/g, "ड़्").replace(/y/g, "य्").replace(/r/g, "र्").replace(/ऱ्/g, "ऱ्").replace(/l/g, "ल्").replace(/L/g, "ळ्").replace(/ऴ्/g, "ऴ्").replace(/v/g, "व्").replace(/w/g, "व्").replace(/h/g, "ह्").replace(/S/g, "ष्").replace(/s/g, "स्").replace(/G/g, "ङ्").replace(/J/g, "ञ्").replace(/ñ/g, "ञ्").replace(/न्ग्/g, "ङ्").replace(/न्ज्/g, "ञ्").replace(/क्ह्/g, "ख्").replace(/ग्ह्/g, "घ्").replace(/च्ह्/g, "छ्").replace(/ज्ह्/g, "झ्").replace(/ट्ह्/g, "ठ्").replace(/ड्ह्/g, "ढ्").replace(/त्ह्/g, "थ्").replace(/द्ह्/g, "ध्").replace(/त्ह्/g, "थ्").replace(/द्ह्/g, "ध्").replace(/प्ह्/g, "फ्").replace(/ब्ह्/g, "भ्").replace(/ड़्ह्/g, "ढ़्").replace(/ढ़्/g, "ढ़्").replace(/स्ह्/g, "श्").replace(/ç/g, "श्").replace(/्-र्/g, "ृ").replace(/-र्/g, "ऋ").replace(/ऋइ/g, "ॠ").replace(/ृइ/g, "ॄ").replace(/्-ल्/g, "ॢ").replace(/-ल्/g, "ऌ").replace(/ऌइ/g, "ॡ").replace(/ॢइ/g, "ॣ").replace(/\u200bक/g, "क").replace(/\u200bख/g, "ख").replace(/\u200bग/g, "ग").replace(/\u200bघ/g, "घ").replace(/\u200bङ/g, "ङ").replace(/\u200bच/g, "च").replace(/\u200bछ/g, "छ").replace(/\u200bज/g, "ज").replace(/\u200bझ/g, "झ").replace(/\u200bञ/g, "ञ").replace(/\u200bट/g, "ट").replace(/\u200bठ/g, "ठ").replace(/\u200bड/g, "ड").replace(/\u200bढ/g, "ढ").replace(/\u200bण/g, "ण").replace(/\u200bत/g, "त").replace(/\u200bथ/g, "थ").replace(/\u200bद/g, "द").replace(/\u200bध/g, "ध").replace(/\u200bन/g, "न").replace(/\u200bप/g, "प").replace(/\u200bफ/g, "फ").replace(/\u200bब/g, "ब").replace(/\u200bभ/g, "भ").replace(/\u200bम/g, "म").replace(/\u200bक़/g, "क़").replace(/\u200bख़/g, "ख़").replace(/\u200bग़/g, "ग़").replace(/\u200bज़/g, "ज़").replace(/\u200bड़/g, "ड़").replace(/\u200bढ़/g, "ढ़").replace(/\u200bफ़/g, "फ़").replace(/\u200bय/g, "य").replace(/\u200bर/g, "र").replace(/\u200bल/g, "ल").replace(/\u200bळ/g, "ळ").replace(/\u200bव/g, "व").replace(/\u200bह/g, "ह").replace(/\u200bश/g, "श").replace(/\u200bष/g, "ष").replace(/\u200bस/g, "स").replace(/\u200b /g, " ").replace(/\u200b\ं/g, "ं").replace(/\u200b\ः/g, "ः").replace(/M/g, "ं").replace(/्ं/g, "ं").replace(/ंं/g, "ँ").replace(/O/g, "ॐ").replace(/ॐं/g, "ॐ").replace(/H/g, "ः").replace(/्ः/g, "ः").replace(/=/g, "़").replace(/\'/g, "ऽ").replace(/’/g, "ऽ").replace(/\|/g, "।").replace(/\//g, "।").replace(/।।/g, "॥").replace(/0/g, "०").replace(/1/g, "१").replace(/2/g, "२").replace(/3/g, "३").replace(/4/g, "४").replace(/5/g, "५").replace(/6/g, "६").replace(/7/g, "७").replace(/8/g, "८").replace(/9/g, "९");
+i.selectionStart=i.selectionEnd=s+i.value.length-len;}
+}
+function loader()
+{
+	conversion.saisie.focus();
+	var i,j;
+	var v=document.getElementsByClassName("bt");
+	for(i=0;i<v.length;i++)
+	for(j=0;j<v[i].children.length;j++)
+			v[i].children[j].onclick=alpha;
+	
+
+}
+</script>
+</head>
+<body onLoad="loader();">
+<div align="center">
+<noscript>
+<font color="red">Warning! JavaScript is disabled</font><br>
+You must enable JavaScript in your web browser.
+</noscript>
+
+<br>
+<form name="conversion">
+<input class="bf" onClick="copy()" accesskey='c' value="Copy" type="button">
+&nbsp; &nbsp; 
+<input class="bf" onClick="reset();conversion.saisie.focus()" value="Clear All" type="button">
+&nbsp; &nbsp; 
+<input class="bf" onClick="if (conversion.saisie.rows==30){conversion.saisie.rows=3;this.value='Large frame';}else {conversion.saisie.rows=30;this.value='Small frame';}conversion.saisie.focus()" value="Large frame" type="button">
+<br>
+<textarea name="saisie" onKeyPress="setTimeout(transcrire, 100, event)" rows="3" class="cadr"></textarea>
+<table width="90%">
+<tbody  align="center"><tr valign="top"> 
+<td width="48%"> <table>
+<tbody><tr class="lat"> 
+<td>a</td>
+<td>ā</td>
+<td>i</td>
+<td>ī</td>
+<td>u</td>
+<td>ū</td>
+<td>ā</td>
+<td>i</td>
+<td>ī</td>
+<td>u</td>
+<td>ū</td>
+</tr>
+<tr class="bt"> 
+<td>अ</td>
+<td>आ</td>
+<td>इ</td>
+<td>ई</td>
+<td>उ</td>
+<td>ऊ</td>
+<td>ा</td>
+<td>ि</td>
+<td>ी</td>
+<td>ु</td>
+<td>ू</td>
+</tr>
+<tr class="lat"> 
+<td>ka</td>
+<td>kha</td>
+<td>ga</td>
+<td>gha</td>
+<td>nga</td>
+<td>ca</td>
+<td>cha</td>
+<td>ja</td>
+<td>jha</td>
+<td>ña</td>
+</tr>
+<tr class="bt">
+<td>क</td>
+<td>ख</td>
+<td>ग</td>
+<td>घ</td>
+<td>ङ</td> 
+<td>च</td>
+<td>छ</td>
+<td>ज</td>
+<td>झ</td>
+<td>ञ</td>
+</tr>
+<tr class="lat"> 
+<td>Ṭa</td>
+<td>Ṭha</td>
+<td>Ḍa</td>
+<td>Ḍha</td>
+<td>Ṇa</td>
+<td>ta</td>
+<td>tha</td>
+<td>da</td>
+<td>dha</td>
+<td>na</td>
+</tr>
+<tr class="bt"> 
+<td>ट</td>
+<td>ठ</td>
+<td>ड</td>
+<td>ढ</td>
+<td>ण</td>
+<td>त</td>
+<td>थ</td>
+<td>द</td>
+<td>ध</td>
+<td>न</td>
+</tr>
+<tr class="lat"> 
+<td>pa</td>
+<td>pha</td>
+<td>ba</td>
+<td>bha</td>
+<td>ma</td>
+<td>qa</td>
+<td>xa</td>
+<td>Ya</td>
+<td>Za</td>
+<td>Ṛa</td>
+<td>Ṛha</td>
+<td>fa</td>
+</tr>
+<tr class="bt"> 
+<td>प</td>
+<td>फ</td>
+<td>ब</td>
+<td>भ</td>
+<td>म</td>
+<td>क़</td>
+<td>ख़</td>
+<td>ग़</td>
+<td>ज़</td>
+<td>ड़</td>
+<td>ढ़</td>
+<td>फ़</td>
+</tr>
+<tr class="lat"> 
+<td>ya</td>
+<td>ra</td>
+<td>la</td>
+<td>Ḷa</td>
+<td>va</td>
+<td>ha</td>
+<td>sha</td>
+<td>Ṣa</td>
+<td>sa</td>
+</tr>
+<tr class="bt"> 
+<td>य</td>
+<td>र</td>
+<td>ल</td>
+<td>ळ</td>
+<td>व</td>
+<td>ह</td>
+<td>श</td>
+<td>ष</td>
+<td>स</td>
+<td>ऱ</td>
+<td>ऴ</td>
+</tr>
+</tbody></table></td>
+<td width="8%"><table>
+<tbody><tr>
+<td>x</td>
+<td>z</td>
+</tr><tr class="bt"> 
+<td title="virama">्</td>
+<td title="chandra">ॅ</td>
+</tr>
+</tbody></table></td>
+<td width="48%"><table>
+<tbody>
+<tr class="bt">
+</tr>
+</tbody></table>
+<table>
+<tbody  ><tr class="lat"> 
+<td>-r</td>
+<td>-ri</td>
+<td>-l</td>
+<td>-li</td>
+<td>e</td>
+<td>ai</td>
+<td>o</td>
+<td>au</td>
+</tr>
+<tr class="bt"> 
+<td>ऋ</td>
+<td>ॠ</td>
+<td>ऌ</td>
+<td>ॡ</td>
+<td>ए</td>
+<td>ऐ</td>
+<td>ओ</td>
+<td>औ</td>
+</tr>
+<tr class="bt"> 
+<td>ृ</td>
+<td>ॄ</td>
+<td>ॢ</td>
+<td>ॣ</td>
+<td>े</td>
+<td>ै</td>
+<td>ो</td>
+<td>ौ</td>
+</tr>
+</tbody></table>
+<br> <table>
+<tbody><tr class="bt"> 
+<td title="udatta">॑</td>
+<td title="anudatta">॒</td>
+<td title="accent grave">॓</td>
+<td title="accent aigu">॔</td>
+<td title="candra bindu">ँ</td>
+<td title="anusvara">ं</td>
+<td title="visarga">ः</td>
+<td title="nukta">़</td>
+</tr>
+</tbody></table>
+<br> <table>
+<tbody><tr class="bt"> 
+<td title="khadi pai(danda)">।</td>
+<td title="double danda">॥</td>
+<td title="avagraha">ऽ</td>
+<td title="symbole d'abréviation">॰</td>
+<td title="OM">ॐ</td>
+</tr>
+</tbody></table>
+<br> <table>
+<tbody><tr class="lat"> 
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+</tr>
+<tr class="bt"> 
+<td>०</td>
+<td>१</td>
+<td>२</td>
+<td>३</td>
+<td>४</td>
+<td>५</td>
+<td>६</td>
+<td>७</td>
+<td>८</td>
+<td>९</td>
+</tr>
+</tbody></table>
+<br>
+<table>
+<tbody><tr class="pt"> 
+<td colspan="2">candra</td>
+<td colspan="2">short</td>
+</tr>
+<tr class="lat"> 
+<td>e</td>
+<td>o</td>
+<td>e</td>
+<td>o</td>
+</tr>
+<tr class="bt"> 
+<td>ऍ</td>
+<td>ऑ</td>
+<td>ऎ</td>
+<td>ऒ</td>
+</tr>
+<tr class="bt"> 
+<td>ॉ</td>
+<td>ॆ</td>
+<td>ॊ</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table>
+</form>
+
+</div>
+
+</body></html>
