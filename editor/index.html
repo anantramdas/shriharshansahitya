@@ -77,7 +77,9 @@
             // id = 'shri_prem_ramayan'; //remove later
             id = 'atma_vishleshan'; //remove later
             activeBook = booksList[id];
-            openFullscreen(document.getElementById('screen'));
+            if (!isLocalHost) {
+                openFullscreen(document.getElementById('screen'));
+            }
             loadJS('raw_books/' + id + '.js', function () {
                 loadImages();
                 showImage(1);
@@ -123,11 +125,14 @@
             lines = lines || rawData[id].split('\n');
             renderLines();
         }
+        function onPageClick() {
+            document.getElementById('pageNumber').classList.add('disable');
+        }
         function renderLines() {
             var str = '';
             for (let lineIndex = (pageChunkNo - 1) * LINELIMIT; lineIndex < pageChunkNo * LINELIMIT && lineIndex < lines.length; lineIndex++) {
                 let line = lines[lineIndex];
-                let lineHtml = line ? `<div class='line' onclick='selectLine(${lineIndex})'>${line}</div><br>` : '<br class="line">';
+                let lineHtml = `<div class='line' onclick='selectLine(${lineIndex})'>${line}</div><br>`;
                 str += `<div class='linerow'><div class='lineNo'>${lineIndex + 1}</div>${lineHtml}</div>`;
             }
             if (pageChunkNo == 1) {
@@ -187,6 +192,7 @@
             cursor: pointer;
             border: 1px solid transparent;
             white-space: initial;
+            min-width: 30%;
         }
 
         .line:hover {
@@ -237,7 +243,10 @@
         }
 
         #loadMore {
-            margin: 15px 5px 80px 15px;
+            margin: 15px auto 80px auto;
+            display: flex;
+            padding: 5px 10px;
+            font-size: 15px;
         }
 
         .hidden {
@@ -312,13 +321,6 @@
             object-fit: contain;
         }
 
-        @media only screen and (max-width: 768px) {
-            #pageImage {
-                height: unset;
-                object-fit: unset;
-            }
-        }
-
         #page {
             overflow-y: scroll;
         }
@@ -347,12 +349,27 @@
 
         .scroll::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
         }
 
         .scroll::-webkit-scrollbar-thumb {
-            border-radius: 10px;
             -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
+        }
+
+        @media only screen and (max-width: 768px) {
+            #pageImage {
+                height: auto;
+                object-fit: cover;
+            }
+            .scroll::-webkit-scrollbar {
+                width: 2px;
+            }
+            .scroll::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.3);
+            }
+
+            .scroll::-webkit-scrollbar-thumb {
+                -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.8);
+            }
         }
 
         @keyframes rotation {
@@ -370,7 +387,7 @@
 <body onload="onLoad()">
     <div id="screen">
         <div id="page" class="scroll">
-            <img id="pageImage" alt="Book Page" style="background-color: white;" src="raw_books/book_icon.png" />
+            <img id="pageImage" alt="Book Page" onclick="onPageClick()" style="background-color: white;" src="raw_books/book_icon.png" />
             <div id="pageNumber" class="disable" onclick="this.classList.toggle('disable')"><span
                     onclick="event.stopPropagation();showImage(pageIndex - 1);">&larr;</span><span>1</span><span
                     onclick="event.stopPropagation();showImage(pageIndex + 1)">&rarr;</span></div>
