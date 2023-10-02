@@ -86,10 +86,10 @@
             }
             function selectLine(lineIndex) {
                 linesDiv = linesDiv || document.querySelectorAll('.line');
-                if (startLineIndex == -1)
+                if (startLineIndex == -1 || startLineIndex > lineIndex)
                     startLineIndex = lineIndex;
-                else if (startLineIndex >= lineIndex)
-                    startLineIndex = lineIndex;
+                else if (startLineIndex == lineIndex)
+                    startLineIndex = -1;
                 if (startLineIndex > -1) {
                     removeActives();
                     endLineIndex = lineIndex;
@@ -112,6 +112,14 @@
         <style>
             * {
                 font-family: 'Laila', sans-serif;
+                -webkit-touch-callout:none;
+                -webkit-user-select:none;
+                -khtml-user-select:none;
+                -moz-user-select:none;
+                -ms-user-select:none;
+                user-select:none;
+                -webkit-tap-highlight-color:rgba(0,0,0,0);
+                outline: none;
             }
             .line {
                 display: inline-block;
