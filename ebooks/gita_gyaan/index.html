@@ -88,6 +88,7 @@
 					strHtml += `${getVerse(verses['end'], 'end')}`;
 				}
 				document.body.innerHTML = strHtml;
+				// copy(strHtml) to create a static html page, to speed up page load, ignore json for desktop(only mobile)
 			}
 		</script>
 	</head>
