@@ -89,7 +89,7 @@
                 if (startLineIndex == -1)
                     startLineIndex = lineIndex;
                 else if (startLineIndex >= lineIndex)
-                    startLineIndex = -1;
+                    startLineIndex = lineIndex;
                 if (startLineIndex > -1) {
                     removeActives();
                     endLineIndex = lineIndex;
@@ -126,9 +126,6 @@
                 background-color: grey;
                 color: white;
             }
-            .activeLine:first {
-                background-color: blue;
-            }
             #bookContent {
                 font-size: 20px;
             }
@@ -142,7 +139,7 @@
                 color: red;
                 font-size: 17px;
                 font-family: Arial;
-                line-height: 2.1;
+                line-height: 2;
             }
             .bookBtn {
                 margin: 5px auto;
