@@ -57,7 +57,7 @@
                 var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
                 // var domain = getDomain();
                 // var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
-                var source = isLocalHost ? 'books' : isWebPSupported ? `https://shriharshanbooksoptimized.pages.dev/` : `https://shriharshanbooks.pages.dev/`;
+                var source = isLocalHost ? '../books' : isWebPSupported ? `https://shriharshanbooksoptimized.pages.dev/` : `https://shriharshanbooks.pages.dev/`;
                 var folder = !isLocalHost && isWebPSupported ? (activeBook.folderWebP || activeBook.id) : activeBook.id;
                 var missingPages = activeBook['missing'] = activeBook['missing'] || {};
                 var missingTotal = 0;
@@ -66,14 +66,10 @@
                 }
                 for (var counter = 1; counter <= activeBook.pageCount - missingTotal; counter++) {
                     var missingPg = missingPages[counter] || 0;
-                    pages.push(`../${source}/${folder}/${activeBook.id}_${counter}.${ext}`);
+                    pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${ext}`);
                     for (var mIndex = 0; mIndex < missingPg; mIndex++) {
-                        pages.push(`../${source}/${folder}/${activeBook.id}_${counter}.${mIndex + 1}.${ext}`);
+                        pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${mIndex + 1}.${ext}`);
                     }
-                    // if (counter == 1) {
-                    // // if (counter == bookPageCount - missingTotal) {
-                    //     pages.push(`../assets/not_for_sale.${ext}`);
-                    // }
                 }
             }
             function downloadBook(id) {
@@ -274,8 +270,9 @@
             }
             #pageImage {
                 width: 100%;
-                height: 100%;
-                object-fit: contain;
+            }
+            #page {
+                overflow-y: scroll;
             }
             @keyframes rotation {
                 0% {
@@ -290,7 +287,7 @@
     <body onload="onLoad()">
         <div id="screen">
             <div id="page">
-                <img id="pageImage" src="raw_books/book_icon.png" />
+                <img id="pageImage" style="background-color: white;" src="raw_books/book_icon.png" />
                 <div id="pageNumber" class="disable" onclick="this.classList.toggle('disable')"><span onclick="event.stopPropagation();showImage(pageIndex - 1);">&larr;</span><span>1</span><span onclick="event.stopPropagation();showImage(pageIndex + 1)">&rarr;</span></div>
             </div>
             <div id="editor">
