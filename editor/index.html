@@ -34,19 +34,71 @@
                     onError & onError();
                 });
             }
+            let isWebPSupported, activeBook;
+            var isLocalHost = location.host == "";
+            function checkWebPSupport(callback) {
+                // only lossy support is checked
+                var img = new Image();
+                img.onload = function() {
+                    isWebPSupported = img.width > 0 && img.height > 0;
+                    callback && callback();
+                };
+                img.onerror = function() {
+                    isWebPSupported = false;
+                    callback && callback();
+                };
+                img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA";
+            }
+
+            checkWebPSupport();
+            var pages, pageIndex;
+            function loadImages() {
+                pages = [];
+                var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
+                // var domain = getDomain();
+                // var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
+                var source = isLocalHost ? 'books' : isWebPSupported ? `https://shriharshanbooksoptimized.pages.dev/` : `https://shriharshanbooks.pages.dev/`;
+                var folder = !isLocalHost && isWebPSupported ? (activeBook.folderWebP || activeBook.id) : activeBook.id;
+                var missingPages = activeBook['missing'] = activeBook['missing'] || {};
+                var missingTotal = 0;
+                for (var pg in missingPages) {
+                    missingTotal += missingPages[pg];
+                }
+                for (var counter = 1; counter <= activeBook.pageCount - missingTotal; counter++) {
+                    var missingPg = missingPages[counter] || 0;
+                    pages.push(`../${source}/${folder}/${activeBook.id}_${counter}.${ext}`);
+                    for (var mIndex = 0; mIndex < missingPg; mIndex++) {
+                        pages.push(`../${source}/${folder}/${activeBook.id}_${counter}.${mIndex + 1}.${ext}`);
+                    }
+                    // if (counter == 1) {
+                    // // if (counter == bookPageCount - missingTotal) {
+                    //     pages.push(`../assets/not_for_sale.${ext}`);
+                    // }
+                }
+            }
             function downloadBook(id) {
+                // id = 'shri_prem_ramayan'; //remove later
                 id = 'atma_vishleshan'; //remove later
+                activeBook  = booksList[id];
                 loadJS('raw_books/' + id + '.js', function () {
+                    loadImages();
+                    showImage(1);
                     onBookLoad(id)
                 });
                 contentDiv.innerHTML = '<div id="loaderBox"><div id="loader"></div></div>';
+            }
+            function showImage(index) {
+                pageIndex = index;
+                document.getElementById('pageNumber').childNodes[1].innerHTML = pageIndex + 1;
+                document.getElementById('pageImage').src = pages[pageIndex];
             }
             function onLoad() {
                 var str = '';
                 contentDiv = document.getElementById('content');
                 for (var bookId in booksList) {
-                    var book = booksList[bookId];
-                    str += `<div id='${bookId}' class='bookBtn' onclick='downloadBook(this.id)'>${book.title}</div>`
+                    let _book = booksList[bookId];
+                    _book.id = bookId;
+                    str += `<div id='${bookId}' class='bookBtn' onclick='downloadBook(this.id)'>${_book.title}</div>`
                 }
                 contentDiv.innerHTML = str;
             }
@@ -119,7 +171,6 @@
                 -ms-user-select:none;
                 user-select:none;
                 -webkit-tap-highlight-color:rgba(0,0,0,0);
-                outline: none;
             }
             .line {
                 display: inline-block;
@@ -145,6 +196,7 @@
                 display: inline-block;
                 width: 30px;
                 color: red;
+                text-align: center;
                 font-size: 17px;
                 font-family: Arial;
                 line-height: 2;
@@ -179,6 +231,37 @@
                 align-self: center;
                 justify-content: center;
             }
+            html, body { height: 100%; padding: 0; margin: 0 }
+            #screen {
+                display: flex;
+                flex-direction: row;
+                height: 100%;
+            }
+            #screen > div {
+                flex: 1;
+                height: 100%;
+            }
+            #editor {
+                overflow-y: scroll;
+                border-left: 1px solid black;
+            }
+            #pageNumber {
+                position: absolute;
+                top: 0;
+                right: 51%;
+                font-size: 18px;
+                color: red;
+                min-width: 100px;
+            }
+            #pageNumber > span {
+                display: inline-block;
+                width: 20px;
+                padding: 5px;
+            }
+            #pageNumber.disable > span {
+                pointer-events: none;
+                color: transparent;
+            }
             #loader {
                 width: 48px;
                 height: 48px;
@@ -188,6 +271,11 @@
                 display: inline-block;
                 box-sizing: border-box;
                 animation: rotation 1s linear infinite;
+            }
+            #pageImage {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
             }
             @keyframes rotation {
                 0% {
@@ -200,7 +288,15 @@
         </style>           
     </head>
     <body onload="onLoad()">
-        <div id="content"></div>
-        <button id="loadMore" class="hidden" onclick="loadMoreLines()">Load more</button>
+        <div id="screen">
+            <div id="page">
+                <img id="pageImage" src="raw_books/book_icon.png" />
+                <div id="pageNumber" class="disable" onclick="this.classList.toggle('disable')"><span onclick="event.stopPropagation();showImage(pageIndex - 1);">&larr;</span><span>1</span><span onclick="event.stopPropagation();showImage(pageIndex + 1)">&rarr;</span></div>
+            </div>
+            <div id="editor">
+                <div id="content"></div>
+                <button id="loadMore" class="hidden" onclick="loadMoreLines()">Load more</button>
+            </div>
+        </div>
     </body>
 </html>
