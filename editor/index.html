@@ -1,299 +1,385 @@
 <html>
-    <head>
-        <!-- basic -->
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!-- mobile metas -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86">
-        <!-- site metas -->
-        <title>Editor</title>
-        <script type="text/javascript" src="../booklist.js"></script>
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Laila&display=swap');
-        </style>
-        <script>
-            const LINELIMIT = 20;
-            var rawData = {}; //contains books text
-            let contentDiv;
-            function loadJS(FILE_URL, onSuccess, onError, async = true) {
-                let scriptEle = document.createElement("script");
 
-                scriptEle.setAttribute("src", FILE_URL);
-                scriptEle.setAttribute("type", "text/javascript");
-                scriptEle.setAttribute("async", async);
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86">
+    <!-- site metas -->
+    <title>Editor</title>
+    <script type="text/javascript" src="../booklist.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Laila&display=swap');
+    </style>
+    <script>
+        const LINELIMIT = 20;
+        var rawData = {}; //contains books text
+        let contentDiv;
+        function loadJS(FILE_URL, onSuccess, onError, async = true) {
+            let scriptEle = document.createElement("script");
 
-                document.body.appendChild(scriptEle);
+            scriptEle.setAttribute("src", FILE_URL);
+            scriptEle.setAttribute("type", "text/javascript");
+            scriptEle.setAttribute("async", async);
 
-                // success event 
-                scriptEle.addEventListener("load", () => {
-                    onSuccess && onSuccess();
-                });
-                // error event
-                scriptEle.addEventListener("error", (ev) => {
-                    onError & onError();
-                });
-            }
-            let isWebPSupported, activeBook;
-            var isLocalHost = location.host == "";
-            function checkWebPSupport(callback) {
-                // only lossy support is checked
-                var img = new Image();
-                img.onload = function() {
-                    isWebPSupported = img.width > 0 && img.height > 0;
-                    callback && callback();
-                };
-                img.onerror = function() {
-                    isWebPSupported = false;
-                    callback && callback();
-                };
-                img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA";
-            }
+            document.body.appendChild(scriptEle);
 
-            checkWebPSupport();
-            var pages, pageIndex;
-            function loadImages() {
-                pages = [];
-                var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
-                // var domain = getDomain();
-                // var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
-                var source = isLocalHost ? '../books' : isWebPSupported ? `https://shriharshanbooksoptimized.pages.dev/` : `https://shriharshanbooks.pages.dev/`;
-                var folder = !isLocalHost && isWebPSupported ? (activeBook.folderWebP || activeBook.id) : activeBook.id;
-                var missingPages = activeBook['missing'] = activeBook['missing'] || {};
-                var missingTotal = 0;
-                for (var pg in missingPages) {
-                    missingTotal += missingPages[pg];
-                }
-                for (var counter = 1; counter <= activeBook.pageCount - missingTotal; counter++) {
-                    var missingPg = missingPages[counter] || 0;
-                    pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${ext}`);
-                    for (var mIndex = 0; mIndex < missingPg; mIndex++) {
-                        pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${mIndex + 1}.${ext}`);
-                    }
-                }
+            // success event 
+            scriptEle.addEventListener("load", () => {
+                onSuccess && onSuccess();
+            });
+            // error event
+            scriptEle.addEventListener("error", (ev) => {
+                onError & onError();
+            });
+        }
+        let isWebPSupported, activeBook;
+        var isLocalHost = location.host == "";
+        function checkWebPSupport(callback) {
+            // only lossy support is checked
+            var img = new Image();
+            img.onload = function () {
+                isWebPSupported = img.width > 0 && img.height > 0;
+                callback && callback();
+            };
+            img.onerror = function () {
+                isWebPSupported = false;
+                callback && callback();
+            };
+            img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA";
+        }
+
+        checkWebPSupport();
+        var pages, pageIndex;
+        function loadImages() {
+            pages = [];
+            var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
+            // var domain = getDomain();
+            // var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
+            var source = isLocalHost ? '../books' : isWebPSupported ? `https://shriharshanbooksoptimized.pages.dev/` : `https://shriharshanbooks.pages.dev/`;
+            var folder = !isLocalHost && isWebPSupported ? (activeBook.folderWebP || activeBook.id) : activeBook.id;
+            var missingPages = activeBook['missing'] = activeBook['missing'] || {};
+            var missingTotal = 0;
+            for (var pg in missingPages) {
+                missingTotal += missingPages[pg];
             }
-            function downloadBook(id) {
-                // id = 'shri_prem_ramayan'; //remove later
-                id = 'atma_vishleshan'; //remove later
-                activeBook  = booksList[id];
-                loadJS('raw_books/' + id + '.js', function () {
-                    loadImages();
-                    showImage(1);
-                    onBookLoad(id)
-                });
-                contentDiv.innerHTML = '<div id="loaderBox"><div id="loader"></div></div>';
-            }
-            function showImage(index) {
-                pageIndex = index;
-                document.getElementById('pageNumber').childNodes[1].innerHTML = pageIndex + 1;
-                document.getElementById('pageImage').src = pages[pageIndex];
-            }
-            function onLoad() {
-                var str = '';
-                contentDiv = document.getElementById('content');
-                for (var bookId in booksList) {
-                    let _book = booksList[bookId];
-                    _book.id = bookId;
-                    str += `<div id='${bookId}' class='bookBtn' onclick='downloadBook(this.id)'>${_book.title}</div>`
-                }
-                contentDiv.innerHTML = str;
-            }
-            let lines;
-            let linesDiv;
-            let startLineIndex;
-            let endLineIndex;
-            let pageChunkNo;
-            function onBookLoad(id) {
-                pageChunkNo = 1;
-                linesDiv = lines = null;
-                endLineIndex = startLineIndex = -1;
-                lines = lines || rawData[id].split('\n');
-                renderLines();
-            }
-            function renderLines() {
-                var str = '';
-                for (let lineIndex = (pageChunkNo - 1) * LINELIMIT; lineIndex < pageChunkNo * LINELIMIT && lineIndex < lines.length; lineIndex++) {
-                    let line = lines[lineIndex];
-                    let lineHtml = line ? `<div class='line' onclick='selectLine(${lineIndex})'>${line}</div><br>` : '<br class="line">';
-                    str += `<div class='linerow'><div class='lineNo'>${lineIndex + 1}</div>${lineHtml}</div>`;
-                }
-                if (pageChunkNo == 1) {
-                    contentDiv.innerHTML = `<div id="bookContent">${str}</div>`;
-                } else {
-                    contentDiv.innerHTML += `<div id="bookContent">${str}</div>`;
-                }
-                document.querySelector('#loadMore').classList.remove('hidden');
-            }
-            function loadMoreLines() {
-                pageChunkNo++;
-                renderLines();
-                linesDiv = document.querySelectorAll('.line');
-                if (pageChunkNo * LINELIMIT >= lines.length) {
-                    document.querySelector('#loadMore').classList.add('hidden');
+            for (var counter = 1; counter <= activeBook.pageCount - missingTotal; counter++) {
+                var missingPg = missingPages[counter] || 0;
+                pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${ext}`);
+                for (var mIndex = 0; mIndex < missingPg; mIndex++) {
+                    pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${mIndex + 1}.${ext}`);
                 }
             }
-            function selectLine(lineIndex) {
-                linesDiv = linesDiv || document.querySelectorAll('.line');
-                if (startLineIndex == -1 || startLineIndex > lineIndex)
-                    startLineIndex = lineIndex;
-                else if (startLineIndex == lineIndex)
-                    startLineIndex = -1;
-                if (startLineIndex > -1) {
-                    removeActives();
-                    endLineIndex = lineIndex;
-                    for (let i = startLineIndex; i <= endLineIndex; i++) {
-                        linesDiv[i].classList.add('activeLine');
-                    }
+        }
+        function downloadBook(id) {
+            // id = 'shri_prem_ramayan'; //remove later
+            id = 'atma_vishleshan'; //remove later
+            activeBook = booksList[id];
+            openFullscreen(document.getElementById('screen'));
+            loadJS('raw_books/' + id + '.js', function () {
+                loadImages();
+                showImage(1);
+                onBookLoad(id)
+            });
+            contentDiv.innerHTML = '<div id="loaderBox"><div id="loader"></div></div>';
+        }
+        function showImage(index) {
+            pageIndex = index;
+            document.getElementById('pageNumber').childNodes[1].innerHTML = pageIndex + 1;
+            document.getElementById('pageImage').src = pages[pageIndex];
+        }
+        function openFullscreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();     // Firefox
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();  // Safari
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();      // IE/Edge
+            }
+        }
+        function onLoad() {
+            var str = '';
+            contentDiv = document.getElementById('content');
+            for (var bookId in booksList) {
+                let _book = booksList[bookId];
+                _book.id = bookId;
+                str += `<div id='${bookId}' class='bookBtn' onclick='downloadBook(this.id)'>${_book.title}</div>`
+            }
+            contentDiv.innerHTML = str;
+        }
+        let lines;
+        let linesDiv;
+        let startLineIndex;
+        let endLineIndex;
+        let pageChunkNo;
+        function onBookLoad(id) {
+            pageChunkNo = 1;
+            linesDiv = lines = null;
+            endLineIndex = startLineIndex = -1;
+            lines = lines || rawData[id].split('\n');
+            renderLines();
+        }
+        function renderLines() {
+            var str = '';
+            for (let lineIndex = (pageChunkNo - 1) * LINELIMIT; lineIndex < pageChunkNo * LINELIMIT && lineIndex < lines.length; lineIndex++) {
+                let line = lines[lineIndex];
+                let lineHtml = line ? `<div class='line' onclick='selectLine(${lineIndex})'>${line}</div><br>` : '<br class="line">';
+                str += `<div class='linerow'><div class='lineNo'>${lineIndex + 1}</div>${lineHtml}</div>`;
+            }
+            if (pageChunkNo == 1) {
+                contentDiv.innerHTML = `<div id="bookContent">${str}</div>`;
+            } else {
+                contentDiv.innerHTML += `<div id="bookContent">${str}</div>`;
+            }
+            document.querySelector('#loadMore').classList.remove('hidden');
+        }
+        function loadMoreLines() {
+            pageChunkNo++;
+            renderLines();
+            linesDiv = document.querySelectorAll('.line');
+            if (pageChunkNo * LINELIMIT >= lines.length) {
+                document.querySelector('#loadMore').classList.add('hidden');
+            }
+        }
+        function selectLine(lineIndex) {
+            linesDiv = linesDiv || document.querySelectorAll('.line');
+            if (startLineIndex == -1 || startLineIndex > lineIndex)
+                startLineIndex = lineIndex;
+            else if (startLineIndex == lineIndex)
+                startLineIndex = -1;
+            if (startLineIndex > -1) {
+                removeActives();
+                endLineIndex = lineIndex;
+                for (let i = startLineIndex; i <= endLineIndex; i++) {
+                    linesDiv[i].classList.add('activeLine');
                 }
-                else {
-                    endLineIndex = -1;
-                    removeActives();
-                }
             }
-            function removeActives() {
-                var activeLines = document.querySelectorAll('.activeLine');
-                for(let line of activeLines) {
-                    line.classList.remove('activeLine');
-                }
+            else {
+                endLineIndex = -1;
+                removeActives();
             }
-        </script>
-        <style>
-            * {
-                font-family: 'Laila', sans-serif;
-                -webkit-touch-callout:none;
-                -webkit-user-select:none;
-                -khtml-user-select:none;
-                -moz-user-select:none;
-                -ms-user-select:none;
-                user-select:none;
-                -webkit-tap-highlight-color:rgba(0,0,0,0);
+        }
+        function removeActives() {
+            var activeLines = document.querySelectorAll('.activeLine');
+            for (let line of activeLines) {
+                line.classList.remove('activeLine');
             }
-            .line {
-                display: inline-block;
-                cursor: pointer;
-                border: 1px solid transparent;
-                white-space: initial;
-            }
-            .line:hover {
-                border-color: black;
-            }
-            .activeLine {
-                background-color: grey;
-                color: white;
-            }
-            #bookContent {
-                font-size: 20px;
-            }
-            .linerow {
-                display: flex;
-                white-space: nowrap;
-            }
-            .lineNo {
-                display: inline-block;
-                width: 30px;
-                color: red;
-                text-align: center;
-                font-size: 17px;
-                font-family: Arial;
-                line-height: 2;
-            }
-            .bookBtn {
-                margin: 5px auto;
-                padding: 10px 8px;
-                background-color: #4c4040;
-                width: 320px;
-                border: 1px solid transparent;
-                font-size: 20px;
-                box-sizing: border-box;
-                text-align: center;
-                font-weight: 600;
-                color: #fff;
-                cursor: pointer;
-            }
-            .bookBtn:hover {
-                background-color: #cdc1c1;
-                color: rgb(17, 39, 240);
-            }
-            #loadMore {
-                margin: 15px 5px 80px 15px;
-            }
-            .hidden {
-                visibility: hidden;
-            }
-            #loaderBox {
-                display: flex;
-                height: 100%;
-                align-items: center;
-                align-self: center;
-                justify-content: center;
-            }
-            html, body { height: 100%; padding: 0; margin: 0 }
-            #screen {
-                display: flex;
-                flex-direction: row;
-                height: 100%;
-            }
-            #screen > div {
-                flex: 1;
-                height: 100%;
-            }
-            #editor {
-                overflow-y: scroll;
-                border-left: 1px solid black;
-            }
-            #pageNumber {
-                position: absolute;
-                top: 0;
-                right: 51%;
-                font-size: 18px;
-                color: red;
-                min-width: 100px;
-            }
-            #pageNumber > span {
-                display: inline-block;
-                width: 20px;
-                padding: 5px;
-            }
-            #pageNumber.disable > span {
-                pointer-events: none;
-                color: transparent;
-            }
-            #loader {
-                width: 48px;
-                height: 48px;
-                border: 5px solid #000;
-                border-bottom-color: transparent;
-                border-radius: 50%;
-                display: inline-block;
-                box-sizing: border-box;
-                animation: rotation 1s linear infinite;
-            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Laila', sans-serif;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        .line {
+            display: inline-block;
+            cursor: pointer;
+            border: 1px solid transparent;
+            white-space: initial;
+        }
+
+        .line:hover {
+            border-color: black;
+        }
+
+        .activeLine {
+            background-color: grey;
+            color: white;
+        }
+
+        #bookContent {
+            font-size: 20px;
+        }
+
+        .linerow {
+            display: flex;
+            white-space: nowrap;
+        }
+
+        .lineNo {
+            display: inline-block;
+            width: 30px;
+            color: red;
+            text-align: center;
+            font-size: 17px;
+            font-family: Arial;
+            line-height: 2;
+        }
+
+        .bookBtn {
+            margin: 5px auto;
+            padding: 10px 8px;
+            background-color: #4c4040;
+            width: 320px;
+            border: 1px solid transparent;
+            font-size: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .bookBtn:hover {
+            background-color: #cdc1c1;
+            color: rgb(17, 39, 240);
+        }
+
+        #loadMore {
+            margin: 15px 5px 80px 15px;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+
+        #loaderBox {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            align-self: center;
+            justify-content: center;
+        }
+
+        html,
+        body {
+            height: 100%;
+            padding: 0;
+            margin: 0
+        }
+
+        #screen {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+        }
+
+        #screen>div {
+            flex: 1;
+            height: 100%;
+        }
+
+        #editor {
+            overflow-y: scroll;
+            border-left: 1px solid black;
+        }
+
+        #pageNumber {
+            position: absolute;
+            top: 0;
+            right: 51%;
+            font-size: 18px;
+            color: red;
+            min-width: 100px;
+        }
+
+        #pageNumber>span {
+            display: inline-block;
+            width: 20px;
+            padding: 5px;
+        }
+
+        #pageNumber.disable>span {
+            pointer-events: none;
+            color: transparent;
+        }
+
+        #loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #000;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        #pageImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @media only screen and (max-width: 768px) {
             #pageImage {
-                width: 100%;
+                height: unset;
+                object-fit: unset;
             }
-            #page {
-                overflow-y: scroll;
+        }
+
+        #page {
+            overflow-y: scroll;
+        }
+
+        :-webkit-full-screen {
+            background-color: white;
+        }
+
+        /* IE11 */
+        :-ms-fullscreen {
+            background-color: white;
+        }
+
+        /* Standard syntax */
+        :fullscreen {
+            background-color: white;
+        }
+
+        .scroll {
+            overflow-y: scroll;
+        }
+
+        .scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .scroll::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .scroll::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
             }
-            @keyframes rotation {
-                0% {
-                    transform: rotate(0deg);
-                }
-                100% {
-                    transform: rotate(360deg);
-                }
-            } 
-        </style>           
-    </head>
-    <body onload="onLoad()">
-        <div id="screen">
-            <div id="page">
-                <img id="pageImage" style="background-color: white;" src="raw_books/book_icon.png" />
-                <div id="pageNumber" class="disable" onclick="this.classList.toggle('disable')"><span onclick="event.stopPropagation();showImage(pageIndex - 1);">&larr;</span><span>1</span><span onclick="event.stopPropagation();showImage(pageIndex + 1)">&rarr;</span></div>
-            </div>
-            <div id="editor">
-                <div id="content"></div>
-                <button id="loadMore" class="hidden" onclick="loadMoreLines()">Load more</button>
-            </div>
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body onload="onLoad()">
+    <div id="screen">
+        <div id="page" class="scroll">
+            <img id="pageImage" alt="Book Page" style="background-color: white;" src="raw_books/book_icon.png" />
+            <div id="pageNumber" class="disable" onclick="this.classList.toggle('disable')"><span
+                    onclick="event.stopPropagation();showImage(pageIndex - 1);">&larr;</span><span>1</span><span
+                    onclick="event.stopPropagation();showImage(pageIndex + 1)">&rarr;</span></div>
         </div>
-    </body>
+        <div id="editor" class="scroll">
+            <div id="content"></div>
+            <button id="loadMore" class="hidden" onclick="loadMoreLines()">Load more</button>
+        </div>
+    </div>
+</body>
+
 </html>
