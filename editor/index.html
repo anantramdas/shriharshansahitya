@@ -21,79 +21,14 @@
         let contentDiv;
         let pageImage, movePrev, moveNext, loadMore;
         let lines;
-        let linesDiv;
         let startLineIndex;
         let lineMap;
         let endLineIndex;
         let pageChunkNo;
+        let textRange;
         var pages, pageIndex;
 
-        function downloadBook(id) {
-            // id = 'shri_prem_ramayan'; //remove later
-            id = 'atma_vishleshan'; //remove later
-            activeBook = booksList[id];
-            lineMap = {};
-            if (!isLocalHost) {
-                openFullscreen();
-            }
-            loadJS('raw_books/' + id + '.js', function () {
-                pages = loadImages();
-                showImage(1);
-                onBookLoad(id)
-            });
-            contentDiv.innerHTML = '<div id="loaderBox"><div id="loader"></div></div>';
-        }
-        function showImage(index) {
-            pageIndex = index;
-            //pageNumber.childNodes[1].innerHTML = pageIndex + 1;
-            pageImage.src = pages[pageIndex];
-        }
-
-        function moveTo(index) {
-            if (index < 0) {
-                alert('First Page');
-            } else if (index >= pages.length) {
-                alert('Last Page');
-            } else {
-                showImage(index);
-                loadText(index);
-            }
-        }
-
-        function saveText() {
-            if (startLineIndex > -1 && endLineIndex > -1)
-                lineMap[pageIndex + 1] = {start: startLineIndex, end: endLineIndex};
-            else
-                delete lineMap[pageIndex + 1];
-        }
-        
-        function loadText(_pageIndex) {
-            let range = lineMap[_pageIndex + 1];
-            if (!range) {
-                let startIndex = 0;
-                for(let page in lineMap) {
-                    if (page < _pageIndex) {
-                        startIndex = lineMap[page].end + 1;
-                        endIndex = startIndex + LINELIMIT;
-                    }
-                    else {
-                        endIndex = lineMap[page].start - 1;
-                        break;
-                    }
-                }
-                range = {start: startIndex, end: endIndex};
-            }
-            return loadText();
-        }
-        
-        function initVariables() {
-            contentDiv = document.getElementById('content');
-            pageImage = document.getElementById('pageImage');
-            movePrev = document.getElementById('movePrev');
-            moveNext = document.getElementById('moveNext');
-            loadMore = document.getElementById('loadMore');
-        }
-        function onLoad() {
+        function onBodyLoad() {
             var str = '';
             initVariables();
             for (var bookId in booksList) {
@@ -105,20 +40,118 @@
             return;
             contentDiv.innerHTML = str;
         }
-        
-        function onBookLoad(id) {
-            pageChunkNo = 1;
-            linesDiv = lines = null;
-            endLineIndex = startLineIndex = -1;
-            lines = lines || rawData[id].split('\n');
-            renderLines();
+
+        function initVariables() {
+            contentDiv = document.getElementById('content');
+            pageImage = document.getElementById('pageImage');
+            movePrev = document.getElementById('movePrev');
+            moveNext = document.getElementById('moveNext');
+            loadMore = document.getElementById('loadMore');
         }
+        
+        function downloadBook(id) {
+            // id = 'shri_prem_ramayan'; //remove later
+            id = 'atma_vishleshan'; //remove later
+            activeBook = booksList[id];
+            lineMap = {};
+            if (!isLocalHost) {
+                openFullscreen();
+            }
+            loadJS('raw_books/' + id + '.js', function () {
+                pages = loadImages();
+                onDownloadComplete(id)
+            });
+            contentDiv.innerHTML = '<div id="loaderBox"><div id="loader"></div></div>';
+        }
+
+        function onDownloadComplete(id) {
+            lines = rawData[id].split('\n');
+            moveTo(0);
+        }
+
+        function moveTo(index) {
+            if (index < 0) {
+                alert('First Page');
+            } else if (index >= pages.length) {
+                alert('Last Page');
+            } else {
+                endLineIndex = startLineIndex = -1;
+                pageChunkNo = 1;
+                changePageImage(index);
+                loadText(index);
+                renderLines();
+                pageIndex = index;
+            }
+        }
+
+        function changePageImage(index) {
+            //pageNumber.childNodes[1].innerHTML = pageIndex + 1;
+            pageImage.src = pages[index];
+        }
+
+        function loadText(_pageIndex) {
+            let pageNo = _pageIndex + 1;
+            textRange = lineMap[pageNo];
+            if (!textRange) {
+                let startIndex = 0, endIndex = lines.length - 1;
+                for(let page in lineMap) {
+                    if (page < pageNo) {
+                        startIndex = lineMap[page].end + 1;
+                    } else {
+                        endIndex = lineMap[page].start - 1;
+                        break;
+                    }
+                }
+                textRange = {start: startIndex, end: endIndex};
+            } else {
+                textRange = {start: textRange.start, end: textRange.end}; //make copy
+            }
+            pageChunkNo = Math.floor(textRange.start / LINELIMIT) + 1;
+        }
+        //TODO - add a tick and cross sign on image to show page lines are set or not and also to reset on click
+        function renderLines() {
+            var str = '';
+            var offset = 0;
+            if (textRange.maxEnd && pageChunkNo == 2) {
+                offset = LINELIMIT - textRange.end + textRange.start - 1;
+            }
+            for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT - offset; lineIndex < textRange.start + pageChunkNo * LINELIMIT && lineIndex <= (textRange.maxEnd || textRange.end); lineIndex++) {
+                let line = lines[lineIndex];
+                let lineNo = lineIndex - textRange.start;
+                let lineHtml = `<div class='line' onclick='selectLine(${lineNo})'>${line}</div><br>`;
+                str += `<div class='linerow'><div class='lineNo'>${lineNo + 1}</div>${lineHtml}</div>`;
+            }
+            
+            if (pageChunkNo == 1) {
+                contentDiv.innerHTML = `<div id="bookContent">${str}</div>`;
+            } else {
+                contentDiv.innerHTML += `<div id="bookContent">${str}</div>`;
+            }
+            loadMore.classList.remove('hidden');
+        }
+
+        function loadMoreLines() {
+            pageChunkNo++;
+            textRange.maxEnd = lines.length - 1;
+            renderLines();
+            if (pageChunkNo * LINELIMIT >= lines.length) {
+                loadMore.classList.add('hidden');
+            }
+        }
+
+        function saveText() {
+            if (startLineIndex > -1 && endLineIndex > -1)
+                lineMap[pageIndex + 1] = {start: textRange.start + startLineIndex, end: textRange.start + endLineIndex};
+            else
+                delete lineMap[pageIndex + 1];
+        }
+        
         function showButtons() {
             movePrev.classList.remove('hidden');
             moveNext.classList.remove('hidden');
         }
         var btnTimer;
-        function onPageClick(e) {
+        function onPageImageClick(e) {
             movePrev.classList.add('hidden');
             moveNext.classList.add('hidden');
             clearTimeout(btnTimer);
@@ -127,36 +160,14 @@
             // generateMarker(e.clientX, e.clientY);
         }
         
-        function renderLines() {
-            var str = '';
-            for (let lineIndex = (pageChunkNo - 1) * LINELIMIT; lineIndex < pageChunkNo * LINELIMIT && lineIndex < lines.length; lineIndex++) {
-                let line = lines[lineIndex];
-                let lineHtml = `<div class='line' onclick='selectLine(${lineIndex})'>${line}</div><br>`;
-                str += `<div class='linerow'><div class='lineNo'>${lineIndex + 1}</div>${lineHtml}</div>`;
-            }
-            if (pageChunkNo == 1) {
-                contentDiv.innerHTML = `<div id="bookContent">${str}</div>`;
-            } else {
-                contentDiv.innerHTML += `<div id="bookContent">${str}</div>`;
-            }
-            loadMore.classList.remove('hidden');
-        }
-        function loadMoreLines() {
-            pageChunkNo++;
-            renderLines();
-            linesDiv = document.querySelectorAll('.line');
-            if (pageChunkNo * LINELIMIT >= lines.length) {
-                loadMore.classList.add('hidden');
-            }
-        }
         function selectLine(lineIndex) {
-            linesDiv = linesDiv || document.querySelectorAll('.line');
+            let linesDiv = document.querySelectorAll('.line');
             if (startLineIndex == -1 || startLineIndex > lineIndex)
                 startLineIndex = lineIndex;
             else if (startLineIndex == lineIndex)
                 startLineIndex = -1;
             if (startLineIndex > -1) {
-                removeActives();
+                deselectActives();
                 endLineIndex = lineIndex;
                 for (let i = startLineIndex; i <= endLineIndex; i++) {
                     linesDiv[i].classList.add('activeLine');
@@ -164,26 +175,23 @@
             }
             else {
                 endLineIndex = -1;
-                removeActives();
+                deselectActives();
             }
             saveText();
         }
-        function removeActives() {
-            var activeLines = document.querySelectorAll('.activeLine');
-            for (let line of activeLines) {
-                line.classList.remove('activeLine');
-            }
+        function deselectActives() {
+            document.querySelectorAll('.activeLine').forEach((line) => line.classList.remove('activeLine'));
         }
     </script>
     <link rel="stylesheet" href="editor_style.css">
 </head>
 
-<body onload="onLoad()">
+<body onload="onBodyLoad()">
     <div id="screen">
         <div id="page" class="scroll">
-            <img id="pageImage" alt="Book Page" onclick="onPageClick(event)" style="background-color: white;" src="raw_books/book_icon.png" />
-            <button id="movePrev"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAArklEQVR4nO3Y0QqCQBRF0f2FZTGDD/bvQUEFfYKBMjAQhD537uUs8N3DVnAEs9ROwBN4A4WgRmAGln61MeFHLMCLBCNm4EwgdWPEB5gIxCNUuIQKl1DhEipcQoVLqKj+ABRRM5QYdg5F7bAUyj3DiFRDhiyPFv3/09bLfiGg4jGiisuIKi4jqriMKJdR5TKqXEZVqjLjzuHsSJIxN4L6HfMgsPY4XXuNw79vxoyvFeVU7Pycczv1AAAAAElFTkSuQmCC"></button>
-            <button id="moveNext"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAqklEQVR4nO3ZQQrCQBBE0e8JDdJDFvHsLgwKQW8QQQmM4MLsq5t6ILhM8SeQKJhJacATuAEDSR2AB/DunxUYSWr5GZJ6zKlffIkx8WfMCziTUHiMqHAZUeEyosJlRLmMKpdR5TKqSpUZd17OBoqMmSky5EoyJY5W27nZJxLxCBUuocIlVLiECpdQ4RIqmh8ARbQKJY5V/gydK4zY3CuM+B6t7UeCS/9uVtUHEhTs/ZXHkMQAAAAASUVORK5CYII="></button>
+            <img id="pageImage" alt="Book Page" onclick="onPageImageClick(event)" style="background-color: white;" src="raw_books/book_icon.png" />
+            <button id="movePrev" onclick="moveTo(pageIndex - 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAArklEQVR4nO3Y0QqCQBRF0f2FZTGDD/bvQUEFfYKBMjAQhD537uUs8N3DVnAEs9ROwBN4A4WgRmAGln61MeFHLMCLBCNm4EwgdWPEB5gIxCNUuIQKl1DhEipcQoVLqKj+ABRRM5QYdg5F7bAUyj3DiFRDhiyPFv3/09bLfiGg4jGiisuIKi4jqriMKJdR5TKqXEZVqjLjzuHsSJIxN4L6HfMgsPY4XXuNw79vxoyvFeVU7Pycczv1AAAAAElFTkSuQmCC"></button>
+            <button id="moveNext" onclick="moveTo(pageIndex + 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAqklEQVR4nO3ZQQrCQBBE0e8JDdJDFvHsLgwKQW8QQQmM4MLsq5t6ILhM8SeQKJhJacATuAEDSR2AB/DunxUYSWr5GZJ6zKlffIkx8WfMCziTUHiMqHAZUeEyosJlRLmMKpdR5TKqSpUZd17OBoqMmSky5EoyJY5W27nZJxLxCBUuocIlVLiECpdQ4RIqmh8ARbQKJY5V/gydK4zY3CuM+B6t7UeCS/9uVtUHEhTs/ZXHkMQAAAAASUVORK5CYII="></button>
         </div>
         <div id="editor" class="scroll">
             <div id="content"></div>
