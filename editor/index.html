@@ -19,7 +19,7 @@
         let bookLineMargin = 10;
         var rawData = {}; //contains books text
         let contentDiv;
-        let pageImage, movePrev, moveNext, loadMore;
+        let pageImage, movePrev, moveNext, loadMore, indicator;
         let lines;
         let startLineIndex;
         let lineMap;
@@ -36,8 +36,8 @@
                 _book.id = bookId;
                 str += `<div id='${bookId}' class='bookBtn' onclick='downloadBook(this.id)'>${_book.title}</div>`
             }
-            downloadBook(); //remove this
-            return;
+            // downloadBook(); //remove this
+            // return;
             contentDiv.innerHTML = str;
         }
 
@@ -47,6 +47,7 @@
             movePrev = document.getElementById('movePrev');
             moveNext = document.getElementById('moveNext');
             loadMore = document.getElementById('loadMore');
+            indicator = document.getElementById('indicator');
         }
         
         function downloadBook(id) {
@@ -80,8 +81,13 @@
                 changePageImage(index);
                 loadText(index);
                 renderLines();
+                scrollToTop();
                 pageIndex = index;
             }
+        }
+
+        function scrollToTop() {
+            document.querySelectorAll('.scroll').forEach(div => div.scrollTo(0, 0));
         }
 
         function changePageImage(index) {
@@ -103,19 +109,20 @@
                     }
                 }
                 textRange = {start: startIndex, end: endIndex};
+                loadMore.innerHTML = 'Load more';
+                loadMore.classList.remove('reset');
+                indicator.classList.remove('correct');
             } else {
+                loadMore.classList.add('reset');
+                indicator.classList.add('correct');
+                loadMore.innerHTML = 'Reset';
                 textRange = {start: textRange.start, end: textRange.end}; //make copy
             }
-            pageChunkNo = Math.floor(textRange.start / LINELIMIT) + 1;
         }
         //TODO - add a tick and cross sign on image to show page lines are set or not and also to reset on click
         function renderLines() {
             var str = '';
-            var offset = 0;
-            if (textRange.maxEnd && pageChunkNo == 2) {
-                offset = LINELIMIT - textRange.end + textRange.start - 1;
-            }
-            for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT - offset; lineIndex < textRange.start + pageChunkNo * LINELIMIT && lineIndex <= (textRange.maxEnd || textRange.end); lineIndex++) {
+            for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT; lineIndex < textRange.start + pageChunkNo * LINELIMIT && lineIndex <= textRange.end; lineIndex++) {
                 let line = lines[lineIndex];
                 let lineNo = lineIndex - textRange.start;
                 let lineHtml = `<div class='line' onclick='selectLine(${lineNo})'>${line}</div><br>`;
@@ -131,11 +138,18 @@
         }
 
         function loadMoreLines() {
-            pageChunkNo++;
-            textRange.maxEnd = lines.length - 1;
-            renderLines();
-            if (pageChunkNo * LINELIMIT >= lines.length) {
-                loadMore.classList.add('hidden');
+            if (loadMore.classList.contains('reset')) {
+                if (confirm("Do you want to reset this page?") == true) {
+                    startLineIndex = endLineIndex = -1;
+                    saveText();
+                    moveTo(pageIndex);
+                }
+            } else {
+                pageChunkNo++;
+                renderLines();
+                if (pageChunkNo * LINELIMIT >= lines.length) {
+                    loadMore.classList.add('hidden');
+                }
             }
         }
 
@@ -149,11 +163,13 @@
         function showButtons() {
             movePrev.classList.remove('hidden');
             moveNext.classList.remove('hidden');
+            indicator.classList.remove('hidden');
         }
         var btnTimer;
         function onPageImageClick(e) {
             movePrev.classList.add('hidden');
             moveNext.classList.add('hidden');
+            indicator.classList.add('hidden');
             clearTimeout(btnTimer);
             btnTimer = setTimeout(showButtons, 1000);
             // if (isEditing)
@@ -172,9 +188,11 @@
                 for (let i = startLineIndex; i <= endLineIndex; i++) {
                     linesDiv[i].classList.add('activeLine');
                 }
+                indicator.classList.add('correct');
             }
             else {
                 endLineIndex = -1;
+                indicator.classList.remove('correct');
                 deselectActives();
             }
             saveText();
@@ -192,6 +210,7 @@
             <img id="pageImage" alt="Book Page" onclick="onPageImageClick(event)" style="background-color: white;" src="raw_books/book_icon.png" />
             <button id="movePrev" onclick="moveTo(pageIndex - 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAArklEQVR4nO3Y0QqCQBRF0f2FZTGDD/bvQUEFfYKBMjAQhD537uUs8N3DVnAEs9ROwBN4A4WgRmAGln61MeFHLMCLBCNm4EwgdWPEB5gIxCNUuIQKl1DhEipcQoVLqKj+ABRRM5QYdg5F7bAUyj3DiFRDhiyPFv3/09bLfiGg4jGiisuIKi4jqriMKJdR5TKqXEZVqjLjzuHsSJIxN4L6HfMgsPY4XXuNw79vxoyvFeVU7Pycczv1AAAAAElFTkSuQmCC"></button>
             <button id="moveNext" onclick="moveTo(pageIndex + 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAqklEQVR4nO3ZQQrCQBBE0e8JDdJDFvHsLgwKQW8QQQmM4MLsq5t6ILhM8SeQKJhJacATuAEDSR2AB/DunxUYSWr5GZJ6zKlffIkx8WfMCziTUHiMqHAZUeEyosJlRLmMKpdR5TKqSpUZd17OBoqMmSky5EoyJY5W27nZJxLxCBUuocIlVLiECpdQ4RIqmh8ARbQKJY5V/gydK4zY3CuM+B6t7UeCS/9uVtUHEhTs/ZXHkMQAAAAASUVORK5CYII="></button>
+            <div id="indicator"></div>
         </div>
         <div id="editor" class="scroll">
             <div id="content"></div>
