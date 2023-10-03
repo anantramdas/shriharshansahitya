@@ -36,8 +36,10 @@
                 _book.id = bookId;
                 str += `<div id='${bookId}' class='bookBtn' onclick='downloadBook(this.id)'>${_book.title}</div>`
             }
-            // downloadBook(); //remove this
-            // return;
+            if (isLocalHost) {
+                downloadBook(); //remove this
+                return;
+            }
             contentDiv.innerHTML = str;
         }
 
