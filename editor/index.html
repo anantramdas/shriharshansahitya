@@ -55,8 +55,8 @@
         }
         
         function downloadBook(id) {
-            // id = 'shri_prem_ramayan'; //remove later
-            id = 'atma_vishleshan'; //remove later
+            id = 'shri_prem_ramayan'; //remove later
+            // id = 'atma_vishleshan'; //remove later
             activeBook = booksList[id];
             lineMap = {};
             if (!isLocalHost) {
@@ -76,9 +76,9 @@
 
         function moveTo(index) {
             if (index < 0) {
-                alert('First Page');
+                console.log('First Page');
             } else if (index >= pages.length) {
-                alert('Last Page');
+                console.log('Last Page');
             } else {
                 endLineIndex = startLineIndex = -1;
                 pageChunkNo = 1;
