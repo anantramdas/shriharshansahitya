@@ -10,78 +10,34 @@
     <!-- site metas -->
     <title>Editor</title>
     <script type="text/javascript" src="../booklist.js"></script>
+    <script type="text/javascript" src="code.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Laila&display=swap');
     </style>
     <script>
         const LINELIMIT = 20;
+        let bookLineMargin = 10;
         var rawData = {}; //contains books text
         let contentDiv;
-        function loadJS(FILE_URL, onSuccess, onError, async = true) {
-            let scriptEle = document.createElement("script");
-
-            scriptEle.setAttribute("src", FILE_URL);
-            scriptEle.setAttribute("type", "text/javascript");
-            scriptEle.setAttribute("async", async);
-
-            document.body.appendChild(scriptEle);
-
-            // success event 
-            scriptEle.addEventListener("load", () => {
-                onSuccess && onSuccess();
-            });
-            // error event
-            scriptEle.addEventListener("error", (ev) => {
-                onError & onError();
-            });
-        }
-        let isWebPSupported, activeBook;
-        var isLocalHost = location.host == "";
-        function checkWebPSupport(callback) {
-            // only lossy support is checked
-            var img = new Image();
-            img.onload = function () {
-                isWebPSupported = img.width > 0 && img.height > 0;
-                callback && callback();
-            };
-            img.onerror = function () {
-                isWebPSupported = false;
-                callback && callback();
-            };
-            img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA";
-        }
-
-        checkWebPSupport();
+        let pageImage, movePrev, moveNext, loadMore;
+        let lines;
+        let linesDiv;
+        let startLineIndex;
+        let lineMap;
+        let endLineIndex;
+        let pageChunkNo;
         var pages, pageIndex;
-        function loadImages() {
-            pages = [];
-            var ext = !isLocalHost && isWebPSupported ? 'webp' : 'jpg';
-            // var domain = getDomain();
-            // var source = isLocalHost ? 'books' : isWebPSupported ? `https://${domain}.github.io/shriharshanbooksoptimized` : `https://${domain}.github.io/shriharshanbooks`;
-            var source = isLocalHost ? '../books' : isWebPSupported ? `https://shriharshanbooksoptimized.pages.dev/` : `https://shriharshanbooks.pages.dev/`;
-            var folder = !isLocalHost && isWebPSupported ? (activeBook.folderWebP || activeBook.id) : activeBook.id;
-            var missingPages = activeBook['missing'] = activeBook['missing'] || {};
-            var missingTotal = 0;
-            for (var pg in missingPages) {
-                missingTotal += missingPages[pg];
-            }
-            for (var counter = 1; counter <= activeBook.pageCount - missingTotal; counter++) {
-                var missingPg = missingPages[counter] || 0;
-                pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${ext}`);
-                for (var mIndex = 0; mIndex < missingPg; mIndex++) {
-                    pages.push(`${source}/${folder}/${activeBook.id}_${counter}.${mIndex + 1}.${ext}`);
-                }
-            }
-        }
+
         function downloadBook(id) {
-            // id = 'shri_prem_ramayan'; //remove later
-            id = 'atma_vishleshan'; //remove later
+            id = 'shri_prem_ramayan'; //remove later
+            // id = 'atma_vishleshan'; //remove later
             activeBook = booksList[id];
+            lineMap = {};
             if (!isLocalHost) {
-                openFullscreen(document.getElementById('screen'));
+                openFullscreen();
             }
             loadJS('raw_books/' + id + '.js', function () {
-                loadImages();
+                pages = loadImages();
                 showImage(1);
                 onBookLoad(id)
             });
@@ -89,35 +45,67 @@
         }
         function showImage(index) {
             pageIndex = index;
-            document.getElementById('pageNumber').childNodes[1].innerHTML = pageIndex + 1;
-            document.getElementById('pageImage').src = pages[pageIndex];
+            //pageNumber.childNodes[1].innerHTML = pageIndex + 1;
+            pageImage.src = pages[pageIndex];
         }
-        function openFullscreen(element) {
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();     // Firefox
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();  // Safari
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();      // IE/Edge
+
+        function moveTo(index) {
+            if (index < 0) {
+                alert('First Page');
+            } else if (index >= pages.length) {
+                alert('Last Page');
+            } else {
+                showImage(index);
+                loadText(index);
             }
+        }
+
+        function saveText() {
+            if (startLineIndex > -1 && endLineIndex > -1)
+                lineMap[pageIndex + 1] = {start: startLineIndex, end: endLineIndex};
+            else
+                delete lineMap[pageIndex + 1];
+        }
+        
+        function loadText(_pageIndex) {
+            let range = lineMap[_pageIndex + 1];
+            if (!range) {
+                let startIndex = 0;
+                for(let page in lineMap) {
+                    if (page < _pageIndex) {
+                        startIndex = lineMap[page].end + 1;
+                        endIndex = startIndex + LINELIMIT;
+                    }
+                    else {
+                        endIndex = lineMap[page].start - 1;
+                        break;
+                    }
+                }
+                range = {start: startIndex, end: endIndex};
+            }
+            return loadText();
+        }
+        
+        function initVariables() {
+            contentDiv = document.getElementById('content');
+            pageImage = document.getElementById('pageImage');
+            movePrev = document.getElementById('movePrev');
+            moveNext = document.getElementById('moveNext');
+            loadMore = document.getElementById('loadMore');
         }
         function onLoad() {
             var str = '';
-            contentDiv = document.getElementById('content');
+            initVariables();
             for (var bookId in booksList) {
                 let _book = booksList[bookId];
                 _book.id = bookId;
                 str += `<div id='${bookId}' class='bookBtn' onclick='downloadBook(this.id)'>${_book.title}</div>`
             }
+            downloadBook(); //remove this
+            return;
             contentDiv.innerHTML = str;
         }
-        let lines;
-        let linesDiv;
-        let startLineIndex;
-        let endLineIndex;
-        let pageChunkNo;
+        
         function onBookLoad(id) {
             pageChunkNo = 1;
             linesDiv = lines = null;
@@ -125,9 +113,20 @@
             lines = lines || rawData[id].split('\n');
             renderLines();
         }
-        function onPageClick() {
-            document.getElementById('pageNumber').classList.add('disable');
+        function showButtons() {
+            movePrev.classList.remove('hidden');
+            moveNext.classList.remove('hidden');
         }
+        var btnTimer;
+        function onPageClick(e) {
+            movePrev.classList.add('hidden');
+            moveNext.classList.add('hidden');
+            clearTimeout(btnTimer);
+            btnTimer = setTimeout(showButtons, 1000);
+            // if (isEditing)
+            // generateMarker(e.clientX, e.clientY);
+        }
+        
         function renderLines() {
             var str = '';
             for (let lineIndex = (pageChunkNo - 1) * LINELIMIT; lineIndex < pageChunkNo * LINELIMIT && lineIndex < lines.length; lineIndex++) {
@@ -140,14 +139,14 @@
             } else {
                 contentDiv.innerHTML += `<div id="bookContent">${str}</div>`;
             }
-            document.querySelector('#loadMore').classList.remove('hidden');
+            loadMore.classList.remove('hidden');
         }
         function loadMoreLines() {
             pageChunkNo++;
             renderLines();
             linesDiv = document.querySelectorAll('.line');
             if (pageChunkNo * LINELIMIT >= lines.length) {
-                document.querySelector('#loadMore').classList.add('hidden');
+                loadMore.classList.add('hidden');
             }
         }
         function selectLine(lineIndex) {
@@ -167,6 +166,7 @@
                 endLineIndex = -1;
                 removeActives();
             }
+            saveText();
         }
         function removeActives() {
             var activeLines = document.querySelectorAll('.activeLine');
@@ -175,215 +175,15 @@
             }
         }
     </script>
-    <style>
-        * {
-            font-family: 'Laila', sans-serif;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        }
-
-        .line {
-            display: inline-block;
-            cursor: pointer;
-            border: 1px solid transparent;
-            white-space: initial;
-            min-width: 30%;
-        }
-
-        .line:hover {
-            border-color: black;
-        }
-
-        .activeLine {
-            background-color: grey;
-            color: white;
-        }
-
-        #bookContent {
-            font-size: 20px;
-        }
-
-        .linerow {
-            display: flex;
-            white-space: nowrap;
-        }
-
-        .lineNo {
-            display: inline-block;
-            width: 30px;
-            color: red;
-            text-align: center;
-            font-size: 17px;
-            font-family: Arial;
-            line-height: 2;
-        }
-
-        .bookBtn {
-            margin: 5px auto;
-            padding: 10px 8px;
-            background-color: #4c4040;
-            width: 320px;
-            border: 1px solid transparent;
-            font-size: 20px;
-            box-sizing: border-box;
-            text-align: center;
-            font-weight: 600;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        .bookBtn:hover {
-            background-color: #cdc1c1;
-            color: rgb(17, 39, 240);
-        }
-
-        #loadMore {
-            margin: 15px auto 80px auto;
-            display: flex;
-            padding: 5px 10px;
-            font-size: 15px;
-        }
-
-        .hidden {
-            visibility: hidden;
-        }
-
-        #loaderBox {
-            display: flex;
-            height: 100%;
-            align-items: center;
-            align-self: center;
-            justify-content: center;
-        }
-
-        html,
-        body {
-            height: 100%;
-            padding: 0;
-            margin: 0
-        }
-
-        #screen {
-            display: flex;
-            flex-direction: row;
-            height: 100%;
-        }
-
-        #screen>div {
-            flex: 1;
-            height: 100%;
-        }
-
-        #editor {
-            overflow-y: scroll;
-            border-left: 1px solid black;
-        }
-
-        #pageNumber {
-            position: absolute;
-            top: 0;
-            right: 51%;
-            font-size: 18px;
-            color: red;
-            min-width: 100px;
-        }
-
-        #pageNumber>span {
-            display: inline-block;
-            width: 20px;
-            padding: 5px;
-        }
-
-        #pageNumber.disable>span {
-            pointer-events: none;
-            color: transparent;
-        }
-
-        #loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #000;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-
-        #pageImage {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        #page {
-            overflow-y: scroll;
-        }
-
-        :-webkit-full-screen {
-            background-color: white;
-        }
-
-        /* IE11 */
-        :-ms-fullscreen {
-            background-color: white;
-        }
-
-        /* Standard syntax */
-        :fullscreen {
-            background-color: white;
-        }
-
-        .scroll {
-            overflow-y: scroll;
-        }
-
-        .scroll::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .scroll::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
-        }
-
-        .scroll::-webkit-scrollbar-thumb {
-            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
-        }
-
-        @media only screen { /*and (max-width: 768px) */
-            #pageImage {
-                height: auto;
-                object-fit: cover;
-            }
-            .scroll::-webkit-scrollbar {
-                width: 0;
-            }
-        }
-
-        @keyframes rotation {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="editor_style.css">
 </head>
 
 <body onload="onLoad()">
     <div id="screen">
         <div id="page" class="scroll">
-            <img id="pageImage" alt="Book Page" onclick="onPageClick()" style="background-color: white;" src="raw_books/book_icon.png" />
-            <div id="pageNumber" class="disable" onclick="this.classList.toggle('disable')"><span
-                    onclick="event.stopPropagation();showImage(pageIndex - 1);">&larr;</span><span>1</span><span
-                    onclick="event.stopPropagation();showImage(pageIndex + 1)">&rarr;</span></div>
+            <img id="pageImage" alt="Book Page" onclick="onPageClick(event)" style="background-color: white;" src="raw_books/book_icon.png" />
+            <button id="movePrev"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAArklEQVR4nO3Y0QqCQBRF0f2FZTGDD/bvQUEFfYKBMjAQhD537uUs8N3DVnAEs9ROwBN4A4WgRmAGln61MeFHLMCLBCNm4EwgdWPEB5gIxCNUuIQKl1DhEipcQoVLqKj+ABRRM5QYdg5F7bAUyj3DiFRDhiyPFv3/09bLfiGg4jGiisuIKi4jqriMKJdR5TKqXEZVqjLjzuHsSJIxN4L6HfMgsPY4XXuNw79vxoyvFeVU7Pycczv1AAAAAElFTkSuQmCC"></button>
+            <button id="moveNext"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAqklEQVR4nO3ZQQrCQBBE0e8JDdJDFvHsLgwKQW8QQQmM4MLsq5t6ILhM8SeQKJhJacATuAEDSR2AB/DunxUYSWr5GZJ6zKlffIkx8WfMCziTUHiMqHAZUeEyosJlRLmMKpdR5TKqSpUZd17OBoqMmSky5EoyJY5W27nZJxLxCBUuocIlVLiECpdQ4RIqmh8ARbQKJY5V/gydK4zY3CuM+B6t7UeCS/9uVtUHEhTs/ZXHkMQAAAAASUVORK5CYII="></button>
         </div>
         <div id="editor" class="scroll">
             <div id="content"></div>
