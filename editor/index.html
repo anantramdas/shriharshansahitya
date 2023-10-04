@@ -20,7 +20,7 @@
         var rawData = {}; //contains books text
         let contentDiv;
         let pageImage, movePrev, moveNext, loadMore, indicator;
-        let pageNum;
+        let pageNum, isEditing;
         let lines;
         let startLineIndex;
         let lineMap;
@@ -55,8 +55,8 @@
         }
         
         function downloadBook(id) {
-            id = 'shri_prem_ramayan'; //remove later
-            // id = 'atma_vishleshan'; //remove later
+            // id = 'shri_prem_ramayan'; //remove later
+            id = 'atma_vishleshan'; //remove later
             activeBook = booksList[id];
             lineMap = {};
             if (!isLocalHost) {
@@ -71,6 +71,7 @@
 
         function onDownloadComplete(id) {
             lines = rawData[id].split('\n');
+            isEditing = false;
             moveTo(0);
         }
 
@@ -127,10 +128,14 @@
         //TODO - add a tick and cross sign on image to show page lines are set or not and also to reset on click
         function renderLines() {
             var str = '';
-            for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT; lineIndex < textRange.start + pageChunkNo * LINELIMIT && lineIndex <= textRange.end; lineIndex++) {
+            for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT; lineIndex < textRange.start + pageChunkNo * LINELIMIT && lineIndex <= (textRange.maxEnd || textRange.end); lineIndex++) {
                 let line = lines[lineIndex];
                 let lineNo = lineIndex - textRange.start;
-                let lineHtml = `<div class='line' onclick='selectLine(${lineNo})'>${line}</div><br>`;
+                let joinWith = isEditing ? `</span> <span onclick="toggleMark(this)">` : '';
+                line = isEditing ? `<span onclick="toggleMark(this)">${line.split(' ').join(joinWith)}</span>` : line;
+                line = isEditing ? line.substring(0, line.length - joinWith.length) : line;
+                let cls = isEditing ? 'line edit' : 'line';
+                let lineHtml = `<div class='${cls}' onclick='selectLine(${lineNo})'>${line}</div><br>`;
                 str += `<div class='linerow'><div class='lineNo'>${lineNo + 1}</div>${lineHtml}</div>`;
             }
             
@@ -142,13 +147,21 @@
             loadMore.classList.remove('hidden');
         }
 
+        function toggleMark(word) {
+            word.parentNode.style.backgroundColor = 'red';
+        }
+
         function loadMoreLines() {
             if (loadMore.classList.contains('reset')) {
                 startLineIndex = endLineIndex = -1;
                 saveText();
                 moveTo(pageIndex);
             } else {
-                pageChunkNo++;
+                if (!lineMap[pageIndex + 1] && !textRange.maxEnd && textRange.end < lines.length - 1) {
+                    textRange.maxEnd = lines.length - 1;
+                } else {
+                    pageChunkNo++;
+                }
                 renderLines();
                 if (pageChunkNo * LINELIMIT >= lines.length) {
                     loadMore.classList.add('hidden');
@@ -205,6 +218,16 @@
         function deselectActives() {
             document.querySelectorAll('.activeLine').forEach((line) => line.classList.remove('activeLine'));
         }
+        function toggleEditing() {
+            if (indicator.classList.contains('correct')) {
+                movePrev.classList.toggle('invisible');
+                moveNext.classList.toggle('invisible');
+                loadMore.classList.toggle('invisible');
+                indicator.classList.toggle('edit');
+                isEditing = !isEditing;
+                moveTo(pageIndex);
+            }
+        }
     </script>
     <link rel="stylesheet" href="editor_style.css?a2">
 </head>
@@ -215,7 +238,7 @@
             <img id="pageImage" alt="Book Page" onclick="onPageImageClick(event)" style="background-color: white;" src="raw_books/book_icon.png" />
             <button id="movePrev" onclick="moveTo(pageIndex - 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAArklEQVR4nO3Y0QqCQBRF0f2FZTGDD/bvQUEFfYKBMjAQhD537uUs8N3DVnAEs9ROwBN4A4WgRmAGln61MeFHLMCLBCNm4EwgdWPEB5gIxCNUuIQKl1DhEipcQoVLqKj+ABRRM5QYdg5F7bAUyj3DiFRDhiyPFv3/09bLfiGg4jGiisuIKi4jqriMKJdR5TKqXEZVqjLjzuHsSJIxN4L6HfMgsPY4XXuNw79vxoyvFeVU7Pycczv1AAAAAElFTkSuQmCC"></button>
             <button id="moveNext" onclick="moveTo(pageIndex + 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAqklEQVR4nO3ZQQrCQBBE0e8JDdJDFvHsLgwKQW8QQQmM4MLsq5t6ILhM8SeQKJhJacATuAEDSR2AB/DunxUYSWr5GZJ6zKlffIkx8WfMCziTUHiMqHAZUeEyosJlRLmMKpdR5TKqSpUZd17OBoqMmSky5EoyJY5W27nZJxLxCBUuocIlVLiECpdQ4RIqmh8ARbQKJY5V/gydK4zY3CuM+B6t7UeCS/9uVtUHEhTs/ZXHkMQAAAAASUVORK5CYII="></button>
-            <div id="indicator"></div>
+            <div id="indicator" onclick="toggleEditing()"></div>
             <div id="pageNum"></div>
         </div>
         <div id="editor" class="scroll">

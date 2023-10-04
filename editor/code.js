@@ -51,7 +51,7 @@ function loadJS(FILE_URL, onSuccess, onError, async = true) {
     });
     // error event
     scriptEle.addEventListener("error", (ev) => {
-        onError & onError();
+        onError && onError();
     });
 }
 function openFullscreen() {
