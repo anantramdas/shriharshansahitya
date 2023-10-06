@@ -20,13 +20,14 @@
         var rawData = {}; //contains books text
         let contentDiv;
         let pageImage, movePrev, moveNext, loadMore, indicator;
-        let pageNum, lineNumbers, isEditing;
+        let pageNum, lineNumbers, lineIndicator, isEditing;
         let lines;
         let startLineIndex;
         let lineMap;
         let endLineIndex;
         let pageChunkNo;
         let textRange;
+        let canReset = false;
         var pages, pageIndex;
 
         function onBodyLoad() {
@@ -53,11 +54,12 @@
             indicator = document.getElementById('indicator');
             pageNum = document.getElementById('pageNum');
             lineNumbers = document.getElementById('lineNumbers');
+            lineIndicator = document.getElementById('lineIndicator');
         }
         
         function downloadBook(id) {
-            id = 'shri_prem_ramayan'; //remove later
-            // id = 'atma_vishleshan'; //remove later
+            // id = 'shri_prem_ramayan'; //remove later
+            id = 'atma_vishleshan'; //remove later
             activeBook = booksList[id];
             lineMap = {};
             if (!isLocalHost) {
@@ -77,7 +79,7 @@
             isEditing = false;
             moveTo(0);
         }
-
+        let blanks = 0;
         function moveTo(index) {
             if (index < 0) {
                 console.log('First Page');
@@ -86,6 +88,10 @@
             } else {
                 endLineIndex = startLineIndex = -1;
                 pageChunkNo = 1;
+                if (index != pageIndex) {
+                    blanks = 0;
+                    indicateLine(0, 0); //disabled selection
+                }
                 changePageImage(index);
                 loadLineNumbers(index);
                 loadText(index);
@@ -104,22 +110,35 @@
             pageImage.src = '';
             pageImage.src = pages[index];
         }
-
+        let linePos;
         function loadLineNumbers(index) {
-            let lineTop = rawData[activeBook.id + '_parser'].lines[index + 1]; //skip not for sale
-            let pageDim = rawData[activeBook.id + '_parser'].pages[index + 1]; //skip not for sale
+            linePos = [];
+            let parser = rawData[activeBook.id + '_parser'];
+            let lineTop = parser.lines[index + 1]; //skip not for sale
+            let pageDim = parser.pages[index + 1]; //skip not for sale
             pageDim = pageDim.split('x');
             let aspect = pageDim[1] / pageDim[0]; //height / width
             let isMobile = document.body.clientWidth <= 900;
             let imgh = isMobile ? aspect * (document.body.clientWidth / 2) : document.body.clientHeight;
             let h = pageDim[1] * 100 / imgh;
             lineTop = (lineTop || '').split(',');
-            let strHtml = '';
+            // let strHtml = '';
             for (var i in lineTop) {
-                let no = +i + 1;
-                strHtml += `<div style = "top: ${lineTop[i] * 100 / h}px">${no}</div>`;
+                let top = lineTop[i] * 100 / h;
+                linePos.push(top);
+                // strHtml += `<div style = "top: ${top}px">${+i + 1}</div>`;
             }
-            lineNumbers.innerHTML = strHtml;
+            // lineNumbers.innerHTML = strHtml;
+        }
+
+        function indicateLine(lineno, blanks) {
+            let index = lineno - blanks;
+            let _startIndex = startLineIndex - (isEditing || canReset ? -1 : blankStartCount);
+            if ((startLineIndex > -1 || isEditing || canReset) && linePos && linePos[index - _startIndex]) {
+                lineIndicator.style.top = (linePos[index - _startIndex] - 12) + 'px';
+            } else {
+                lineIndicator.style.top = '-200px';
+            }
         }
 
         function loadText(_pageIndex) {
@@ -138,25 +157,30 @@
                 textRange = {start: startIndex, end: endIndex};
                 loadMore.innerHTML = 'Load more';
                 loadMore.classList.remove('reset');
+                canReset = false;
                 indicator.classList.remove('correct');
             } else {
                 loadMore.classList.add('reset');
+                canReset = true;
                 indicator.classList.add('correct');
                 loadMore.innerHTML = 'Reset';
-                textRange = {start: textRange.start, end: textRange.end}; //make copy
+                textRange = {start: textRange.start, end: textRange.end, maxEnd: textRange.end}; //make copy // maxEnd is due to complex logic in renderLines for loading more than LineLimit
             }
         }
         //TODO - add a tick and cross sign on image to show page lines are set or not and also to reset on click
+
         function renderLines() {
             var str = '';
-            for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT; lineIndex < textRange.start + pageChunkNo * LINELIMIT && lineIndex <= (textRange.maxEnd || textRange.end); lineIndex++) {
+            for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT; lineIndex <= (textRange.maxEnd || Math.min(textRange.end, textRange.start + pageChunkNo * LINELIMIT - 1)); lineIndex++) {
                 let line = lines[lineIndex];
                 let lineNo = lineIndex - textRange.start;
                 let joinWith = isEditing ? `</span> <span onclick="toggleMark(this)">` : '';
                 line = isEditing ? `<span onclick="toggleMark(this)">${line.split(' ').join(joinWith)}</span>` : line;
                 line = isEditing ? line.substring(0, line.length - joinWith.length) : line;
+                blanks += line.length ? 0 : 1;
+                let isBlank = !line.length;
                 let cls = isEditing ? 'line edit' : 'line';
-                let lineHtml = `<div class='${cls}' onclick='selectLine(${lineNo})'>${line}</div><br>`;
+                let lineHtml = `<div class='${cls}' ontouchstart="indicateLine(${lineNo}, ${blanks})" onmouseenter="indicateLine(${lineNo}, ${blanks})" onclick='selectLine(${lineNo}, ${blanks}, ${isBlank})'>${line}</div><br>`;
                 str += `<div class='linerow'><div class='lineNo'>${lineNo + 1}</div>${lineHtml}</div>`;
             }
             
@@ -167,6 +191,7 @@
             }
             loadMore.classList.remove('hidden');
         }
+
         let parentLine;
         function toggleMark(word) {
             parentLine = word.parentNode;
@@ -174,18 +199,14 @@
         }
 
         function loadMoreLines() {
-            if (loadMore.classList.contains('reset')) {
+            if (canReset) {
                 startLineIndex = endLineIndex = -1;
                 saveText();
                 moveTo(pageIndex);
             } else {
-                if (!lineMap[pageIndex + 1] && !textRange.maxEnd && textRange.end < lines.length - 1) {
-                    textRange.maxEnd = lines.length - 1;
-                } else {
-                    pageChunkNo++;
-                }
+                pageChunkNo++;
                 renderLines();
-                if (pageChunkNo * LINELIMIT >= lines.length) {
+                if (pageChunkNo * LINELIMIT >= textRange.end) {
                     loadMore.classList.add('hidden');
                 }
             }
@@ -213,12 +234,14 @@
             // if (isEditing)
             // generateMarker(e.clientX, e.clientY);
         }
-        
-        function selectLine(lineIndex) {
-            if (!loadMore.classList.contains('reset')) {
+        let blankStartCount;
+        function selectLine(lineIndex, blanks, isSelfBlank) {
+            if (!canReset) {
                 let linesDiv = document.querySelectorAll('.line');
-                if (startLineIndex == -1 || startLineIndex > lineIndex)
+                if (startLineIndex == -1 || startLineIndex > lineIndex) {
                     startLineIndex = lineIndex;
+                    blankStartCount = isSelfBlank ? blanks - 1 : blanks;
+                }
                 else if (startLineIndex == lineIndex)
                     startLineIndex = -1;
                 if (startLineIndex > -1) {
@@ -234,6 +257,7 @@
                     indicator.classList.remove('correct');
                     deselectActives();
                 }
+                indicateLine(lineIndex, blanks);
                 saveText();
             }
         }
@@ -247,6 +271,7 @@
                 loadMore.classList.toggle('invisible');
                 indicator.classList.toggle('edit');
                 isEditing = !isEditing;
+                blanks = 0;
                 moveTo(pageIndex);
             }
         }
@@ -261,6 +286,7 @@
             <div id="indicator" onclick="toggleEditing()"></div>
             <div id="pageNum"></div>
             <div id="lineNumbers"></div>
+            <div id="lineIndicator">{</div>
         </div>
         <div id="editor" class="scroll">
             <div id="content"></div>
