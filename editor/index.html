@@ -14,12 +14,23 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Laila&display=swap');
     </style>
+    <!-- add firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
+
     <script>
-        const LINELIMIT = 20;
+        const firebaseConfig = {
+            databaseURL: "https://bookeditor-caf1f-default-rtdb.firebaseio.com"
+        }
+        firebase.initializeApp(firebaseConfig)
+        const database = firebase.database()
+    </script>
+    <script>
+        const LINELIMIT = 20, DBLIMIT = 52;
         let bookLineMargin = 10;
         var rawData = {}; //contains books text
         let contentDiv;
-        let pageImage, movePrev, moveNext, loadMore, indicator;
+        let pageImage, movePrev, moveNext, loadMore, indicator, imageLoader, message, networkTrouble;
         let pageNum, lineNumbers, lineIndicator, isEditing;
         let lines;
         let startLineIndex;
@@ -55,11 +66,14 @@
             pageNum = document.getElementById('pageNum');
             lineNumbers = document.getElementById('lineNumbers');
             lineIndicator = document.getElementById('lineIndicator');
+            imageLoader = document.getElementById('imageLoader');
+            message = document.getElementById('message');
+            networkTrouble = document.getElementById('networkTrouble');
         }
         
         function downloadBook(id) {
-            // id = 'shri_prem_ramayan'; //remove later
-            id = 'atma_vishleshan'; //remove later
+            id = 'shri_prem_ramayan'; //remove later
+            // id = 'atma_vishleshan'; //remove later
             activeBook = booksList[id];
             lineMap = {};
             if (!isLocalHost) {
@@ -71,7 +85,7 @@
                     onDownloadComplete(id)
                 });
             });
-            contentDiv.innerHTML = '<div id="loaderBox"><div id="loader"></div></div>';
+            contentDiv.innerHTML = '<div class="loaderBox"><div class="loader"></div></div>';
         }
 
         function onDownloadComplete(id) {
@@ -89,10 +103,13 @@
                 endLineIndex = startLineIndex = -1;
                 pageChunkNo = 1;
                 if (index != pageIndex) {
+                    if (!isLocalHost) {
+                        imageLoader.style.display = 'block';
+                    }
                     blanks = 0;
                     indicateLine(0, 0); //disabled selection
+                    changePageImage(index);
                 }
-                changePageImage(index);
                 loadLineNumbers(index);
                 loadText(index);
                 renderLines();
@@ -107,7 +124,6 @@
 
         function changePageImage(index) {
             pageNum.innerHTML = index + 1;
-            pageImage.src = '';
             pageImage.src = pages[index];
         }
         let linePos;
@@ -122,13 +138,13 @@
             let imgh = isMobile ? aspect * (document.body.clientWidth / 2) : document.body.clientHeight;
             let h = pageDim[1] * 100 / imgh;
             lineTop = (lineTop || '').split(',');
-            // let strHtml = '';
+            let strHtml = '';
             for (var i in lineTop) {
                 let top = lineTop[i] * 100 / h;
                 linePos.push(top);
-                // strHtml += `<div style = "top: ${top}px">${+i + 1}</div>`;
+                strHtml += `<div style = "top: ${top}px">${+i + 1}</div>`;
             }
-            // lineNumbers.innerHTML = strHtml;
+            lineNumbers.innerHTML = strHtml;
         }
 
         function indicateLine(lineno, blanks) {
@@ -174,11 +190,18 @@
             for (let lineIndex = textRange.start + (pageChunkNo - 1) * LINELIMIT; lineIndex <= (textRange.maxEnd || Math.min(textRange.end, textRange.start + pageChunkNo * LINELIMIT - 1)); lineIndex++) {
                 let line = lines[lineIndex];
                 let lineNo = lineIndex - textRange.start;
-                let joinWith = isEditing ? `</span> <span onclick="toggleMark(this)">` : '';
-                line = isEditing ? `<span onclick="toggleMark(this)">${line.split(' ').join(joinWith)}</span>` : line;
-                line = isEditing ? line.substring(0, line.length - joinWith.length) : line;
                 blanks += line.length ? 0 : 1;
                 let isBlank = !line.length;
+                if (isEditing || canReset) {
+                    let wMap = wordMap[pageIndex + 1] || {};
+                    wMap = wMap[lineNo + 1] || [];
+                    let words = line.split(' '), wstr = '';
+                    for (let wi in words) {
+                        let cls = wMap.includes(+wi + 1) ? 'class="wordmark"' : '';
+                        wstr += `<span id='w_${lineNo + 1}_${+wi + 1}' ${cls} onclick="toggleMark(this)">${words[wi]}</span> `
+                    }
+                    line = wstr.trimEnd();
+                }
                 let cls = isEditing ? 'line edit' : 'line';
                 let lineHtml = `<div class='${cls}' ontouchstart="indicateLine(${lineNo}, ${blanks})" onmouseenter="indicateLine(${lineNo}, ${blanks})" onclick='selectLine(${lineNo}, ${blanks}, ${isBlank})'>${line}</div><br>`;
                 str += `<div class='linerow'><div class='lineNo'>${lineNo + 1}</div>${lineHtml}</div>`;
@@ -192,31 +215,41 @@
             loadMore.classList.remove('hidden');
         }
 
-        let parentLine;
+        let parentLine, hasWordChange = {};
         function toggleMark(word) {
-            parentLine = word.parentNode;
-            word.classList.toggle('wordmark');
+            if (isEditing) {
+                parentLine = word.parentNode;
+                let wordIndex = Array.prototype.indexOf.call(parentLine.children, word);
+                if (wordIndex < DBLIMIT) {
+                    word.classList.toggle('wordmark');
+                    hasWordChange[pageIndex + 1] = true;
+                } else {
+                    showWarning();
+                }
+            }
         }
 
         function loadMoreLines() {
             if (canReset) {
                 startLineIndex = endLineIndex = -1;
-                saveText();
+                saveLines();
+                delete wordMap[pageIndex + 1];
                 moveTo(pageIndex);
             } else {
                 pageChunkNo++;
                 renderLines();
-                if (pageChunkNo * LINELIMIT >= textRange.end) {
+                if (textRange.start + pageChunkNo * LINELIMIT >= textRange.end) {
                     loadMore.classList.add('hidden');
                 }
             }
         }
 
-        function saveText() {
+        function saveLines() {
             if (startLineIndex > -1 && endLineIndex > -1)
                 lineMap[pageIndex + 1] = {start: textRange.start + startLineIndex, end: textRange.start + endLineIndex};
             else
                 delete lineMap[pageIndex + 1];
+            triggerDBSave(pageIndex);
         }
         
         function showButtons() {
@@ -239,18 +272,26 @@
             if (!canReset) {
                 let linesDiv = document.querySelectorAll('.line');
                 if (startLineIndex == -1 || startLineIndex > lineIndex) {
-                    startLineIndex = lineIndex;
-                    blankStartCount = isSelfBlank ? blanks - 1 : blanks;
+                    if (lineIndex < DBLIMIT) {
+                        startLineIndex = lineIndex;
+                        blankStartCount = isSelfBlank ? blanks - 1 : blanks;
+                    } else {
+                        showWarning();
+                    }
                 }
                 else if (startLineIndex == lineIndex)
                     startLineIndex = -1;
                 if (startLineIndex > -1) {
-                    deselectActives();
-                    endLineIndex = lineIndex;
-                    for (let i = startLineIndex; i <= endLineIndex; i++) {
-                        linesDiv[i].classList.add('activeLine');
+                    if (lineIndex - startLineIndex < DBLIMIT) {
+                        deselectActives();
+                        endLineIndex = lineIndex;
+                        for (let i = startLineIndex; i <= endLineIndex; i++) {
+                            linesDiv[i].classList.add('activeLine');
+                        }
+                        indicator.classList.add('correct');
+                    } else {
+                        showWarning();
                     }
-                    indicator.classList.add('correct');
                 }
                 else {
                     endLineIndex = -1;
@@ -258,14 +299,19 @@
                     deselectActives();
                 }
                 indicateLine(lineIndex, blanks);
-                saveText();
+                saveLines();
             }
         }
         function deselectActives() {
             document.querySelectorAll('.activeLine').forEach((line) => line.classList.remove('activeLine'));
         }
+        
         function toggleEditing() {
             if (indicator.classList.contains('correct')) {
+                if (isEditing && hasWordChange[pageIndex + 1]) {
+                    saveWords();
+                }
+                hasWordChange[pageIndex + 1] = false;
                 movePrev.classList.toggle('invisible');
                 moveNext.classList.toggle('invisible');
                 loadMore.classList.toggle('invisible');
@@ -275,6 +321,28 @@
                 moveTo(pageIndex);
             }
         }
+        let wordMap = {};
+        function saveWords() {
+            let markings = document.querySelectorAll('.wordmark')
+            let objWords = {};
+            for (let node of markings) {
+                let id = node.id.split('_');
+                let line = id[1];
+                let word = +id[2];
+                objWords[line] = objWords[line] || [];
+                objWords[line].push(word);
+            }
+            wordMap[pageIndex + 1] = objWords;
+            triggerDBSave(objWords);
+        }
+        function onImageLoad() {
+            if (pages) {
+                imageLoader.style.display = 'none';
+            }
+        }
+        function showWarning() {
+            message.style.display = 'flex';
+        }
     </script>
     <link rel="stylesheet" href="editor_style.css?a2">
 </head>
@@ -282,11 +350,12 @@
 <body onload="onBodyLoad()">
     <div id="screen">
         <div id="page" class="scroll">
-            <img id="pageImage" alt="Book Page" onclick="onPageImageClick(event)" style="background-color: white;" src="raw_books/book_icon.png" />
+            <img id="pageImage" alt="Book Page" onload="onImageLoad()"  onclick="onPageImageClick(event)" style="background-color: white;" src="raw_books/book_icon.png" />
             <div id="indicator" onclick="toggleEditing()"></div>
+            <div id="lineIndicator">{</div>
+            <div id="imageLoader"><div class='loaderBox'><div class="loader"></div></div></div>
             <div id="pageNum"></div>
             <div id="lineNumbers"></div>
-            <div id="lineIndicator">{</div>
         </div>
         <div id="editor" class="scroll">
             <div id="content"></div>
@@ -294,6 +363,8 @@
         </div>
         <button id="movePrev" onclick="moveTo(pageIndex - 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAArklEQVR4nO3Y0QqCQBRF0f2FZTGDD/bvQUEFfYKBMjAQhD537uUs8N3DVnAEs9ROwBN4A4WgRmAGln61MeFHLMCLBCNm4EwgdWPEB5gIxCNUuIQKl1DhEipcQoVLqKj+ABRRM5QYdg5F7bAUyj3DiFRDhiyPFv3/09bLfiGg4jGiisuIKi4jqriMKJdR5TKqXEZVqjLjzuHsSJIxN4L6HfMgsPY4XXuNw79vxoyvFeVU7Pycczv1AAAAAElFTkSuQmCC"></button>
         <button id="moveNext" onclick="moveTo(pageIndex + 1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAqklEQVR4nO3ZQQrCQBBE0e8JDdJDFvHsLgwKQW8QQQmM4MLsq5t6ILhM8SeQKJhJacATuAEDSR2AB/DunxUYSWr5GZJ6zKlffIkx8WfMCziTUHiMqHAZUeEyosJlRLmMKpdR5TKqSpUZd17OBoqMmSky5EoyJY5W27nZJxLxCBUuocIlVLiECpdQ4RIqmh8ARbQKJY5V/gydK4zY3CuM+B6t7UeCS/9uVtUHEhTs/ZXHkMQAAAAASUVORK5CYII="></button>
+        <div id="message" onclick="this.style.display='none'"><span>Limit 52. Selection Not Allowed.</span></div>
+        <div id="networkTrouble"><span>(Slow/No) Network! Error saving data. Waiting...</span></div>
     </div>
 </body>
 

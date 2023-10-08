@@ -8,7 +8,29 @@
     user-select: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-
+#message, #networkTrouble {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    display: none;
+}
+#message > span, #networkTrouble > span {
+    display: inline-block;
+    padding: 15px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgb(223, 69, 69);
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 15px;
+}
 .line {
     display: inline-block;
     cursor: pointer;
@@ -34,6 +56,7 @@
 }
 
 #lineIndicator {
+    top: -200px;
     left: 5px;
     color: red;
     font-size: 30px;
@@ -117,12 +140,22 @@
     visibility: hidden;
 }
 
-#loaderBox {
+.loaderBox {
     display: flex;
     height: 100%;
     align-items: center;
     align-self: center;
     justify-content: center;
+}
+
+#imageLoader {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 
 html,
@@ -157,7 +190,7 @@ body {
     color: white;
 }
 
-#loader {
+.loader {
     width: 48px;
     height: 48px;
     border: 5px solid #000;
@@ -212,7 +245,11 @@ body {
 }
 #movePrev, #moveNext {
     position: fixed;
+    padding: 10px 15px;
     bottom: 0;
+    border: 0;
+    background-color: rgb(150, 150, 200);
+    opacity: 0.5;
 }
 #movePrev > img, #moveNext > img {
     width: 30px;

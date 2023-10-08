@@ -66,3 +66,57 @@ function openFullscreen() {
         element.msRequestFullscreen();      // IE/Edge
     }
 }
+
+function getAbcChar(number) {
+    if (number <= 26) {
+        return String.fromCharCode(64 + number);
+    } else if (number <= 52) {
+        return String.fromCharCode(96 + number - 26);
+    }
+}
+let dbTimer, networkTroubleCounter = 0;
+function triggerDBSave(words) {
+    storeData(pageIndex, words);
+    clearTimeout(dbTimer);
+    networkTroubleCounter++;
+    dbTimer = setTimeout(showNetworkTrouble, 2000);
+}
+
+function storeData(pageIndex, words) {
+    // https://www.slidesmaker.me/blog/firebase-realtime-database-crud-operations-javascript
+    let data = {};
+    let pageNum = pageIndex + 1;
+    let map = lineMap[pageNum];
+    let val = map ? 1 : -1;
+    let path;
+    if (words) {
+        data[pageNum] = {};
+        console.log(words)
+        for (let line in words) {
+            let cL = getAbcChar(+line);
+            let cW = words[line].map(getAbcChar).join('');
+            data[pageNum][cL] = data[pageNum][cL] || '';
+            data[pageNum][cL] += cW;
+        }
+        path = activeBook.id + '/words';
+    } else {
+        data[pageNum] = map ? getAbcChar(map.start) + getAbcChar(map.end - map.start + 1) : null;
+        path = activeBook.id + '/pages';
+    }
+    console.log(data)
+    database.ref(path).update(data).then(function() {
+        console.log('success');
+        networkTroubleCounter--;
+        if (networkTroubleCounter == 0) {
+            clearTimeout(dbTimer);
+            hideNetworkTrouble();
+        }
+    });
+}
+
+function showNetworkTrouble() {
+    networkTrouble.style.display = 'flex';
+}
+function hideNetworkTrouble() {
+    networkTrouble.style.display = 'none';
+}
