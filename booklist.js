@@ -507,6 +507,7 @@ var booksList = {
         totalPages: 16,
         pageCount: 16,
         title: 'श्री हर्षण चालीसा',
+        readonly: 1,
         miniBook: 1,
         intro: ``,
         introAuthor: '',
@@ -555,6 +556,7 @@ function bookTemplate(folderName, isMiniLayout) {
     var title = booksList[folderName]['title'];
     var downloadLink = `https://archive.org/download/${booksList[folderName]['dlinkPrefix'] || folderName}/${booksList[folderName]['dlink']}`;
     var intro = booksList[folderName]['intro'];
+    var isReadOnly = booksList[folderName]['readonly'];
     var introAuthor = booksList[folderName]['introAuthor'];
     var pageCount = booksList[folderName]['totalPages'];
     var miniBook = booksList[folderName]['miniBook'] || 0;
@@ -568,13 +570,15 @@ function bookTemplate(folderName, isMiniLayout) {
     var ext = isWebPSupported ? "webp" : "jpg";
     var thumbnail = `<img class="book__cover" src="assets/${folderName}.${ext}" alt="${title}" loading="lazy">`;
     if (isMiniLayout) {
+        var readBook = !isReadOnly ? `onclick="loadPdf('${folderName}');"` : '';
         return `
-            <div class="block ${folderName} book${isMini}" onclick="loadPdf('${folderName}');">
+            <div class="block ${folderName} book${isMini}" ${readBook}>
                 ${thumbnail}
                 <a onclick="event.stopPropagation();" href="${downloadLink}"><img class="download" src="svg/download.svg" /></a>
             </div>
         `;
     }
+    var readBook = !isReadOnly ? `<a class="button" onclick="loadPdf('${folderName}');">पुस्तक पढ़ें</a>` : '';
     return `<div class="block ${folderName} a-box" onmouseenter="bookActive(this)" onmouseleave="bookInactive(this)">
     <div class="book${isMini}">
         <div class="book__wrapper${bookSize}"></div>
@@ -587,7 +591,7 @@ function bookTemplate(folderName, isMiniLayout) {
             <div class="book-intro-author"><span class="page-count">(कुल पृष्ठ : ${pageCount + 1})</span>${introAuthor}</div>
         </div>
         <div class="button-panel">
-            <a class="button" onclick="loadPdf('${folderName}');">पुस्तक पढ़ें</a>
+            ${readBook}
             <a class="button" href="${downloadLink}">डाउनलोड करें</a>
         </div>
     </div>
