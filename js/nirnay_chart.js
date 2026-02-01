@@ -15,9 +15,17 @@ var finalDates = {
 		type: 'ekadashi',
 		date: ['May 13, 2026'],
 	},
-	'निर्जला': {
+	'पद्मिनी': {
 		type: 'ekadashi',
 		date: ['May 27, 2026'],
+	},
+	'परमा': {
+		type: 'ekadashi',
+		date: ['Jun 11, 2026'],
+	},
+	'निर्जला': {
+		type: 'ekadashi',
+		date: ['Jun 25, 2026'],
 	},
 	'योगिनी': {
 		type: 'ekadashi',
